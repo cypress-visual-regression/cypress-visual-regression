@@ -43,7 +43,7 @@ compareSnapshotCommand();
 
 ### To Use
 
-Add `cy.compareSnapshot('home');` in your tests specs wherever you want to test for visual regressions, making sure to replace `home` with a relevant name.
+Add `cy.compareSnapshot('home');` in your tests specs whenever you want to test for visual regressions, making sure to replace `home` with a relevant name.
 
 Get base images:
 
