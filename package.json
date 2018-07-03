@@ -1,0 +1,16 @@
+{
+  "name": "cypress-visual-regression",
+  "scripts": {
+    "test": "./node_modules/.bin/cypress run --env type=actual",
+    "base": "./node_modules/.bin/cypress run --env type=base --config screenshotsFolder=cypress/snapshots/base"
+  },
+  "dependencies": {
+    "cypress": "^3.0.2",
+    "image-diff": "^1.6.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-plugin-import": "^2.13.0"
+  }
+}
