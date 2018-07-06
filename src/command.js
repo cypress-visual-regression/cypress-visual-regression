@@ -2,9 +2,10 @@
 
 function compareSnapshotCommand() {
   Cypress.Commands.add('compareSnapshot', (name) => {
-    // get title based on 'type' env var
+    // get image title from the 'type' environment variable
     let title = 'actual';
     if (Cypress.env('type') === 'base') { title = 'base'; }
+
     // take snapshot
     cy.screenshot(`${name}-${title}`);
 
