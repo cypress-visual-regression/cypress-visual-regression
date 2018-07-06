@@ -2,7 +2,7 @@ const path = require('path');
 
 const imageDiff = require('image-diff');
 
-const SNAPSHOT_DIRECTORY = path.join(__dirname, '..', 'cypress', 'snapshots');
+const SNAPSHOT_DIRECTORY = path.join(__dirname, '..', '..', '..', 'cypress', 'snapshots');
 
 
 function compareSnapshotsPlugin(args) {
