@@ -2,6 +2,8 @@
 
 [![NPM](https://nodei.co/npm/cypress-visual-regression.png)](https://nodei.co/npm/cypress-visual-regression/)
 
+[![Build Status](https://travis-ci.org/mjhea0/cypress-visual-regression.svg?branch=master)](https://travis-ci.org/mjhea0/cypress-visual-regression)
+
 Module for adding visual regression testing to [Cypress](https://www.cypress.io/).
 
 > **NOTE:** [ImageMagick](http://www.imagemagick.org/script/index.php) is required for this project to work.
@@ -59,6 +61,6 @@ $ ./node_modules/.bin/cypress run --env type=actual
 
 ## TODO
 
-1. Add tests + Travis CI
 1. Port over [app](https://github.com/mjhea0/testcafe-visual-regression/blob/master/src/app.js) to display [results](https://github.com/mjhea0/testcafe-visual-regression/blob/master/docs/example.png) from each test run
 1. Allow end user to customize options (like error thresholds, screenshot directory)
+1. Prevent "base" tests runs from actually running the regular tests
