@@ -2,8 +2,10 @@ const path = require('path');
 
 const imageDiff = require('image-diff');
 
-const SNAPSHOT_DIRECTORY = path.join(__dirname, '..', '..', '..', 'cypress', 'snapshots');
-
+// TODO: allow user to define/update
+const SNAPSHOT_DIRECTORY = process.env.SNAPSHOT_DIRECTORY || path.join(
+  __dirname, '..', '..', '..', 'cypress', 'snapshots',
+);
 
 function compareSnapshotsPlugin(args) {
   return new Promise((resolve, reject) => {

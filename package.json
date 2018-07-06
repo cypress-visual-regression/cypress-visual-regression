@@ -1,6 +1,6 @@
 {
   "name": "cypress-visual-regression",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Module for adding visual regression testing to Cypress",
   "repository": "https://github.com/mjhea0/cypress-visual-regression",
   "author": "Michael Herman <michael@mherman.org>",
@@ -16,10 +16,8 @@
     "prepublish": "npm run lint && npm run build",
     "lint": "./node_modules/.bin/eslint src/**",
     "prebuild": "./node_modules/.bin/rimraf dist",
-    "build": "./node_modules/.bin/babel src --out-dir dist"
-  },
-  "dependencies": {
-    "image-diff": "^1.6.3"
+    "build": "./node_modules/.bin/babel src --out-dir dist",
+    "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -29,7 +27,8 @@
     "rimraf": "^2.6.2"
   },
   "peerDependencies": {
-    "cypress": "^3.0.2"
+    "cypress": "^3.0.2",
+    "image-diff": "^1.6.3"
   },
   "files": [
     "dist/command.js",
@@ -38,6 +37,8 @@
     "dist/package.json"
   ],
   "ignore": [
-    "src"
+    "src",
+    "cypress",
+    "cypress.json"
   ]
 }
