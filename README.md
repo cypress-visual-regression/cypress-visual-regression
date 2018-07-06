@@ -1,14 +1,14 @@
-# Visual Regression Testing Example with Cypress
+# Cypress Visual Regression
+
+[![NPM](https://nodei.co/npm/cypress-visual-regression.png)](https://nodei.co/npm/cypress-visual-regression/)
 
 Module for adding visual regression testing to [Cypress](https://www.cypress.io/).
-
-[![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/cypress-visual-regression)
 
 > **NOTE:** [ImageMagick](http://www.imagemagick.org/script/index.php) is required for this project to work.
 
 ## Getting Started
 
-Install
+Install:
 
 ```sh
 $ npm install cypress-visual-regression
@@ -45,13 +45,13 @@ compareSnapshotCommand();
 
 Add `cy.compareSnapshot('home');` in your tests specs whenever you want to test for visual regressions, making sure to replace `home` with a relevant name.
 
-Get base images:
+Take the base images:
 
 ```sh
 $ ./node_modules/.bin/cypress run --env type=base --config screenshotsFolder=cypress/snapshots/base
 ```
 
-Find regressions
+Find regressions:
 
 ```sh
 $ ./node_modules/.bin/cypress run --env type=actual
@@ -59,6 +59,6 @@ $ ./node_modules/.bin/cypress run --env type=actual
 
 ## TODO
 
-1. Set up an NPM Package
+1. Add tests + Travis CI
 1. Port over [app](https://github.com/mjhea0/testcafe-visual-regression/blob/master/src/app.js) to display [results](https://github.com/mjhea0/testcafe-visual-regression/blob/master/docs/example.png) from each test run
 1. Allow end user to customize options (like error thresholds, screenshot directory)
