@@ -1,16 +1,43 @@
 {
   "name": "cypress-visual-regression",
+  "version": "0.0.7",
+  "description": "Module for adding visual regression testing to Cypress",
+  "repository": "https://github.com/mjhea0/cypress-visual-regression",
+  "author": "Michael Herman <michael@mherman.org>",
+  "license": "MIT",
+  "keywords": [
+    "visual regression",
+    "image diff",
+    "cypress"
+  ],
   "scripts": {
     "test": "./node_modules/.bin/cypress run --env type=actual",
-    "base": "./node_modules/.bin/cypress run --env type=base --config screenshotsFolder=cypress/snapshots/base"
+    "base": "./node_modules/.bin/cypress run --env type=base --config screenshotsFolder=cypress/snapshots/base",
+    "prepublish": "npm run lint && npm run build",
+    "lint": "./node_modules/.bin/eslint src/**",
+    "prebuild": "./node_modules/.bin/rimraf dist",
+    "build": "./node_modules/.bin/babel src --out-dir dist"
   },
   "dependencies": {
-    "cypress": "^3.0.2",
     "image-diff": "^1.6.3"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^13.0.0",
-    "eslint-plugin-import": "^2.13.0"
-  }
+    "eslint-plugin-import": "^2.13.0",
+    "rimraf": "^2.6.2"
+  },
+  "peerDependencies": {
+    "cypress": "^3.0.2"
+  },
+  "files": [
+    "dist/command.js",
+    "dist/plugin.js",
+    "dist/README.md",
+    "dist/package.json"
+  ],
+  "ignore": [
+    "src"
+  ]
 }
