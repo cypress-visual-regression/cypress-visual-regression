@@ -15,8 +15,8 @@ function compareSnapshotsPlugin(args) {
       diffImage: path.join(SNAPSHOT_DIRECTORY, 'diff', args.specDirectory, `${args.fileName}-diff.png`),
     };
     imageDiff(options, (err, imagesAreSame) => {
-      if (err) reject(err);
-      resolve(imagesAreSame);
+      if (err) return reject(err);
+      return resolve(imagesAreSame);
     });
   });
 }

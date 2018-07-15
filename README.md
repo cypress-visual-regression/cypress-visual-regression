@@ -61,6 +61,7 @@ $ ./node_modules/.bin/cypress run --env type=actual
 
 ## TODO
 
-1. Port over [app](https://github.com/mjhea0/testcafe-visual-regression/blob/master/src/app.js) to display [results](https://github.com/mjhea0/testcafe-visual-regression/blob/master/docs/example.png) from each test run
+1. Add testing server
+1. Add Docker
 1. Allow end user to customize options (like error thresholds, screenshot directory)
 1. Prevent "base" tests runs from actually running the regular tests
