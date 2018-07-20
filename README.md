@@ -59,6 +59,10 @@ Find regressions:
 $ ./node_modules/.bin/cypress run --env type=actual
 ```
 
+## Example
+
+![example](./cypress-visual-regression.gif)
+
 ## TODO
 
 1. Spin up local server for testing
