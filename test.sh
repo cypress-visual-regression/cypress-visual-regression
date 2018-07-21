@@ -1,6 +1,6 @@
 #!/bin/sh
 
-npm install
+npm install image-diff
 npm run lint
 npm run build
 cd docker
