@@ -65,8 +65,10 @@ $ ./node_modules/.bin/cypress run --env type=actual
 
 ## TODO
 
-1. Spin up local server for testing
-1. Test functionality of taking screenshots without running visual regression
+1. Spin up local server for testing (set e??)
 1. Add Docker
+
+1. Add ability to test for expected errors
+1. Test functionality of taking screenshots without running visual regression
 1. Allow end user to customize options (like error thresholds, screenshot directory)
 1. Prevent "base" tests runs from actually running the regular tests
