@@ -20,7 +20,7 @@ before_install:
   - npm install image-diff
 
 script:
-  - ./test.sh
+  - bash test.sh
 
 after_script:
   - docker-compose down
