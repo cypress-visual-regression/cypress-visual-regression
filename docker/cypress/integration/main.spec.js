@@ -18,4 +18,10 @@ describe('Visual Regression Example', () => {
     cy.compareSnapshot('login');
   });
 
+  it('should display the JSON correctly', () => {
+    cy.visit(`/04.html`);
+    cy.get('H1').contains('bar');
+    cy.compareSnapshot('bar');
+  });
+
 });

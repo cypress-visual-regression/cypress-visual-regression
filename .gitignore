@@ -1,5 +1,7 @@
 .DS_Store
-node_modules/
 npm-debug.log
+
+node_modules/
 dist/
-.Trash-0/
+docker/cypress/snapshots/*
+!docker/cypress/snapshots/.gitkeep

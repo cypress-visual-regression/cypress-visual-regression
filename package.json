@@ -27,8 +27,7 @@
     "rimraf": "^2.6.2"
   },
   "peerDependencies": {
-    "cypress": "^3.0.3",
-    "image-diff": "^1.6.3"
+    "cypress": "^3.0.3"
   },
   "files": [
     "dist/command.js",
@@ -40,5 +39,8 @@
     "src",
     "cypress",
     "cypress.json"
-  ]
+  ],
+  "dependencies": {
+    "image-diff": "^1.6.3"
+  }
 }
