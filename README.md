@@ -65,7 +65,7 @@ $ ./node_modules/.bin/cypress run --env type=actual
 
 ## TODO
 
-1. Add ability to test for expected errors
+1. Set up 'npm publish' workflow on travis ci
 1. Test functionality of taking screenshots without running visual regression
 1. Allow end user to customize options (like error thresholds, screenshot directory)
-1. Prevent "base" tests runs from actually running the regular tests
+1. Prevent "base" tests runs from actually running the regular Cypress tests

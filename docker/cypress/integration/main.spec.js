@@ -18,10 +18,16 @@ describe('Visual Regression Example', () => {
     cy.compareSnapshot('login');
   });
 
-  it('should display the JSON correctly', () => {
-    cy.visit(`/04.html`);
-    cy.get('H1').contains('bar');
-    cy.compareSnapshot('bar');
+  it('should display the foo page incorrectly', () => {
+    if (Cypress.env('type') === 'base') {
+      cy.visit(`/04.html`);
+      cy.get('H1').contains('bar');
+      cy.compareSnapshot('bar');
+    } else {
+      cy.visit(`/05.html`);
+      cy.get('H1').contains('none');
+      cy.compareSnapshotTest('bar').should('be.false');
+    }
   });
 
 });
