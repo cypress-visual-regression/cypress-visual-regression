@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
 function compareSnapshotCommand() {
-  Cypress.Commands.add('compareSnapshot', (name) => {
+  Cypress.Commands.add('compareSnapshot', (name, errorThreshold = 0.00) => {
     // get image title from the 'type' environment variable
     let title = 'actual';
     if (Cypress.env('type') === 'base') { title = 'base'; }
@@ -16,7 +16,7 @@ function compareSnapshotCommand() {
         specDirectory: Cypress.spec.name,
       };
       cy.task('compareSnapshotsPlugin', options).then((results) => {
-        if (!results) throw new Error(`${name} images are different`);
+        if (results.percentage > errorThreshold) throw new Error(`${name} images are different`);
       });
     }
   });
