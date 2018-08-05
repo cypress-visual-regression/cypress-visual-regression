@@ -1,7 +1,7 @@
 const compareSnapshotCommand = require('../../dist/command.js');
 
 function compareSnapshotTestCommand() {
-  Cypress.Commands.add('compareSnapshotTest', name => {
+  Cypress.Commands.add('compareSnapshotTest', (name, errorThreshold = 0.00) => {
     // get image title from the 'type' environment variable
     let title = 'actual';
     if (Cypress.env('type') === 'base') {
@@ -18,7 +18,8 @@ function compareSnapshotTestCommand() {
         specDirectory: Cypress.spec.name
       };
       cy.task('compareSnapshotsPlugin', options).then(results => {
-        if (!results) return false;
+        if (results.percentage > errorThreshold) return false;
+        return true;
       });
     }
   });

@@ -15,7 +15,8 @@ describe('Visual Regression Example', () => {
   it('should display the login page correctly', () => {
     cy.visit(`/03.html`);
     cy.get('H1').contains('Login');
-    cy.compareSnapshot('login');
+    cy.compareSnapshot('login', 0.0);
+    cy.compareSnapshot('login', 0.1);
   });
 
   it('should display the foo page incorrectly', () => {
@@ -27,6 +28,20 @@ describe('Visual Regression Example', () => {
       cy.visit(`/05.html`);
       cy.get('H1').contains('none');
       cy.compareSnapshotTest('bar').should('be.false');
+    }
+  });
+
+  it('should handle custom error thresholds correctly', () => {
+    if (Cypress.env('type') === 'base') {
+      cy.visit(`/04.html`);
+      cy.get('H1').contains('bar');
+      cy.compareSnapshot('bar');
+    } else {
+      cy.visit(`/05.html`);
+      cy.get('H1').contains('none');
+      cy.compareSnapshot('bar', 0.019);
+      cy.compareSnapshotTest('bar', 0.019).should('be.true');
+      cy.compareSnapshotTest('bar', 0.018).should('be.false');
     }
   });
 
