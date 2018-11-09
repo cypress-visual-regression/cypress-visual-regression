@@ -2,7 +2,7 @@
 FROM cypress/browsers:chrome67
 
 # set cypress version
-ENV CYPRESS_VERSION 3.1.0
+ENV CYPRESS_VERSION 3.1.1
 ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
 
 # set working directory
