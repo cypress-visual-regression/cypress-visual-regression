@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "cypress-visual-regression": "0.0.10",
+    "cypress-visual-regression": "0.0.14",
     "image-diff": "1.6.3"
   }
 }
