@@ -1,5 +1,5 @@
 # base image
-FROM cypress/browsers:chrome67
+FROM cypress/browsers:chrome69
 
 # set cypress version
 ENV CYPRESS_VERSION 3.1.2
