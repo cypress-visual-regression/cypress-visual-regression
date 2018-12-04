@@ -17,12 +17,24 @@ function compareSnapshotsPlugin(args) {
       diffImage: path.join(SNAPSHOT_DIRECTORY, 'diff', args.specDirectory, `${args.fileName}-diff.png`),
     };
 
+    const diffFolder = path.join(SNAPSHOT_DIRECTORY, 'diff');
+    if (!fs.existsSync(diffFolder)) {
+      fs.mkdirSync(diffFolder);
+    }
+
+    const specFolder = path.join(diffFolder, args.specDirectory);
+    if (!fs.existsSync(specFolder)) {
+      fs.mkdirSync(specFolder);
+    }
+
     fs.createReadStream(options.actualImage)
       .pipe(new PNG())
-      .on('parsed', (imgActual) => {
+      .on('parsed', function () {
+        const imgActual = this;
         fs.createReadStream(options.expectedImage)
           .pipe(new PNG())
-          .on('parsed', (imgExpected) => {
+          .on('parsed', function () {
+            const imgExpected = this;
             const diff = new PNG({ width: imgActual.width, height: imgActual.height });
 
             const mismatchedPixels = pixelmatch(
