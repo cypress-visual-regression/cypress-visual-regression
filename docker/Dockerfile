@@ -8,7 +8,7 @@ ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
 # set working directory
 WORKDIR /usr/src/app
 
-# install cypress, image-diff, and cypress-visual-regression
+# install cypress, and cypress-visual-regression
 COPY package.json /usr/src/app/package.json
 RUN npm install cypress@${CYPRESS_VERSION}
 RUN npm install

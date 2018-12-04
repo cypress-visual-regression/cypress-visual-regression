@@ -2,7 +2,7 @@
 
 set -e
 
-npm install image-diff
+npm install
 npm run lint
 npm run build
 cd docker
