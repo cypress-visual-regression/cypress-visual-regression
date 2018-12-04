@@ -4,6 +4,7 @@ FROM cypress/browsers:chrome69
 # set cypress version
 ENV CYPRESS_VERSION 3.1.2
 ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
+ENV CI true npm install cypress
 
 # set working directory
 WORKDIR /usr/src/app
