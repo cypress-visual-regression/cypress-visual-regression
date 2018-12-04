@@ -38,7 +38,7 @@ function compareSnapshotsPlugin(args) {
 
             resolve({
               mismatchedPixels,
-              percentage: mismatchedPixels / (imgActual.width, imgActual.height)
+              percentage: mismatchedPixels / (imgActual.width, imgActual.height),
             });
           })
           .on('error', error => reject(error));
