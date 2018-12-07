@@ -1,10 +1,12 @@
 /* eslint-disable no-undef */
 
 function compareSnapshotCommand() {
-  Cypress.Commands.add('compareSnapshot', (name, errorThreshold = 0.00) => {
+  Cypress.Commands.add('compareSnapshot', (name, errorThreshold = 0.0) => {
     // get image title from the 'type' environment variable
     let title = 'actual';
-    if (Cypress.env('type') === 'base') { title = 'base'; }
+    if (Cypress.env('type') === 'base') {
+      title = 'base';
+    }
 
     // take snapshot
     cy.screenshot(`${name}-${title}`);

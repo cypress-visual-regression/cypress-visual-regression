@@ -5,16 +5,29 @@ const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
 
 // TODO: allow user to define/update
-const SNAPSHOT_DIRECTORY = process.env.SNAPSHOT_DIRECTORY || path.join(
-  __dirname, '..', '..', '..', 'cypress', 'snapshots',
-);
+const SNAPSHOT_DIRECTORY = process.env.SNAPSHOT_DIRECTORY || path.join(__dirname, '..', '..', '..', 'cypress', 'snapshots');
 
 function compareSnapshotsPlugin(args) {
   return new Promise((resolve, reject) => {
     const options = {
-      actualImage: path.join(SNAPSHOT_DIRECTORY, 'actual', args.specDirectory, `${args.fileName}-actual.png`),
-      expectedImage: path.join(SNAPSHOT_DIRECTORY, 'base', args.specDirectory, `${args.fileName}-base.png`),
-      diffImage: path.join(SNAPSHOT_DIRECTORY, 'diff', args.specDirectory, `${args.fileName}-diff.png`),
+      actualImage: path.join(
+        SNAPSHOT_DIRECTORY,
+        'actual',
+        args.specDirectory,
+        `${args.fileName}-actual.png`,
+      ),
+      expectedImage: path.join(
+        SNAPSHOT_DIRECTORY,
+        'base',
+        args.specDirectory,
+        `${args.fileName}-base.png`,
+      ),
+      diffImage: path.join(
+        SNAPSHOT_DIRECTORY,
+        'diff',
+        args.specDirectory,
+        `${args.fileName}-diff.png`,
+      ),
     };
 
     const diffFolder = path.join(SNAPSHOT_DIRECTORY, 'diff');
@@ -27,6 +40,7 @@ function compareSnapshotsPlugin(args) {
       fs.mkdirSync(specFolder);
     }
 
+    /* eslint-disable func-names */
     fs.createReadStream(options.actualImage)
       .pipe(new PNG())
       .on('parsed', function () {
@@ -50,12 +64,13 @@ function compareSnapshotsPlugin(args) {
 
             resolve({
               mismatchedPixels,
-              percentage: mismatchedPixels / (imgActual.width, imgActual.height),
+              percentage: (mismatchedPixels / imgActual.width / imgActual.height) ** 0.5,
             });
           })
           .on('error', error => reject(error));
       })
       .on('error', error => reject(error));
+    /* eslint-enable func-names */
   });
 }
 
