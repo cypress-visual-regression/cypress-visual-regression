@@ -6,8 +6,6 @@
 
 Module for adding visual regression testing to [Cypress](https://www.cypress.io/).
 
-> **NOTE:** [ImageMagick](http://www.imagemagick.org/script/index.php) is required for this project to work.
-
 ## Getting Started
 
 Install:
