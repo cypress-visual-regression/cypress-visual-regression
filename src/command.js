@@ -2,6 +2,9 @@
 
 function compareSnapshotCommand() {
   Cypress.Commands.add('compareSnapshot', (name, errorThreshold = 0.0) => {
+    if (Cypress.env('silent') === 'true') {
+      return;
+    }
     // get image title from the 'type' environment variable
     let title = 'actual';
     if (Cypress.env('type') === 'base') {
