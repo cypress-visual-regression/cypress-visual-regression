@@ -40,7 +40,7 @@ describe('Visual Regression Example', () => {
       cy.get('H1').contains('none');
       cy.compareSnapshot('bar', 0.02);
       cy.compareSnapshotTest('bar', 0.02).should('be.true');
-      cy.compareSnapshotTest('bar', 0.019).should('be.false');
+      cy.compareSnapshotTest('bar', 0.017).should('be.false');
     }
   });
 });

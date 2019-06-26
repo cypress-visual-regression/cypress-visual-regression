@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. This projec
 
 This change log follows the format documented in [Keep a CHANGELOG](http://keepachangelog.com/).
 
+## v1.0.2
+
+### Changed
+
+- Bumps to Cypress v3.3.1
+
 ## v1.0.1
 
 ### Changed
