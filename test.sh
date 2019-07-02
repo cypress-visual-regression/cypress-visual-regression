@@ -4,6 +4,7 @@ set -e
 
 npm install
 npm run lint
+npm run prettier:check
 npm run build
 cd docker
 rm -rf dist

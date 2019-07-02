@@ -17,17 +17,21 @@
     "lint": "./node_modules/.bin/eslint src/**",
     "prebuild": "./node_modules/.bin/rimraf dist",
     "build": "./node_modules/.bin/babel src --out-dir dist",
-    "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test"
+    "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
+    "prettier:check": "prettier --check --trailing-comma es5 --single-quote --arrow-parens always 'src/**/*.js'",
+    "prettier:fix": "prettier --write --trailing-comma es5 --single-quote --arrow-parens always 'src/**/*.js'"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-import": "^2.13.0",
+    "prettier": "1.18.2",
     "rimraf": "^2.6.2"
   },
   "peerDependencies": {
-    "cypress": "^3.3.1"
+    "cypress": "^3.3.2"
   },
   "files": [
     "dist/command.js",
@@ -41,7 +45,8 @@
     "cypress.json"
   ],
   "dependencies": {
-    "cypress": "^3.3.1",
+    "cypress": "^3.3.2",
+    "mkdirp": "^0.5.1",
     "pixelmatch": "^4.0.2",
     "pngjs": "^3.3.3"
   }

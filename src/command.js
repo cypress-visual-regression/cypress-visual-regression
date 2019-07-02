@@ -18,7 +18,9 @@ function compareSnapshotCommand() {
         specDirectory: Cypress.spec.name,
       };
       cy.task('compareSnapshotsPlugin', options).then((results) => {
-        if (results.percentage > errorThreshold) throw new Error(`${name} images are different`);
+        if (results.percentage > errorThreshold) {
+          throw new Error(`${name} images are different`);
+        }
       });
     }
   });
