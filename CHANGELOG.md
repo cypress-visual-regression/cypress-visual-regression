@@ -8,7 +8,7 @@ This change log follows the format documented in [Keep a CHANGELOG](http://keepa
 
 ### Changed
 
-- Bumps to Cypress v3.3.2
+- Bumps to Cypress v3.3.2, adds Prettier, and uses [mkdirp](https://github.com/substack/node-mkdirp) instead of [fs.mkdirSync](https://nodejs.org/api/fs.html#fs_fs_mkdirsync_path_options)
 
 ## v1.0.2
 
