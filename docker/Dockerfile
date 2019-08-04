@@ -2,7 +2,7 @@
 FROM cypress/browsers:chrome69
 
 # set cypress version
-ENV CYPRESS_VERSION 3.3.1
+ENV CYPRESS_VERSION 3.4.1
 ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
 ENV CI true npm install cypress
 
