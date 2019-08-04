@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. This projec
 
 This change log follows the format documented in [Keep a CHANGELOG](http://keepachangelog.com/).
 
+## v1.0.4
+
+### Changed
+
+- Bumps to Cypress v3.4.1
+
 ## v1.0.3
 
 ### Changed
@@ -26,5 +32,5 @@ This change log follows the format documented in [Keep a CHANGELOG](http://keepa
 
 ### Changed
 
-- Using [pixelmatch](https://github.com/mapbox/pixelmatch) instead of [image-diff](https://github.com/uber-archive/image-diff)
-- **BREAKING**: `errorThreshold` now compares with the square root of the percentage of pixels that have changed. For example, if the image size is 1000 x 660, and there are 257 changed pixels, the error value would be `(257 / 1000 / 660) ** 0.5 = 0.01973306715627196663293831730957`
+- Uses [pixelmatch](https://github.com/mapbox/pixelmatch) instead of [image-diff](https://github.com/uber-archive/image-diff)
+- **BREAKING**: `errorThreshold` now compares with the square root of the percentage of pixels that have changed. For example, if the image size is 1000 x 660, and there are 257 changed pixels, the error value would be `(257 / 1000 / 660) ** 0.5 = 0.01973306715627196663293831730957`.
