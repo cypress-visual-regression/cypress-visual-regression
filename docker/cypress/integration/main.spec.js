@@ -43,4 +43,19 @@ describe('Visual Regression Example', () => {
       cy.compareSnapshotTest('bar', 0.017).should('be.false');
     }
   });
+
+  it('should handle custom error thresholds correctly - take 2', () => {
+    if (Cypress.env('type') === 'base') {
+      cy.visit('/06.html');
+      cy.get('H1').contains('Color');
+      cy.compareSnapshot('bar');
+    } else {
+      cy.visit('/07.html');
+      cy.get('H1').contains('Color');
+      cy.compareSnapshot('bar', 0.02);
+      cy.compareSnapshotTest('bar', 0.02).should('be.true');
+      cy.compareSnapshotTest('bar', 0.017).should('be.false');
+      cy.compareSnapshotTest('bar').should('be.false');
+    }
+  });
 });
