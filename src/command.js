@@ -1,15 +1,18 @@
 /* eslint-disable no-undef */
 
 function compareSnapshotCommand() {
-  Cypress.Commands.add('compareSnapshot', (name, errorThreshold = 0.0) => {
-    // get image title from the 'type' environment variable
+  Cypress.Commands.add('compareSnapshot', { prevSubject: 'optional' }, (subject, name, errorThreshold = 0.0) => {
     let title = 'actual';
     if (Cypress.env('type') === 'base') {
       title = 'base';
     }
 
     // take snapshot
-    cy.screenshot(`${name}-${title}`);
+    if (subject) {
+      cy.get(subject).screenshot(`${name}-${title}`);
+    } else {
+      cy.screenshot(`${name}-${title}`);
+    }
 
     // run visual tests
     if (Cypress.env('type') === 'actual') {
