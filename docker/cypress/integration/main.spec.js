@@ -18,6 +18,18 @@ describe('Visual Regression Example', () => {
     cy.compareSnapshot('login', 0.1);
   });
 
+  it('should display the component correctly', () => {
+    if (Cypress.env('type') === 'base') {
+      cy.visit('/03.html');
+      cy.get('H1').contains('Login');
+      cy.get('form').compareSnapshot('login-form');
+    } else {
+      cy.visit('/03.html');
+      cy.get('H1').contains('Login');
+      cy.get('form').compareSnapshotTest('login-form').should('be.true');
+    }
+  });
+
   it('should display the foo page incorrectly', () => {
     if (Cypress.env('type') === 'base') {
       cy.visit('/04.html');
