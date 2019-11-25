@@ -45,6 +45,26 @@ compareSnapshotCommand();
 
 Add `cy.compareSnapshot('home');` in your tests specs whenever you want to test for visual regressions, making sure to replace `home` with a relevant name. You can also add an optional error threshold: Value can range from 0.00 (no difference) to 1.00 (every pixel is different). So, if you enter an error threshold of 0.50, the test would fail only if 0.51 percent of pixels are different.
 
+For example:
+
+```sh
+it('should display the login page correctly', () => {
+  cy.visit('/03.html');
+  cy.get('H1').contains('Login');
+  cy.compareSnapshot('login', 0.0);
+  cy.compareSnapshot('login', 0.1);
+});
+```
+
+You can target a single HTML element as well:
+
+```sh
+cy.get('#my-header').compareSnapshot('just-header')
+```
+
+> Looking more examples? Review [docker/cypress/integration/main.spec.js](https://github.com/mjhea0/cypress-visual-regression/blob/master/docker/cypress/integration/main.spec.js).
+
+
 Take the base images:
 
 ```sh

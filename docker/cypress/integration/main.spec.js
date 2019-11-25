@@ -27,6 +27,7 @@ describe('Visual Regression Example', () => {
       cy.visit('/03.html');
       cy.get('H1').contains('Login');
       cy.get('form').compareSnapshotTest('login-form').should('be.true');
+      cy.get('form').compareSnapshotTest('login-form', 0.02).should('be.true');
     }
   });
 
@@ -47,12 +48,15 @@ describe('Visual Regression Example', () => {
       cy.visit('/04.html');
       cy.get('H1').contains('bar');
       cy.compareSnapshot('bar');
+      cy.get('H1').compareSnapshotTest('h1');
     } else {
       cy.visit('/05.html');
       cy.get('H1').contains('none');
       cy.compareSnapshot('bar', 0.02);
       cy.compareSnapshotTest('bar', 0.02).should('be.true');
       cy.compareSnapshotTest('bar', 0.017).should('be.false');
+      cy.get('H1').compareSnapshotTest('h1', 0.08).should('be.true');
+      cy.get('H1').compareSnapshotTest('h1', 0.07).should('be.false');
     }
   });
 
