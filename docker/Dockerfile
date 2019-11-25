@@ -1,8 +1,8 @@
 # base image
-FROM cypress/browsers:chrome69
+FROM cypress/browsers:node12.13.0-chrome78-ff70-brave78
 
 # set cypress version
-ENV CYPRESS_VERSION 3.4.1
+ENV CYPRESS_VERSION 3.6.1
 ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
 ENV CI true npm install cypress
 

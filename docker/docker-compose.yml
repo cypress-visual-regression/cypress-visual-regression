@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.7'
 
 services:
 
@@ -7,7 +7,7 @@ services:
       context: ./web
       dockerfile: Dockerfile
     ports:
-      - '80:80'
+      - 80:80
 
   cypress:
     build:
@@ -17,4 +17,4 @@ services:
       - ./cypress/snapshots:/usr/src/app/cypress/snapshots
     depends_on:
       - nginx
-    network_mode: 'host'
+    network_mode: host

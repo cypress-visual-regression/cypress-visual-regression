@@ -47,7 +47,7 @@ Add `cy.compareSnapshot('home');` in your tests specs whenever you want to test 
 
 For example:
 
-```sh
+```js
 it('should display the login page correctly', () => {
   cy.visit('/03.html');
   cy.get('H1').contains('Login');
@@ -58,7 +58,7 @@ it('should display the login page correctly', () => {
 
 You can target a single HTML element as well:
 
-```sh
+```js
 cy.get('#my-header').compareSnapshot('just-header')
 ```
 
