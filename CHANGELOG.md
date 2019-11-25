@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. This projec
 
 This change log follows the format documented in [Keep a CHANGELOG](http://keepachangelog.com/).
 
+## v1.0.5
+
+### Changed
+
+- Bumps to Cypress v3.6.1
+- Adds functionality for testing a single HTML element
+
 ## v1.0.4
 
 ### Changed
