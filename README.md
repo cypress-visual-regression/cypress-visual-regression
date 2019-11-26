@@ -62,7 +62,7 @@ You can target a single HTML element as well:
 cy.get('#my-header').compareSnapshot('just-header')
 ```
 
-> Looking more examples? Review [docker/cypress/integration/main.spec.js](https://github.com/mjhea0/cypress-visual-regression/blob/master/docker/cypress/integration/main.spec.js).
+> Looking for more examples? Review [docker/cypress/integration/main.spec.js](https://github.com/mjhea0/cypress-visual-regression/blob/master/docker/cypress/integration/main.spec.js).
 
 
 Take the base images:
