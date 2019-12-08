@@ -77,6 +77,10 @@ Find regressions:
 $ ./node_modules/.bin/cypress run --env type=actual
 ```
 
+*Note:* In case base images were not created (#9) the reason can be wrong `--config` syntax. If you need to pass multiple config commands in the cypress command you need to write it in comma separated format. For example to pass `testFiles` and `screenshotFolder` at once do it like this:  
+`--config screenshotsFolder=cypress/snapshots/base,testFiles=\"**/*regression-tests.js\"`  
+In case `--config` flag is passed separately multiple times only the first option is taken into account.
+
 ## Example
 
 ![example](./cypress-visual-regression.gif)
