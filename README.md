@@ -43,9 +43,18 @@ compareSnapshotCommand();
 
 ## To Use
 
-Add `cy.compareSnapshot('home');` in your tests specs whenever you want to test for visual regressions, making sure to replace `home` with a relevant name. You can also add an optional error threshold: Value can range from 0.00 (no difference) to 1.00 (every pixel is different). So, if you enter an error threshold of 0.50, the test would fail only if 0.51 percent of pixels are different.
+Add `cy.compareSnapshot('home');` in your tests specs whenever you want to test for visual regressions, making sure to replace `home` with a relevant name. You can also add an optional error threshold: Value can range from 0.00 (no difference) to 1.00 (every pixel is different). So, if you enter an error threshold of 0.51, the test would fail only if > 51% of pixels are different.
 
-For example:
+More examples:
+
+| Threshold | Fails when |
+|-----------|------------|
+| .25 | > 25%  |
+| .30 | > 30% |
+| .50 | > 50% |
+| .75 | > 75% |
+
+Sample:
 
 ```js
 it('should display the login page correctly', () => {
