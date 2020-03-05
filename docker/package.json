@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "cypress-visual-regression": "1.0.6",
+    "cypress-visual-regression": "1.0.7",
     "pixelmatch": "5.1.0",
     "pngjs": "3.4.0"
   }
