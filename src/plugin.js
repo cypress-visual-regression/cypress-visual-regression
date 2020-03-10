@@ -56,11 +56,11 @@ async function compareSnapshotsPlugin(args) {
   /* eslint-disable func-names */
   fs.createReadStream(options.actualImage)
     .pipe(new PNG())
-    .on('parsed', function () {
+    .on('parsed', function() {
       const imgActual = this;
       fs.createReadStream(options.expectedImage)
         .pipe(new PNG())
-        .on('parsed', function () {
+        .on('parsed', function() {
           const imgExpected = this;
           const diff = new PNG({
             width: imgActual.width,
@@ -94,8 +94,8 @@ async function compareSnapshotsPlugin(args) {
   /* eslint-enable func-names */
   return {
     mismatchedPixels: 0,
-    percentage: 0
-  }
+    percentage: 0,
+  };
 }
 
 function getCompareSnapshotsPlugin(on) {
