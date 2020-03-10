@@ -22,6 +22,18 @@ async function createFolder(folderPath) {
   return true;
 }
 
+async function parseImage(image) {
+  return new Promise((resolve, reject) => {
+    const fd = fs.createReadStream(image);
+    fd.pipe(new PNG())
+      .on('parsed', function() {
+        const that = this;
+        resolve(that);
+      })
+      .on('error', (error) => reject(error));
+  });
+}
+
 async function compareSnapshotsPlugin(args) {
   const options = {
     actualImage: path.join(
@@ -44,58 +56,39 @@ async function compareSnapshotsPlugin(args) {
     ),
   };
 
+  let mismatchedPixels = 0;
+  let percentage = 0;
   try {
     const diffFolder = path.join(SNAPSHOT_DIRECTORY, 'diff');
     await createFolder(diffFolder);
     const specFolder = path.join(diffFolder, args.specDirectory);
     await createFolder(specFolder);
+    const imgExpected = await parseImage(options.expectedImage);
+    const imgActual = await parseImage(options.actualImage);
+    const diff = new PNG({
+      width: imgActual.width,
+      height: imgActual.height,
+    });
+
+    mismatchedPixels = pixelmatch(
+      imgActual.data,
+      imgExpected.data,
+      diff.data,
+      imgActual.width,
+      imgActual.height,
+      { threshold: 0.1 }
+    );
+    percentage = (mismatchedPixels / imgActual.width / imgActual.height) ** 0.5;
+
+    diff.pack().pipe(fs.createWriteStream(options.diffImage));
   } catch (error) {
     console.log(error);
   }
-
-  /* eslint-disable func-names */
-  fs.createReadStream(options.actualImage)
-    .pipe(new PNG())
-    .on('parsed', function() {
-      const imgActual = this;
-      fs.createReadStream(options.expectedImage)
-        .pipe(new PNG())
-        .on('parsed', function() {
-          const imgExpected = this;
-          const diff = new PNG({
-            width: imgActual.width,
-            height: imgActual.height,
-          });
-
-          const mismatchedPixels = pixelmatch(
-            imgActual.data,
-            imgExpected.data,
-            diff.data,
-            imgActual.width,
-            imgActual.height,
-            { threshold: 0.1 }
-          );
-
-          diff.pack().pipe(fs.createWriteStream(options.diffImage));
-
-          return {
-            mismatchedPixels,
-            percentage:
-              (mismatchedPixels / imgActual.width / imgActual.height) ** 0.5,
-          };
-        })
-        .on('error', (error) => {
-          throw error;
-        });
-    })
-    .on('error', (error) => {
-      throw error;
-    });
-  /* eslint-enable func-names */
   return {
-    mismatchedPixels: 0,
-    percentage: 0,
+    mismatchedPixels,
+    percentage,
   };
+  /* eslint-enable func-names */
 }
 
 function getCompareSnapshotsPlugin(on) {
