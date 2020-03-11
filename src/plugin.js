@@ -15,7 +15,7 @@ async function createFolder(folderPath) {
     try {
       await mkdirp(folderPath);
     } catch (error) {
-      console.error(error);
+      console.log(error); // eslint-disable-line no-console
       return false;
     }
   }
@@ -25,12 +25,14 @@ async function createFolder(folderPath) {
 async function parseImage(image) {
   return new Promise((resolve, reject) => {
     const fd = fs.createReadStream(image);
+    /* eslint-disable func-names */
     fd.pipe(new PNG())
       .on('parsed', function() {
         const that = this;
         resolve(that);
       })
       .on('error', (error) => reject(error));
+    /* eslint-enable func-names */
   });
 }
 
@@ -82,13 +84,12 @@ async function compareSnapshotsPlugin(args) {
 
     diff.pack().pipe(fs.createWriteStream(options.diffImage));
   } catch (error) {
-    console.log(error);
+    console.log(error); // eslint-disable-line no-console
   }
   return {
     mismatchedPixels,
     percentage,
   };
-  /* eslint-enable func-names */
 }
 
 function getCompareSnapshotsPlugin(on) {
