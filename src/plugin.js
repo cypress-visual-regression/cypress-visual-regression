@@ -14,7 +14,7 @@ async function mkdirp(folderPath) {
     fs.mkdir(folderPath, { recursive: true }, (error) => {
       if (error) {
         console.log(error); // eslint-disable-line no-console
-        reject(false);
+        reject(new Error(`Error in creating ${folderPath}`));
       }
       resolve(true);
     });
@@ -38,7 +38,7 @@ async function parseImage(image) {
     const fd = fs.createReadStream(image);
     /* eslint-disable func-names */
     fd.pipe(new PNG())
-      .on('parsed', function () {
+      .on('parsed', function() {
         const that = this;
         resolve(that);
       })
