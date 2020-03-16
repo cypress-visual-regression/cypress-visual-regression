@@ -10,10 +10,11 @@ const SNAPSHOT_DIRECTORY =
   path.join(__dirname, '..', '..', '..', 'cypress', 'snapshots');
 
 async function mkdirp(folderPath) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     fs.mkdir(folderPath, { recursive: true }, (error) => {
       if (error) {
         console.log(error); // eslint-disable-line no-console
+        reject(false);
       }
       resolve(true);
     });
@@ -37,7 +38,7 @@ async function parseImage(image) {
     const fd = fs.createReadStream(image);
     /* eslint-disable func-names */
     fd.pipe(new PNG())
-      .on('parsed', function() {
+      .on('parsed', function () {
         const that = this;
         resolve(that);
       })
