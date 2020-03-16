@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const mkdirp = require('mkdirp');
 
 const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
@@ -9,6 +8,17 @@ const pixelmatch = require('pixelmatch');
 const SNAPSHOT_DIRECTORY =
   process.env.SNAPSHOT_DIRECTORY ||
   path.join(__dirname, '..', '..', '..', 'cypress', 'snapshots');
+
+async function mkdirp(folderPath) {
+  return new Promise((resolve) => {
+    fs.mkdir(folderPath, { recursive: true }, (error) => {
+      if (error) {
+        console.log(error); // eslint-disable-line no-console
+      }
+      resolve(true);
+    });
+  });
+}
 
 async function createFolder(folderPath) {
   if (!fs.existsSync(folderPath)) {
