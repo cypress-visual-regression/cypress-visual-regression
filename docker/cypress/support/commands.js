@@ -20,7 +20,7 @@ function compareSnapshotTestCommand() {
       const options = {
         fileName: name,
         specDirectory: Cypress.spec.name,
-        failSilently: Cypress.env("failSilently") !== undefined ? Cypress.env("failSilently") : true;
+        failSilently: Cypress.env("failSilently") !== undefined ? Cypress.env("failSilently") : true
       };
       cy.task('compareSnapshotsPlugin', options).then(results => {
         if (results.percentage > errorThreshold) return false;
