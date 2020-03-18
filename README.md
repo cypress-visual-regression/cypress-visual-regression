@@ -23,6 +23,16 @@ Add the following config to your *cypress.json* file:
 }
 ```
 
+Options
+- failSilently is enabled by default, toggle it to see the errors
+```json
+{
+  "env": {
+    "failSilently": true
+  }
+}
+```
+
 Add the plugin to *cypress/plugins/index.js*:
 
 ```javascript

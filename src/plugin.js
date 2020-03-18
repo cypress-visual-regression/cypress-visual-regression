@@ -21,13 +21,16 @@ async function mkdirp(folderPath) {
   });
 }
 
-async function createFolder(folderPath) {
+async function createFolder(folderPath, failSilently) {
   if (!fs.existsSync(folderPath)) {
     try {
       await mkdirp(folderPath);
     } catch (error) {
-      console.log(error); // eslint-disable-line no-console
-      return false;
+      if (failSilently) {
+        console.log(error); // eslint-disable-line no-console
+        return false;
+      }
+      throw error;
     }
   }
   return true;
@@ -73,9 +76,9 @@ async function compareSnapshotsPlugin(args) {
   let percentage = 0;
   try {
     const diffFolder = path.join(SNAPSHOT_DIRECTORY, 'diff');
-    await createFolder(diffFolder);
+    await createFolder(diffFolder, args.failSilently);
     const specFolder = path.join(diffFolder, args.specDirectory);
-    await createFolder(specFolder);
+    await createFolder(specFolder, args.failSilently);
     const imgExpected = await parseImage(options.expectedImage);
     const imgActual = await parseImage(options.actualImage);
     const diff = new PNG({
