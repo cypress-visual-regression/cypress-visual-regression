@@ -17,9 +17,10 @@
     "lint": "./node_modules/.bin/eslint src/**",
     "prebuild": "./node_modules/.bin/rimraf dist",
     "build": "./node_modules/.bin/babel src --out-dir dist",
+    "prepare": "npm run build",
     "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
-    "prettier:check": "prettier --check --trailing-comma es5 --single-quote --arrow-parens always 'src/**/*.js'",
-    "prettier:fix": "prettier --write --trailing-comma es5 --single-quote --arrow-parens always 'src/**/*.js'"
+    "prettier:check": "prettier --check --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
+    "prettier:fix": "prettier --write --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\""
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
