@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const mkdirp = require('mkdirp');
 
 const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
@@ -10,83 +9,101 @@ const SNAPSHOT_DIRECTORY =
   process.env.SNAPSHOT_DIRECTORY ||
   path.join(__dirname, '..', '..', '..', 'cypress', 'snapshots');
 
-function compareSnapshotsPlugin(args) {
+async function mkdirp(folderPath) {
   return new Promise((resolve, reject) => {
-    const options = {
-      actualImage: path.join(
-        SNAPSHOT_DIRECTORY,
-        'actual',
-        args.specDirectory,
-        `${args.fileName}-actual.png`
-      ),
-      expectedImage: path.join(
-        SNAPSHOT_DIRECTORY,
-        'base',
-        args.specDirectory,
-        `${args.fileName}-base.png`
-      ),
-      diffImage: path.join(
-        SNAPSHOT_DIRECTORY,
-        'diff',
-        args.specDirectory,
-        `${args.fileName}-diff.png`
-      ),
-    };
+    fs.mkdir(folderPath, { recursive: true }, (error) => {
+      if (error) {
+        console.log(error); // eslint-disable-line no-console
+        reject(new Error(`Error in creating ${folderPath}`));
+      }
+      resolve(true);
+    });
+  });
+}
 
-    const diffFolder = path.join(SNAPSHOT_DIRECTORY, 'diff');
-    if (!fs.existsSync(diffFolder)) {
-      mkdirp(diffFolder, (err) => {
-        if (err) {
-          console.log(err); // eslint-disable-line no-console
-        }
-      });
+async function createFolder(folderPath, failSilently) {
+  if (!fs.existsSync(folderPath)) {
+    try {
+      await mkdirp(folderPath);
+    } catch (error) {
+      if (failSilently) {
+        console.log(error); // eslint-disable-line no-console
+        return false;
+      }
+      throw error;
     }
+  }
+  return true;
+}
 
-    const specFolder = path.join(diffFolder, args.specDirectory);
-    if (!fs.existsSync(specFolder)) {
-      mkdirp(specFolder, (err) => {
-        if (err) {
-          console.log(err); // eslint-disable-line no-console
-        }
-      });
-    }
-
+async function parseImage(image) {
+  return new Promise((resolve, reject) => {
+    const fd = fs.createReadStream(image);
     /* eslint-disable func-names */
-    fs.createReadStream(options.actualImage)
-      .pipe(new PNG())
+    fd.pipe(new PNG())
       .on('parsed', function() {
-        const imgActual = this;
-        fs.createReadStream(options.expectedImage)
-          .pipe(new PNG())
-          .on('parsed', function() {
-            const imgExpected = this;
-            const diff = new PNG({
-              width: imgActual.width,
-              height: imgActual.height,
-            });
-
-            const mismatchedPixels = pixelmatch(
-              imgActual.data,
-              imgExpected.data,
-              diff.data,
-              imgActual.width,
-              imgActual.height,
-              { threshold: 0.1 }
-            );
-
-            diff.pack().pipe(fs.createWriteStream(options.diffImage));
-
-            resolve({
-              mismatchedPixels,
-              percentage:
-                (mismatchedPixels / imgActual.width / imgActual.height) ** 0.5,
-            });
-          })
-          .on('error', (error) => reject(error));
+        const that = this;
+        resolve(that);
       })
       .on('error', (error) => reject(error));
     /* eslint-enable func-names */
   });
+}
+
+async function compareSnapshotsPlugin(args) {
+  const options = {
+    actualImage: path.join(
+      SNAPSHOT_DIRECTORY,
+      'actual',
+      args.specDirectory,
+      `${args.fileName}-actual.png`
+    ),
+    expectedImage: path.join(
+      SNAPSHOT_DIRECTORY,
+      'base',
+      args.specDirectory,
+      `${args.fileName}-base.png`
+    ),
+    diffImage: path.join(
+      SNAPSHOT_DIRECTORY,
+      'diff',
+      args.specDirectory,
+      `${args.fileName}-diff.png`
+    ),
+  };
+
+  let mismatchedPixels = 0;
+  let percentage = 0;
+  try {
+    const diffFolder = path.join(SNAPSHOT_DIRECTORY, 'diff');
+    await createFolder(diffFolder, args.failSilently);
+    const specFolder = path.join(diffFolder, args.specDirectory);
+    await createFolder(specFolder, args.failSilently);
+    const imgExpected = await parseImage(options.expectedImage);
+    const imgActual = await parseImage(options.actualImage);
+    const diff = new PNG({
+      width: imgActual.width,
+      height: imgActual.height,
+    });
+
+    mismatchedPixels = pixelmatch(
+      imgActual.data,
+      imgExpected.data,
+      diff.data,
+      imgActual.width,
+      imgActual.height,
+      { threshold: 0.1 }
+    );
+    percentage = (mismatchedPixels / imgActual.width / imgActual.height) ** 0.5;
+
+    diff.pack().pipe(fs.createWriteStream(options.diffImage));
+  } catch (error) {
+    console.log(error); // eslint-disable-line no-console
+  }
+  return {
+    mismatchedPixels,
+    percentage,
+  };
 }
 
 function getCompareSnapshotsPlugin(on) {

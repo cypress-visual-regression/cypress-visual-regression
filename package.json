@@ -47,7 +47,6 @@
   ],
   "dependencies": {
     "cypress": "^4.1.0",
-    "mkdirp": "^1.0.3",
     "pixelmatch": "^5.1.0",
     "pngjs": "^3.4.0"
   }
