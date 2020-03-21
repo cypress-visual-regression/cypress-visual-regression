@@ -11,7 +11,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
         errorThreshold = params;
       } else if (typeof params === 'object') {
         errorThreshold = params.errorThreshold || 0.0;
-          // eslint-disable-next-line prefer-object-spread
+        // eslint-disable-next-line prefer-object-spread
         screenshotOptions = Object.assign({}, defaultScreenshotOptions, params);
       }
       let title = 'actual';
