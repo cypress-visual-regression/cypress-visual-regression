@@ -1,10 +1,18 @@
 /* eslint-disable no-undef */
 
-function compareSnapshotCommand() {
+function compareSnapshotCommand(defaultScreenshotOptions) {
   Cypress.Commands.add(
     'compareSnapshot',
     { prevSubject: 'optional' },
-    (subject, name, errorThreshold = 0.0) => {
+    (subject, name, params = 0.0) => {
+      let screenshotOptions = defaultScreenshotOptions;
+      let errorThreshold = 0.0;
+      if (typeof params === 'number') {
+        errorThreshold = params;
+      } else if (typeof params === 'object') {
+        errorThreshold = params.errorThreshold || 0.0;
+        screenshotOptions = { ...screenshotOptions, ...params };
+      }
       let title = 'actual';
       if (Cypress.env('type') === 'base') {
         title = 'base';
@@ -12,9 +20,9 @@ function compareSnapshotCommand() {
 
       // take snapshot
       if (subject) {
-        cy.get(subject).screenshot(`${name}-${title}`);
+        cy.get(subject).screenshot(`${name}-${title}`, screenshotOptions);
       } else {
-        cy.screenshot(`${name}-${title}`);
+        cy.screenshot(`${name}-${title}`, screenshotOptions);
       }
 
       // run visual tests
