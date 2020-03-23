@@ -83,6 +83,17 @@ You can target a single HTML element as well:
 cy.get('#my-header').compareSnapshot('just-header')
 ```
 
+You can pass arguments to `cy.screenshot()` as well, in that case the error threshold can be passed as `errorThreshold` property of object:
+
+```js
+it('should display the login page correctly', () => {
+  cy.visit('/03.html');
+  cy.compareSnapshot('login', {
+    capture: 'fullPage',
+    errorThreshold: 0.1
+  });
+});
+```
 > Looking for more examples? Review [docker/cypress/integration/main.spec.js](https://github.com/mjhea0/cypress-visual-regression/blob/master/docker/cypress/integration/main.spec.js).
 
 
