@@ -53,6 +53,16 @@ const compareSnapshotCommand = require('cypress-visual-regression/dist/command')
 compareSnapshotCommand();
 ```
 
+Optionally you can pass default `cy.screenshot()` parameters, these will be use in case no parameters are passed for `compareSnapshot` command:
+
+```javascript
+const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
+
+compareSnapshotCommand({
+  capture: 'fullPage'
+});
+```
+
 ## To Use
 
 Add `cy.compareSnapshot('home');` in your tests specs whenever you want to test for visual regressions, making sure to replace `home` with a relevant name. You can also add an optional error threshold: Value can range from 0.00 (no difference) to 1.00 (every pixel is different). So, if you enter an error threshold of 0.51, the test would fail only if > 51% of pixels are different.
