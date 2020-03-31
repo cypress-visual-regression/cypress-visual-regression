@@ -25,7 +25,7 @@ function compareSnapshotCommand() {
         };
         cy.task('compareSnapshotsPlugin', options).then((results) => {
           if (results.percentage > errorThreshold) {
-            throw new Error(`${name} images are different`);
+            throw new Error(`The "${name}" image is different. Threshold limit exceeded! \nExpected: ${errorThreshold} \nActual: ${results.percentage}`);
           }
         });
       }
