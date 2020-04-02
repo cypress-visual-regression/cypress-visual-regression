@@ -74,4 +74,11 @@ describe('Visual Regression Example', () => {
       cy.compareSnapshotTest('bar').should('be.false');
     }
   });
+
+  it("should pass parameters to cy.screenshot", () => {
+    cy.visit("/08.html");
+    cy.compareSnapshot("screenshot-params-full", {
+      capture: "fullPage"
+    });
+  });
 });
