@@ -23,18 +23,6 @@ Add the following config to your *cypress.json* file:
 }
 ```
 
-Options
-- failSilently is enabled by default, toggle it to see the errors
-- Add the following config to your *cypress.json* file to see the errors:
-
-```json
-{
-  "env": {
-    "failSilently": false
-  }
-}
-```
-
 Add the plugin to *cypress/plugins/index.js*:
 
 ```javascript
@@ -53,15 +41,28 @@ const compareSnapshotCommand = require('cypress-visual-regression/dist/command')
 compareSnapshotCommand();
 ```
 
-Optionally you can pass default `cy.screenshot()` parameters, these will be use in case no parameters are passed for `compareSnapshot` command:
+### Options
+
+`failSilently` is enabled by default. Add the following config to your *cypress.json* file to see the errors:
+
+```json
+{
+  "env": {
+    "failSilently": false
+  }
+}
+```
+
+You can also pass default arguments to `compareSnapshotCommand()`:
 
 ```javascript
 const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
-
 compareSnapshotCommand({
   capture: 'fullPage'
 });
 ```
+
+These will be used by default when no parameters are passed to the `compareSnapshot` command.
 
 ## To Use
 
@@ -93,7 +94,7 @@ You can target a single HTML element as well:
 cy.get('#my-header').compareSnapshot('just-header')
 ```
 
-You can pass arguments to `cy.screenshot()` as well, in that case the error threshold can be passed as `errorThreshold` property of object:
+You can pass arguments as an object to `cy.screenshot()`, rather than just an error threshold, as well:
 
 ```js
 it('should display the login page correctly', () => {
