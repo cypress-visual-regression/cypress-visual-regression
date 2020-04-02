@@ -2,11 +2,28 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.2.0
+
+- Bumps to Cypress v4.3.0
+- Adds functionality to pass default arguments to `compareSnapshotCommand()`
+- Adds functionality to pass an object to `cy.screenshot()` rather than just an error threshold:
+
+    ```javascript
+    cy.compareSnapshot('login', 0.1);
+
+    // or
+
+    cy.compareSnapshot('login', {
+      capture: 'fullPage',
+      errorThreshold: 0.1
+    });
+    ```
+
 ## v1.1.0
 
 - Removes support for Node 8 and 9
 - Bumps to Cypress v4.2.0
-- Add a `failSilently` option for ignore failures and proceeding with execution
+- Adds a `failSilently` option for ignore failures and proceeding with execution
 - Replaces [mkdirp](https://www.npmjs.com/package/mkdirp) with [fs.mkdir](https://nodejs.org/dist/latest-v12.x/docs/api/fs.html#fs_fs_mkdir_path_options_callback)
 - Adds `prepare` script to run build step
 - Fixes quotes for Prettier commands in Windows
