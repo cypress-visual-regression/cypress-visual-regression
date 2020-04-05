@@ -1,6 +1,6 @@
 {
   "name": "cypress-visual-regression",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Module for adding visual regression testing to Cypress",
   "repository": "https://github.com/mjhea0/cypress-visual-regression",
   "author": "Michael Herman <michael@mherman.org>",
@@ -32,7 +32,7 @@
     "rimraf": "^3.0.2"
   },
   "peerDependencies": {
-    "cypress": "^4.2.0"
+    "cypress": "^4.3.0"
   },
   "files": [
     "dist/command.js",
@@ -46,7 +46,7 @@
     "cypress.json"
   ],
   "dependencies": {
-    "cypress": "^4.2.0",
+    "cypress": "^4.3.0",
     "pixelmatch": "^5.1.0",
     "pngjs": "^3.4.0"
   }

@@ -23,18 +23,6 @@ Add the following config to your *cypress.json* file:
 }
 ```
 
-Options
-- failSilently is enabled by default, toggle it to see the errors
-- Add the following config to your *cypress.json* file to see the errors:
-
-```json
-{
-  "env": {
-    "failSilently": false
-  }
-}
-```
-
 Add the plugin to *cypress/plugins/index.js*:
 
 ```javascript
@@ -52,6 +40,29 @@ const compareSnapshotCommand = require('cypress-visual-regression/dist/command')
 
 compareSnapshotCommand();
 ```
+
+### Options
+
+`failSilently` is enabled by default. Add the following config to your *cypress.json* file to see the errors:
+
+```json
+{
+  "env": {
+    "failSilently": false
+  }
+}
+```
+
+You can also pass default arguments to `compareSnapshotCommand()`:
+
+```javascript
+const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
+compareSnapshotCommand({
+  capture: 'fullPage'
+});
+```
+
+These will be used by default when no parameters are passed to the `compareSnapshot` command.
 
 ## To Use
 
@@ -83,6 +94,17 @@ You can target a single HTML element as well:
 cy.get('#my-header').compareSnapshot('just-header')
 ```
 
+You can pass arguments as an object to `cy.screenshot()`, rather than just an error threshold, as well:
+
+```js
+it('should display the login page correctly', () => {
+  cy.visit('/03.html');
+  cy.compareSnapshot('login', {
+    capture: 'fullPage',
+    errorThreshold: 0.1
+  });
+});
+```
 > Looking for more examples? Review [docker/cypress/integration/main.spec.js](https://github.com/mjhea0/cypress-visual-regression/blob/master/docker/cypress/integration/main.spec.js).
 
 
