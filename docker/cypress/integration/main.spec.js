@@ -74,4 +74,21 @@ describe('Visual Regression Example', () => {
       cy.compareSnapshotTest('bar').should('be.false');
     }
   });
+
+  it('should faild because of threshold', () => {
+    if (Cypress.env('type') === 'base') {
+      cy.visit('/04.html');
+      cy.get('H1').contains('bar');
+      cy.compareSnapshot('bar');
+      cy.get('H1').compareSnapshotTest('h1');
+    } else {
+      cy.visit('/05.html');
+      cy.get('H1').contains('none');
+      cy.compareSnapshot('bar', 0.02);
+      cy.compareSnapshotTest('bar', 0.01).should('be.true');
+      cy.compareSnapshotTest('bar', 0.010).should('be.false');
+      cy.get('H1').compareSnapshotTest('h1', 0.01).should('be.true');
+      cy.get('H1').compareSnapshotTest('h1', 0.01).should('be.false');
+    }
+  });
 });
