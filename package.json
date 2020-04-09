@@ -13,14 +13,15 @@
   "scripts": {
     "test": "./node_modules/.bin/cypress run --env type=actual",
     "base": "./node_modules/.bin/cypress run --env type=base --config screenshotsFolder=cypress/snapshots/base",
-    "prepublish": "npm run lint && npm run prettier:check && npm run build",
+    "prepublish": "npm run jest && npm run lint && npm run prettier:check && npm run build",
     "lint": "./node_modules/.bin/eslint src/**",
     "prebuild": "./node_modules/.bin/rimraf dist",
     "build": "./node_modules/.bin/babel src --out-dir dist",
     "prepare": "npm run build",
     "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
     "prettier:check": "prettier --check --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
-    "prettier:fix": "prettier --write --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\""
+    "prettier:fix": "prettier --write --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
+    "jest": "jest __tests__"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -28,6 +29,7 @@
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
+    "jest": "^25.3.0",
     "prettier": "1.19.1",
     "rimraf": "^3.0.2"
   },

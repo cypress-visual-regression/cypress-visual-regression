@@ -3,6 +3,7 @@
 set -e
 
 npm install
+npm run jest
 npm run lint
 npm run prettier:check
 npm run build
