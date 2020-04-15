@@ -23,28 +23,27 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
         specDirectory: Cypress.spec.name,
       };
 
-      // take snapshot
-      cy.task('checkBaseSnapshot', options).then((results) => {
-        if (Cypress.env('type') === 'base' && results.existsBase) {
-          return;
+      cy.task('checkBaseSnapshot', options).then((checks) => {
+        if (Cypress.env('type') === 'actual' || !checks.existsBase) {
+          // take snapshot
+          if (subject) {
+            cy.get(subject).screenshot(`${name}-${title}`, screenshotOptions);
+          } else {
+            cy.screenshot(`${name}-${title}`, screenshotOptions);
+          }
         }
-        if (subject) {
-          cy.get(subject).screenshot(`${name}-${title}`, screenshotOptions);
-        } else {
-          cy.screenshot(`${name}-${title}`, screenshotOptions);
+
+        // run visual tests
+        if (Cypress.env('type') === 'actual') {
+          cy.task('compareSnapshotsPlugin', options).then((results) => {
+            if (results.percentage > errorThreshold) {
+              throw new Error(
+                `The "${name}" image is different. Threshold limit exceeded! \nExpected: ${errorThreshold} \nActual: ${results.percentage}`
+              );
+            }
+          });
         }
       });
-
-      // run visual tests
-      if (Cypress.env('type') === 'actual') {
-        cy.task('compareSnapshotsPlugin', options).then((results) => {
-          if (results.percentage > errorThreshold) {
-            throw new Error(
-              `The "${name}" image is different. Threshold limit exceeded! \nExpected: ${errorThreshold} \nActual: ${results.percentage}`
-            );
-          }
-        });
-      }
     }
   );
 }
