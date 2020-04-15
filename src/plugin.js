@@ -106,8 +106,21 @@ async function compareSnapshotsPlugin(args) {
   };
 }
 
+function checkBaseSnapshot(args) {
+  const base = path.join(
+    SNAPSHOT_DIRECTORY,
+    'base',
+    args.specDirectory,
+    `${args.fileName}-base.png`
+  );
+  return {
+    existsBase: fs.existsSync(base),
+  };
+}
+
 function getCompareSnapshotsPlugin(on) {
   on('task', { compareSnapshotsPlugin });
+  on('task', { checkBaseSnapshot });
 }
 
 module.exports = getCompareSnapshotsPlugin;

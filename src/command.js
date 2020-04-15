@@ -18,19 +18,25 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
         title = 'base';
       }
 
+      const options = {
+        fileName: name,
+        specDirectory: Cypress.spec.name,
+      };
+
       // take snapshot
-      if (subject) {
-        cy.get(subject).screenshot(`${name}-${title}`, screenshotOptions);
-      } else {
-        cy.screenshot(`${name}-${title}`, screenshotOptions);
-      }
+      cy.task('checkBaseSnapshot', options).then((results) => {
+        if (Cypress.env('type') === 'base' && results.existsBase) {
+          return;
+        }
+        if (subject) {
+          cy.get(subject).screenshot(`${name}-${title}`, screenshotOptions);
+        } else {
+          cy.screenshot(`${name}-${title}`, screenshotOptions);
+        }
+      });
 
       // run visual tests
       if (Cypress.env('type') === 'actual') {
-        const options = {
-          fileName: name,
-          specDirectory: Cypress.spec.name,
-        };
         cy.task('compareSnapshotsPlugin', options).then((results) => {
           if (results.percentage > errorThreshold) {
             throw new Error(
