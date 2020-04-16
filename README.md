@@ -2,8 +2,6 @@
 
 [![npm](https://img.shields.io/npm/v/cypress-visual-regression)](https://www.npmjs.com/package/cypress-visual-regression)
 
-[![Build Status](https://travis-ci.org/mjhea0/cypress-visual-regression.svg?branch=master)](https://travis-ci.org/mjhea0/cypress-visual-regression)
-
 Module for adding visual regression testing to [Cypress](https://www.cypress.io/).
 
 ## Getting Started
