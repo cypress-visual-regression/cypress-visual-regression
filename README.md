@@ -18,7 +18,7 @@ Add the following config to your *cypress.json* file:
 
 ```json
 {
-  "screenshotsFolder": "cypress/snapshots/actual",
+  "screenshotsFolder": "./cypress/snapshots/actual",
   "trashAssetsBeforeRuns": true
 }
 ```

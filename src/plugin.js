@@ -7,7 +7,7 @@ const pixelmatch = require('pixelmatch');
 // TODO: allow user to define/update
 const SNAPSHOT_DIRECTORY =
   process.env.SNAPSHOT_DIRECTORY ||
-  path.join(__dirname, '..', '..', '..', 'cypress', 'snapshots');
+  path.join(process.cwd(), 'cypress', 'snapshots');
 
 async function mkdirp(folderPath) {
   return new Promise((resolve, reject) => {
