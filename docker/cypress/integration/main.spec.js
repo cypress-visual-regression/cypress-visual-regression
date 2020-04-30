@@ -80,6 +80,5 @@ describe('Visual Regression Example', () => {
     cy.compareSnapshot("screenshot-params-full", {
       capture: "fullPage"
     });
-
   });
 });

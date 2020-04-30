@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.3.0
+
+- Bumps to Cypress v4.5.0
+- Snapshot path now based on the CWD (`process.cwd()`)
+
 ## v1.2.0
 
 - Bumps to Cypress v4.3.0
