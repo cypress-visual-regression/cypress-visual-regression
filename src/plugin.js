@@ -98,6 +98,10 @@ async function compareSnapshotsPlugin(args) {
 
     diff.pack().pipe(fs.createWriteStream(options.diffImage));
   } catch (error) {
+    if (!args.failSilently) {
+      throw error;
+    }
+
     console.log(error); // eslint-disable-line no-console
   }
   return {
