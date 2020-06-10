@@ -38,6 +38,11 @@ async function createFolder(folderPath, failSilently) {
 
 async function parseImage(image) {
   return new Promise((resolve, reject) => {
+    if (!fs.existsSync(image)) {
+      reject(new Error(`Snapshot ${image} does not exist.`));
+      return;
+    }
+
     const fd = fs.createReadStream(image);
     /* eslint-disable func-names */
     fd.pipe(new PNG())
