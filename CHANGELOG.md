@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.4.0
+
+- Bumps to Cypress v4.9.0
+- Expand canvas before image comparison so that both images fully cover each other
+
 ## v1.3.0
 
 - Bumps to Cypress v4.5.0

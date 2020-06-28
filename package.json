@@ -34,7 +34,7 @@
     "rimraf": "^3.0.2"
   },
   "peerDependencies": {
-    "cypress": "^4.5.0"
+    "cypress": "^4.9.0"
   },
   "files": [
     "dist/command.js",
@@ -48,7 +48,7 @@
     "cypress.json"
   ],
   "dependencies": {
-    "cypress": "^4.5.0",
+    "cypress": "^4.9.0",
     "pixelmatch": "^5.1.0",
     "pngjs": "^3.4.0"
   }
