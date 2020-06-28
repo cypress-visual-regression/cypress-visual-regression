@@ -75,6 +75,18 @@ describe('Visual Regression Example', () => {
     }
   });
 
+  it('should compare images of different sizes', () => {
+    if (Cypress.env('type') === 'base') {
+      cy.visit('/07.html');
+      cy.get('H1').contains('Color');
+      cy.compareSnapshot('bar-07');
+    } else {
+      cy.visit('/08.html');
+      cy.get('H1').contains('Color');
+      cy.compareSnapshotTest('bar-07').should('be.false');
+    }
+  });
+
   it("should pass parameters to cy.screenshot", () => {
     cy.visit("/08.html");
     cy.compareSnapshot("screenshot-params-full", {

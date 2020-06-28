@@ -50,6 +50,24 @@ async function parseImage(image) {
   });
 }
 
+function adjustCanvas(image, width, height) {
+  if (image.width === width && image.height === height) {
+    // fast-path
+    return image;
+  }
+
+  const imageAdjustedCanvas = new PNG({
+    width,
+    height,
+    bitDepth: image.bitDepth,
+    inputHasAlpha: true,
+  });
+
+  PNG.bitblt(image, imageAdjustedCanvas, 0, 0, image.width, image.height, 0, 0);
+
+  return imageAdjustedCanvas;
+}
+
 async function compareSnapshotsPlugin(args) {
   const options = {
     actualImage: path.join(
@@ -82,19 +100,30 @@ async function compareSnapshotsPlugin(args) {
     const imgExpected = await parseImage(options.expectedImage);
     const imgActual = await parseImage(options.actualImage);
     const diff = new PNG({
-      width: imgActual.width,
-      height: imgActual.height,
+      width: Math.max(imgActual.width, imgExpected.width),
+      height: Math.max(imgActual.height, imgExpected.height),
     });
 
+    const imgActualFullCanvas = adjustCanvas(
+      imgActual,
+      diff.width,
+      diff.height
+    );
+    const imgExpectedFullCanvas = adjustCanvas(
+      imgExpected,
+      diff.width,
+      diff.height
+    );
+
     mismatchedPixels = pixelmatch(
-      imgActual.data,
-      imgExpected.data,
+      imgActualFullCanvas.data,
+      imgExpectedFullCanvas.data,
       diff.data,
-      imgActual.width,
-      imgActual.height,
+      diff.width,
+      diff.height,
       { threshold: 0.1 }
     );
-    percentage = (mismatchedPixels / imgActual.width / imgActual.height) ** 0.5;
+    percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5;
 
     diff.pack().pipe(fs.createWriteStream(options.diffImage));
   } catch (error) {
