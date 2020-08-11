@@ -5,6 +5,17 @@ describe('Visual Regression Example', () => {
     cy.compareSnapshot('home');
   });
 
+  it("handle missing base snapshot file as a failed spec", () => {
+    cy.visit("/01.html");
+    if (Cypress.env("type") === "actual") {
+      try {
+        cy.compareSnapshotTest("missing").should("be.false");
+      } catch (e) {
+        throw new Error("Missing snapshot file not handled correctly");
+      }
+    };
+  });
+
   it('should display the register page correctly', () => {
     cy.visit('/02.html');
     cy.get('H1').contains('Register');
