@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.5.0
+
+- Bumps to Cypress v4.12.1
+- Check if snapshot file exists before parsing it
+
 ## v1.4.0
 
 - Bumps to Cypress v4.9.0
