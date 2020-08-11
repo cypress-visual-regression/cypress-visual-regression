@@ -32,7 +32,15 @@ function compareSnapshotTestCommand() {
         failSilently: Cypress.env("failSilently") !== undefined ? Cypress.env("failSilently") : true
       };
       cy.task('compareSnapshotsPlugin', options).then(results => {
-        if (results.percentage > errorThreshold) return false;
+        if (results.error) {
+          console.log(results.error); // eslint-disable-line no-console
+          return false
+        }
+
+        if (results.percentage > errorThreshold) {
+          return false
+        };
+
         return true;
       });
     }

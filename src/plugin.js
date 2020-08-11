@@ -132,7 +132,7 @@ async function compareSnapshotsPlugin(args) {
 
     diff.pack().pipe(fs.createWriteStream(options.diffImage));
   } catch (error) {
-    console.log(error); // eslint-disable-line no-console
+    return { error };
   }
   return {
     mismatchedPixels,
