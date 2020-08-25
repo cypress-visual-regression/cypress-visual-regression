@@ -4,9 +4,9 @@ const path = require('path');
 const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
 
-let SNAPSHOT_BASE_DIRECTORY; 
-let SNAPSHOT_ACTUAL_DIRECTORY; 
-let SNAPSHOT_DIFF_DIRECTORY; 
+let SNAPSHOT_BASE_DIRECTORY;
+let SNAPSHOT_ACTUAL_DIRECTORY;
+let SNAPSHOT_DIFF_DIRECTORY;
 let CYPRESS_SCREENSHOT_DIR;
 
 function setupScreenshotPaths(config) {
@@ -15,16 +15,14 @@ function setupScreenshotPaths(config) {
 
 function setupSnapshotPaths(args) {
   SNAPSHOT_BASE_DIRECTORY =
-    args.baseDir ||
-    path.join(process.cwd(), 'cypress', 'snapshots', 'base'); 
+    args.baseDir || path.join(process.cwd(), 'cypress', 'snapshots', 'base');
 
   SNAPSHOT_ACTUAL_DIRECTORY =
     args.actualDir ||
-    path.join(process.cwd(), 'cypress', 'snapshots', 'actual'); 
+    path.join(process.cwd(), 'cypress', 'snapshots', 'actual');
 
   SNAPSHOT_DIFF_DIRECTORY =
-    args.diffDir ||
-    path.join(process.cwd(), 'cypress', 'snapshots', 'diff');
+    args.diffDir || path.join(process.cwd(), 'cypress', 'snapshots', 'diff');
 }
 
 async function mkdirp(folderPath) {
@@ -94,14 +92,17 @@ function adjustCanvas(image, width, height) {
 function cvrCopy(args) {
   setupSnapshotPaths(args);
   const baseDir = path.join(SNAPSHOT_BASE_DIRECTORY, args.specName);
-  const from = path.join(CYPRESS_SCREENSHOT_DIR, args.specName, `${args.from}.png`);
+  const from = path.join(
+    CYPRESS_SCREENSHOT_DIR,
+    args.specName,
+    `${args.from}.png`
+  );
   const to = path.join(baseDir, `${args.to}.png`);
 
-  return createFolder(baseDir, false)
-    .then(() => {
-      fs.copyFileSync(from, to);
-      return true;
-    });
+  return createFolder(baseDir, false).then(() => {
+    fs.copyFileSync(from, to);
+    return true;
+  });
 }
 
 async function compareSnapshotsPlugin(args) {
@@ -171,9 +172,9 @@ async function compareSnapshotsPlugin(args) {
 
 function getCompareSnapshotsPlugin(on, config) {
   setupScreenshotPaths(config);
-  on('task', { 
+  on('task', {
     compareSnapshotsPlugin,
-    cvrCopy
+    cvrCopy,
   });
 }
 

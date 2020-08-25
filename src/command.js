@@ -23,14 +23,15 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
         const fileName = `${name}-${title}`;
         if (Cypress.env('type') === 'base') {
           const identifier = `${fileName}-${new Date().getTime()}`;
-          cy.get(subject).screenshot(`${identifier}`, screenshotOptions)
-            .task("cvrCopy", {
+          cy.get(subject)
+            .screenshot(`${identifier}`, screenshotOptions)
+            .task('cvrCopy', {
               specName: Cypress.spec.name,
               from: `${identifier}`,
               to: `${fileName}`,
-              baseDir: Cypress.env("SNAPSHOT_BASE_DIRECTORY"),
-              actualDir: Cypress.env("SNAPSHOT_ACTUAL_DIRECTORY"),
-              diffDir: Cypress.env("SNAPSHOT_DIFF_DIRECTORY")
+              baseDir: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
+              actualDir: Cypress.env('SNAPSHOT_ACTUAL_DIRECTORY'),
+              diffDir: Cypress.env('SNAPSHOT_DIFF_DIRECTORY'),
             });
         } else {
           cy.get(subject).screenshot(`${fileName}`, screenshotOptions);
@@ -44,9 +45,9 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
         const options = {
           fileName: name,
           specDirectory: Cypress.spec.name,
-          baseDir: Cypress.env("SNAPSHOT_BASE_DIRECTORY"),
-          actualDir: Cypress.env("SNAPSHOT_ACTUAL_DIRECTORY"),
-          diffDir: Cypress.env("SNAPSHOT_DIFF_DIRECTORY")
+          baseDir: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
+          actualDir: Cypress.env('SNAPSHOT_ACTUAL_DIRECTORY'),
+          diffDir: Cypress.env('SNAPSHOT_DIFF_DIRECTORY'),
         };
         cy.task('compareSnapshotsPlugin', options).then((results) => {
           if (results.error) {
