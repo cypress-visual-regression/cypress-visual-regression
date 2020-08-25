@@ -4,10 +4,28 @@ const path = require('path');
 const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
 
-// TODO: allow user to define/update
-const SNAPSHOT_DIRECTORY =
-  process.env.SNAPSHOT_DIRECTORY ||
-  path.join(process.cwd(), 'cypress', 'snapshots');
+let SNAPSHOT_BASE_DIRECTORY; 
+let SNAPSHOT_ACTUAL_DIRECTORY; 
+let SNAPSHOT_DIFF_DIRECTORY; 
+let CYPRESS_SCREENSHOT_DIR;
+
+function setupScreenshotPaths(config) {
+  CYPRESS_SCREENSHOT_DIR = config.screenshotsFolder;
+}
+
+function setupSnapshotPaths(args) {
+  SNAPSHOT_BASE_DIRECTORY =
+    args.baseDir ||
+    path.join(process.cwd(), 'cypress', 'snapshots', 'base'); 
+
+  SNAPSHOT_ACTUAL_DIRECTORY =
+    args.actualDir ||
+    path.join(process.cwd(), 'cypress', 'snapshots', 'actual'); 
+
+  SNAPSHOT_DIFF_DIRECTORY =
+    args.diffDir ||
+    path.join(process.cwd(), 'cypress', 'snapshots', 'diff');
+}
 
 async function mkdirp(folderPath) {
   return new Promise((resolve, reject) => {
@@ -73,23 +91,35 @@ function adjustCanvas(image, width, height) {
   return imageAdjustedCanvas;
 }
 
+function cvrCopy(args) {
+  setupSnapshotPaths(args);
+  const baseDir = path.join(SNAPSHOT_BASE_DIRECTORY, args.specName);
+  const from = path.join(CYPRESS_SCREENSHOT_DIR, args.specName, args.from + ".png");
+  const to = path.join(baseDir, args.to + ".png");
+  
+  return createFolder(baseDir, false)
+    .then(() => {
+      fs.copyFileSync(from, to);
+      return true;
+    });
+}
+
 async function compareSnapshotsPlugin(args) {
+  setupSnapshotPaths(args);
+
   const options = {
     actualImage: path.join(
-      SNAPSHOT_DIRECTORY,
-      'actual',
+      SNAPSHOT_ACTUAL_DIRECTORY,
       args.specDirectory,
       `${args.fileName}-actual.png`
     ),
     expectedImage: path.join(
-      SNAPSHOT_DIRECTORY,
-      'base',
+      SNAPSHOT_BASE_DIRECTORY,
       args.specDirectory,
       `${args.fileName}-base.png`
     ),
     diffImage: path.join(
-      SNAPSHOT_DIRECTORY,
-      'diff',
+      SNAPSHOT_DIFF_DIRECTORY,
       args.specDirectory,
       `${args.fileName}-diff.png`
     ),
@@ -98,9 +128,8 @@ async function compareSnapshotsPlugin(args) {
   let mismatchedPixels = 0;
   let percentage = 0;
   try {
-    const diffFolder = path.join(SNAPSHOT_DIRECTORY, 'diff');
-    await createFolder(diffFolder, args.failSilently);
-    const specFolder = path.join(diffFolder, args.specDirectory);
+    await createFolder(SNAPSHOT_DIFF_DIRECTORY, args.failSilently);
+    const specFolder = path.join(SNAPSHOT_DIFF_DIRECTORY, args.specDirectory);
     await createFolder(specFolder, args.failSilently);
     const imgExpected = await parseImage(options.expectedImage);
     const imgActual = await parseImage(options.actualImage);
@@ -140,8 +169,12 @@ async function compareSnapshotsPlugin(args) {
   };
 }
 
-function getCompareSnapshotsPlugin(on) {
-  on('task', { compareSnapshotsPlugin });
+function getCompareSnapshotsPlugin(on, config) {
+  setupScreenshotPaths(config);
+  on('task', { 
+    compareSnapshotsPlugin,
+    cvrCopy
+  });
 }
 
 module.exports = getCompareSnapshotsPlugin;
