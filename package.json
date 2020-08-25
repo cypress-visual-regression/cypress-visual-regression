@@ -50,6 +50,7 @@
   "dependencies": {
     "cypress": "^4.12.1",
     "pixelmatch": "^5.1.0",
-    "pngjs": "^3.4.0"
+    "pngjs": "^3.4.0",
+    "sanitize-filename": "^1.6.3"
   }
 }
