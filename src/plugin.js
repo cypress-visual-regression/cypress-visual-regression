@@ -10,7 +10,9 @@ let SNAPSHOT_DIFF_DIRECTORY;
 let CYPRESS_SCREENSHOT_DIR;
 
 function setupScreenshotPaths(config) {
-  CYPRESS_SCREENSHOT_DIR = config.screenshotsFolder;
+  config = config || {};
+  // use cypress default path as fallback
+  CYPRESS_SCREENSHOT_DIR = config.screenshotsFolder || 'cypress/screenshots';
 }
 
 function setupSnapshotPaths(args) {
