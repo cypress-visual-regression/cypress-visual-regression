@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.5.1
+
+- Bumps to Cypress v5.1.0
+
 ## v1.5.0
 
 - Bumps to Cypress v4.12.1

@@ -1,6 +1,6 @@
 # Cypress Visual Regression
 
-[![NPM](https://nodei.co/npm/cypress-visual-regression.png)](https://nodei.co/npm/cypress-visual-regression/)
+[![npm](https://img.shields.io/npm/v/cypress-visual-regression)](https://www.npmjs.com/package/cypress-visual-regression)
 
 [![Build Status](https://travis-ci.org/mjhea0/cypress-visual-regression.svg?branch=master)](https://travis-ci.org/mjhea0/cypress-visual-regression)
 
@@ -128,9 +128,3 @@ $ ./node_modules/.bin/cypress run --env type=actual
 ## Example
 
 ![example](./cypress-visual-regression.gif)
-
-## TODO
-
-1. Allow end user to customize options (screenshot directory)
-1. Test functionality of taking screenshots without running visual regression
-1. Prevent "base" tests runs from actually running the regular Cypress tests
