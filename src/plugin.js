@@ -3,6 +3,7 @@ const path = require('path');
 
 const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
+const sanitize = require('sanitize-filename');
 
 // TODO: allow user to define/update
 const SNAPSHOT_DIRECTORY =
@@ -74,24 +75,26 @@ function adjustCanvas(image, width, height) {
 }
 
 async function compareSnapshotsPlugin(args) {
+  const fileName = sanitize(args.fileName);
+
   const options = {
     actualImage: path.join(
       SNAPSHOT_DIRECTORY,
       'actual',
       args.specDirectory,
-      `${args.fileName}-actual.png`
+      `${fileName}-actual.png`
     ),
     expectedImage: path.join(
       SNAPSHOT_DIRECTORY,
       'base',
       args.specDirectory,
-      `${args.fileName}-base.png`
+      `${fileName}-base.png`
     ),
     diffImage: path.join(
       SNAPSHOT_DIRECTORY,
       'diff',
       args.specDirectory,
-      `${args.fileName}-diff.png`
+      `${fileName}-diff.png`
     ),
   };
 
