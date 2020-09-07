@@ -41,6 +41,13 @@ const compareSnapshotCommand = require('cypress-visual-regression/dist/command')
 compareSnapshotCommand();
 ```
 
+> Make sure you import *commands.js* in *cypress/support/index.js*:
+>
+> ```javascript
+> import './commands'
+> ```
+>
+
 ### Options
 
 `failSilently` is enabled by default. Add the following config to your *cypress.json* file to see the errors:
