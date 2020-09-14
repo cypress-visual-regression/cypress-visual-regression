@@ -25,7 +25,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
       }
 
       // take snapshot
-      let objToOperateOn = subject ? cy.get(subject) : cy;
+      const objToOperateOn = subject ? cy.get(subject) : cy;
       const fileName = `${name}-${title}`;
       if (Cypress.env('type') === 'base') {
         const identifier = `${fileName}-${new Date().getTime()}`;
