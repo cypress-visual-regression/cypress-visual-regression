@@ -25,23 +25,20 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
       }
 
       // take snapshot
-      if (subject) {
-        const fileName = `${name}-${title}`;
-        if (Cypress.env('type') === 'base') {
-          const identifier = `${fileName}-${new Date().getTime()}`;
-          cy.get(subject)
-            .screenshot(`${identifier}`, screenshotOptions)
-            .task('visualRegressionCopy', {
-              specName: Cypress.spec.name,
-              from: `${identifier}`,
-              to: `${fileName}`,
-              baseDir: SNAPSHOT_BASE_DIRECTORY,
-            });
-        } else {
-          cy.get(subject).screenshot(`${fileName}`, screenshotOptions);
-        }
+      let objToOperateOn = subject ? cy.get(subject) : cy;
+      const fileName = `${name}-${title}`;
+      if (Cypress.env('type') === 'base') {
+        const identifier = `${fileName}-${new Date().getTime()}`;
+        objToOperateOn
+          .screenshot(`${identifier}`, screenshotOptions)
+          .task('visualRegressionCopy', {
+            specName: Cypress.spec.name,
+            from: `${identifier}`,
+            to: `${fileName}`,
+            baseDir: SNAPSHOT_BASE_DIRECTORY,
+          });
       } else {
-        cy.screenshot(`${name}-${title}`, screenshotOptions);
+        objToOperateOn.screenshot(`${fileName}`, screenshotOptions);
       }
 
       // run visual tests
