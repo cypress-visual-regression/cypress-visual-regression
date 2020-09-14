@@ -9,10 +9,9 @@ let SNAPSHOT_ACTUAL_DIRECTORY;
 let SNAPSHOT_DIFF_DIRECTORY;
 let CYPRESS_SCREENSHOT_DIR;
 
-function setupScreenshotPaths(config) {
-  config = config || {};
+function setupScreenshotPath(config) {
   // use cypress default path as fallback
-  CYPRESS_SCREENSHOT_DIR = config.screenshotsFolder || 'cypress/screenshots';
+  CYPRESS_SCREENSHOT_DIR = (config || {}).screenshotsFolder || 'cypress/screenshots';
 }
 
 function setupSnapshotPaths(args) {
@@ -91,7 +90,7 @@ function adjustCanvas(image, width, height) {
   return imageAdjustedCanvas;
 }
 
-function cvrCopy(args) {
+function visualRegressionCopy(args) {
   setupSnapshotPaths(args);
   const baseDir = path.join(SNAPSHOT_BASE_DIRECTORY, args.specName);
   const from = path.join(
@@ -173,10 +172,10 @@ async function compareSnapshotsPlugin(args) {
 }
 
 function getCompareSnapshotsPlugin(on, config) {
-  setupScreenshotPaths(config);
+  setupScreenshotPath(config);
   on('task', {
     compareSnapshotsPlugin,
-    cvrCopy,
+    visualRegressionCopy,
   });
 }
 

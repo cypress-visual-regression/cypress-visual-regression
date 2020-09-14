@@ -5,6 +5,10 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
     'compareSnapshot',
     { prevSubject: 'optional' },
     (subject, name, params = 0.0) => {
+      const SNAPSHOT_BASE_DIRECTORY = Cypress.env('SNAPSHOT_BASE_DIRECTORY');
+      const SNAPSHOT_ACTUAL_DIRECTORY = Cypress.env('SNAPSHOT_ACTUAL_DIRECTORY');
+      const SNAPSHOT_DIFF_DIRECTORY = Cypress.env('SNAPSHOT_DIFF_DIRECTORY');
+
       let screenshotOptions = defaultScreenshotOptions;
       let errorThreshold = 0.0;
       if (typeof params === 'number') {
@@ -25,13 +29,13 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
           const identifier = `${fileName}-${new Date().getTime()}`;
           cy.get(subject)
             .screenshot(`${identifier}`, screenshotOptions)
-            .task('cvrCopy', {
+            .task('visualRegressionCopy', {
               specName: Cypress.spec.name,
               from: `${identifier}`,
               to: `${fileName}`,
-              baseDir: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
-              actualDir: Cypress.env('SNAPSHOT_ACTUAL_DIRECTORY'),
-              diffDir: Cypress.env('SNAPSHOT_DIFF_DIRECTORY'),
+              baseDir: SNAPSHOT_BASE_DIRECTORY,
+              actualDir: SNAPSHOT_ACTUAL_DIRECTORY,
+              diffDir: SNAPSHOT_DIFF_DIRECTORY,
             });
         } else {
           cy.get(subject).screenshot(`${fileName}`, screenshotOptions);
@@ -45,9 +49,9 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
         const options = {
           fileName: name,
           specDirectory: Cypress.spec.name,
-          baseDir: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
-          actualDir: Cypress.env('SNAPSHOT_ACTUAL_DIRECTORY'),
-          diffDir: Cypress.env('SNAPSHOT_DIFF_DIRECTORY'),
+          baseDir: SNAPSHOT_BASE_DIRECTORY,
+          actualDir: SNAPSHOT_ACTUAL_DIRECTORY,
+          diffDir: SNAPSHOT_DIFF_DIRECTORY,
         };
         cy.task('compareSnapshotsPlugin', options).then((results) => {
           if (results.error) {
