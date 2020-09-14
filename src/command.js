@@ -33,9 +33,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
               specName: Cypress.spec.name,
               from: `${identifier}`,
               to: `${fileName}`,
-              baseDir: SNAPSHOT_BASE_DIRECTORY,
-              actualDir: SNAPSHOT_ACTUAL_DIRECTORY,
-              diffDir: SNAPSHOT_DIFF_DIRECTORY,
+              baseDir: SNAPSHOT_BASE_DIRECTORY
             });
         } else {
           cy.get(subject).screenshot(`${fileName}`, screenshotOptions);

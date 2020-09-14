@@ -5,7 +5,6 @@ const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
 
 let SNAPSHOT_BASE_DIRECTORY;
-let SNAPSHOT_ACTUAL_DIRECTORY;
 let SNAPSHOT_DIFF_DIRECTORY;
 let CYPRESS_SCREENSHOT_DIR;
 
@@ -17,10 +16,6 @@ function setupScreenshotPath(config) {
 function setupSnapshotPaths(args) {
   SNAPSHOT_BASE_DIRECTORY =
     args.baseDir || path.join(process.cwd(), 'cypress', 'snapshots', 'base');
-
-  SNAPSHOT_ACTUAL_DIRECTORY =
-    args.actualDir ||
-    path.join(process.cwd(), 'cypress', 'snapshots', 'actual');
 
   SNAPSHOT_DIFF_DIRECTORY =
     args.diffDir || path.join(process.cwd(), 'cypress', 'snapshots', 'diff');
@@ -111,7 +106,7 @@ async function compareSnapshotsPlugin(args) {
 
   const options = {
     actualImage: path.join(
-      SNAPSHOT_ACTUAL_DIRECTORY,
+      CYPRESS_SCREENSHOT_DIR,
       args.specDirectory,
       `${args.fileName}-actual.png`
     ),
