@@ -75,14 +75,14 @@ describe('Visual Regression Example', () => {
     if (Cypress.env('type') === 'base') {
       cy.visit('/06.html');
       cy.get('H1').contains('Color');
-      cy.compareSnapshot('bar');
+      cy.compareSnapshot('baz');
     } else {
       cy.visit('/07.html');
       cy.get('H1').contains('Color');
-      cy.compareSnapshot('bar', 0.02);
-      cy.compareSnapshotTest('bar', 0.02).should('be.true');
-      cy.compareSnapshotTest('bar', 0.017).should('be.false');
-      cy.compareSnapshotTest('bar').should('be.false');
+      cy.compareSnapshot('baz', 0.023);
+      cy.compareSnapshotTest('baz', 0.023).should('be.true');
+      cy.compareSnapshotTest('baz', 0.020).should('be.false');
+      cy.compareSnapshotTest('baz').should('be.false');
     }
   });
 
