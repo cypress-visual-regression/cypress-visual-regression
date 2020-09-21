@@ -66,7 +66,7 @@ These will be used by default when no parameters are passed to the `compareSnaps
 
 **Configure snapshot paths**
 
-You can control where snapshots should be located by setting two environment variables.
+You can control where snapshots should be located by setting two environment variables:
 
 | Variable | Description |
 |----------|-------------|
