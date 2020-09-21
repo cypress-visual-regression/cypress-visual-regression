@@ -59,7 +59,7 @@ describe('Visual Regression Example', () => {
       cy.visit('/04.html');
       cy.get('H1').contains('bar');
       cy.compareSnapshot('foo');
-      cy.get('H1').compareSnapshotTest('h1');
+      cy.get('H1').compareSnapshot('h1');
     } else {
       cy.visit('/05.html');
       cy.get('H1').contains('none');
