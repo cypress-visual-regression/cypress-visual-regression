@@ -6,9 +6,6 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
     { prevSubject: 'optional' },
     (subject, name, params = 0.0) => {
       const SNAPSHOT_BASE_DIRECTORY = Cypress.env('SNAPSHOT_BASE_DIRECTORY');
-      const SNAPSHOT_ACTUAL_DIRECTORY = Cypress.env(
-        'SNAPSHOT_ACTUAL_DIRECTORY'
-      );
       const SNAPSHOT_DIFF_DIRECTORY = Cypress.env('SNAPSHOT_DIFF_DIRECTORY');
 
       let screenshotOptions = defaultScreenshotOptions;
@@ -47,7 +44,6 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
           fileName: name,
           specDirectory: Cypress.spec.name,
           baseDir: SNAPSHOT_BASE_DIRECTORY,
-          actualDir: SNAPSHOT_ACTUAL_DIRECTORY,
           diffDir: SNAPSHOT_DIFF_DIRECTORY,
         };
         cy.task('compareSnapshotsPlugin', options).then((results) => {
