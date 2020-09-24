@@ -28,8 +28,8 @@ Add the plugin to *cypress/plugins/index.js*:
 ```javascript
 const getCompareSnapshotsPlugin = require('cypress-visual-regression/dist/plugin');
 
-module.exports = (on) => {
-  getCompareSnapshotsPlugin(on);
+module.exports = (on, config) => {
+  getCompareSnapshotsPlugin(on, config);
 };
 ```
 
@@ -70,6 +70,17 @@ compareSnapshotCommand({
 ```
 
 These will be used by default when no parameters are passed to the `compareSnapshot` command.
+
+**Configure snapshot paths**
+
+You can control where snapshots should be located by setting two environment variables:
+
+| Variable | Description |
+|----------|-------------|
+| SNAPSHOT_BASE_DIRECTORY | Directory of the base snapshots |
+| SNAPSHOT_DIFF_DIRECTORY | Directory for the snapshot diff | 
+
+The `actual` directory always points to the configured screenshot directory.
 
 ## To Use
 

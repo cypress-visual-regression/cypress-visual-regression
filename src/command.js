@@ -5,6 +5,9 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
     'compareSnapshot',
     { prevSubject: 'optional' },
     (subject, name, params = 0.0) => {
+      const SNAPSHOT_BASE_DIRECTORY = Cypress.env('SNAPSHOT_BASE_DIRECTORY');
+      const SNAPSHOT_DIFF_DIRECTORY = Cypress.env('SNAPSHOT_DIFF_DIRECTORY');
+
       let screenshotOptions = defaultScreenshotOptions;
       let errorThreshold = 0.0;
       if (typeof params === 'number') {
@@ -19,10 +22,20 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
       }
 
       // take snapshot
-      if (subject) {
-        cy.get(subject).screenshot(`${name}-${title}`, screenshotOptions);
+      const objToOperateOn = subject ? cy.get(subject) : cy;
+      const fileName = `${name}-${title}`;
+      if (Cypress.env('type') === 'base') {
+        const identifier = `${fileName}-${new Date().getTime()}`;
+        objToOperateOn
+          .screenshot(`${identifier}`, screenshotOptions)
+          .task('visualRegressionCopy', {
+            specName: Cypress.spec.name,
+            from: `${identifier}`,
+            to: `${fileName}`,
+            baseDir: SNAPSHOT_BASE_DIRECTORY,
+          });
       } else {
-        cy.screenshot(`${name}-${title}`, screenshotOptions);
+        objToOperateOn.screenshot(`${fileName}`, screenshotOptions);
       }
 
       // run visual tests
@@ -30,6 +43,8 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
         const options = {
           fileName: name,
           specDirectory: Cypress.spec.name,
+          baseDir: SNAPSHOT_BASE_DIRECTORY,
+          diffDir: SNAPSHOT_DIFF_DIRECTORY,
         };
         cy.task('compareSnapshotsPlugin', options).then((results) => {
           if (results.error) {
