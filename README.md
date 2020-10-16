@@ -129,12 +129,12 @@ it('should display the login page correctly', () => {
 Take the base images:
 
 ```sh
-$ ./node_modules/.bin/cypress run --env type=base --config screenshotsFolder=cypress/snapshots/base
+$ ./node_modules/.bin/cypress run --env type=base --config screenshotsFolder=cypress/snapshots/base,testFiles=\"**/*regression-tests.js\"
 
 # use comma separated format for multiple config commands
 $ ./node_modules/.bin/cypress run \
   --env type=base \
-  --config screenshotsFolder=cypress/snapshots/base,testFiles=\"**/*regression-tests.js\
+  --config screenshotsFolder=cypress/snapshots/base,testFiles=\"**/*regression-tests.js\"
 ```
 
 Find regressions:
