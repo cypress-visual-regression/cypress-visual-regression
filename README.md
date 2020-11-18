@@ -2,8 +2,6 @@
 
 [![npm](https://img.shields.io/npm/v/cypress-visual-regression)](https://www.npmjs.com/package/cypress-visual-regression)
 
-[![Build Status](https://travis-ci.org/mjhea0/cypress-visual-regression.svg?branch=master)](https://travis-ci.org/mjhea0/cypress-visual-regression)
-
 Module for adding visual regression testing to [Cypress](https://www.cypress.io/).
 
 ## Getting Started
@@ -28,8 +26,8 @@ Add the plugin to *cypress/plugins/index.js*:
 ```javascript
 const getCompareSnapshotsPlugin = require('cypress-visual-regression/dist/plugin');
 
-module.exports = (on) => {
-  getCompareSnapshotsPlugin(on);
+module.exports = (on, config) => {
+  getCompareSnapshotsPlugin(on, config);
 };
 ```
 
@@ -40,6 +38,13 @@ const compareSnapshotCommand = require('cypress-visual-regression/dist/command')
 
 compareSnapshotCommand();
 ```
+
+> Make sure you import *commands.js* in *cypress/support/index.js*:
+>
+> ```javascript
+> import './commands'
+> ```
+>
 
 ### Options
 
@@ -63,6 +68,17 @@ compareSnapshotCommand({
 ```
 
 These will be used by default when no parameters are passed to the `compareSnapshot` command.
+
+**Configure snapshot paths**
+
+You can control where snapshots should be located by setting two environment variables:
+
+| Variable | Description |
+|----------|-------------|
+| SNAPSHOT_BASE_DIRECTORY | Directory of the base snapshots |
+| SNAPSHOT_DIFF_DIRECTORY | Directory for the snapshot diff | 
+
+The `actual` directory always points to the configured screenshot directory.
 
 ## To Use
 
@@ -111,12 +127,12 @@ it('should display the login page correctly', () => {
 Take the base images:
 
 ```sh
-$ ./node_modules/.bin/cypress run --env type=base --config screenshotsFolder=cypress/snapshots/base
+$ ./node_modules/.bin/cypress run --env type=base --config screenshotsFolder=cypress/snapshots/base,testFiles=\"**/*regression-tests.js\"
 
 # use comma separated format for multiple config commands
 $ ./node_modules/.bin/cypress run \
   --env type=base \
-  --config screenshotsFolder=cypress/snapshots/base,testFiles=\"**/*regression-tests.js\
+  --config screenshotsFolder=cypress/snapshots/base,testFiles=\"**/*regression-tests.js\"
 ```
 
 Find regressions:

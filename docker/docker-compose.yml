@@ -15,6 +15,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./cypress/snapshots:/usr/src/app/cypress/snapshots
+      - ./cypress/screenshots:/usr/src/app/cypress/screenshots
     depends_on:
       - nginx
     network_mode: host
