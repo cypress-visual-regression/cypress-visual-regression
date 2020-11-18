@@ -2,6 +2,9 @@
 
 [![npm](https://img.shields.io/npm/v/cypress-visual-regression)](https://www.npmjs.com/package/cypress-visual-regression)
 
+[![github actions](https://github.com/mjhea0/cypress-visual-regression/workflows/Continuous%20Integration/badge.svg)](https://github.com/mjhea0/cypress-visual-regression/actions)
+
+
 Module for adding visual regression testing to [Cypress](https://www.cypress.io/).
 
 ## Getting Started
@@ -58,10 +61,11 @@ compareSnapshotCommand();
 }
 ```
 
-You can also pass default arguments to `compareSnapshotCommand()`:
+You can also pass default [arguments](https://docs.cypress.io/api/cypress-api/screenshot-api.html#Arguments) to `compareSnapshotCommand()`:
 
 ```javascript
 const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
+
 compareSnapshotCommand({
   capture: 'fullPage'
 });
@@ -76,7 +80,7 @@ You can control where snapshots should be located by setting two environment var
 | Variable | Description |
 |----------|-------------|
 | SNAPSHOT_BASE_DIRECTORY | Directory of the base snapshots |
-| SNAPSHOT_DIFF_DIRECTORY | Directory for the snapshot diff | 
+| SNAPSHOT_DIFF_DIRECTORY | Directory for the snapshot diff |
 
 The `actual` directory always points to the configured screenshot directory.
 
