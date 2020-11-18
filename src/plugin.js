@@ -3,6 +3,7 @@ const path = require('path');
 
 const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
+const sanitize = require('sanitize-filename');
 
 let SNAPSHOT_BASE_DIRECTORY;
 let SNAPSHOT_DIFF_DIRECTORY;
@@ -105,21 +106,23 @@ function visualRegressionCopy(args) {
 async function compareSnapshotsPlugin(args) {
   setupSnapshotPaths(args);
 
+  const fileName = sanitize(args.fileName);
+
   const options = {
     actualImage: path.join(
       CYPRESS_SCREENSHOT_DIR,
       args.specDirectory,
-      `${args.fileName}-actual.png`
+      `${fileName}-actual.png`
     ),
     expectedImage: path.join(
       SNAPSHOT_BASE_DIRECTORY,
       args.specDirectory,
-      `${args.fileName}-base.png`
+      `${fileName}-base.png`
     ),
     diffImage: path.join(
       SNAPSHOT_DIFF_DIRECTORY,
       args.specDirectory,
-      `${args.fileName}-diff.png`
+      `${fileName}-diff.png`
     ),
   };
 
