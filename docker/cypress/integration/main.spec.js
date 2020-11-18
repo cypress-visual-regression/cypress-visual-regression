@@ -79,8 +79,8 @@ describe('Visual Regression Example', () => {
     } else {
       cy.visit('/07.html');
       cy.get('H1').contains('Color');
-      cy.compareSnapshot('baz', 0.023);
-      cy.compareSnapshotTest('baz', 0.023).should('be.true');
+      cy.compareSnapshot('baz', 0.025);
+      cy.compareSnapshotTest('baz', 0.025).should('be.true');
       cy.compareSnapshotTest('baz', 0.020).should('be.false');
       cy.compareSnapshotTest('baz').should('be.false');
     }
