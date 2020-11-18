@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. This projec
 
 ## v1.5.3
 
-- Bumps to Cypress v5.2.0
+- Bumps to Cypress v5.6.0
 - Sanitize file names
 
 ## v1.5.2
