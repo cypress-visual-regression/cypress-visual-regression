@@ -2,15 +2,19 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.5.6
+
+- Updates `peerDependencies` (PR #[71](https://github.com/mjhea0/cypress-visual-regression/pull/71))
+
 ## v1.5.3
 
 - Bumps to Cypress v5.6.0
-- Sanitize file names
+- Sanitizes file names
 
 ## v1.5.2
 
 - Bumps to Cypress v5.2.0
-- Add ability to configure paths by environment variables
+- Adds ability to configure paths by environment variables
 
 ## v1.5.1
 
@@ -19,12 +23,12 @@ All notable changes to this project will be documented in this file. This projec
 ## v1.5.0
 
 - Bumps to Cypress v4.12.1
-- Check if snapshot file exists before parsing it
+- Checks if snapshot file exists before parsing it
 
 ## v1.4.0
 
 - Bumps to Cypress v4.9.0
-- Expand canvas before image comparison so that both images fully cover each other
+- Expands canvas before image comparison so that both images fully cover each other
 
 ## v1.3.0
 
