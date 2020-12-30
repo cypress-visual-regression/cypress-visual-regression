@@ -13,7 +13,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
       if (typeof params === 'number') {
         errorThreshold = params;
       } else if (typeof params === 'object') {
-        errorThreshold = params.errorThreshold || 0.0;
+        errorThreshold = params.errorThreshold || defaultScreenshotOptions.errorThreshold || 0.0;
         screenshotOptions = Object.assign({}, defaultScreenshotOptions, params);
       }
       let title = 'actual';
