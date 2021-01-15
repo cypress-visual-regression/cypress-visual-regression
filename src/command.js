@@ -15,7 +15,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
       } else if (typeof params === 'object') {
         errorThreshold =
           params.errorThreshold ||
-          defaultScreenshotOptions.errorThreshold ||
+          (defaultScreenshotOptions && defaultScreenshotOptions.errorThreshold) ||
           0.0;
         screenshotOptions = Object.assign({}, defaultScreenshotOptions, params);
       }
