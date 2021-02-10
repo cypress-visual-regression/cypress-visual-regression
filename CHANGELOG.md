@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.5.7
+
+- Bumps to Cypress v6.4.0
+- Adds `errorThreshold` to the global options (PR #[72](https://github.com/mjhea0/cypress-visual-regression/pull/72))
+
 ## v1.5.6
 
 - Updates `peerDependencies` (PR #[71](https://github.com/mjhea0/cypress-visual-regression/pull/71))
