@@ -1,10 +1,11 @@
 # base image
 FROM cypress/browsers:node14.15.0-chrome86-ff82
 
-# set cypress version
-ENV CYPRESS_VERSION 5.6.0
+# set variables
+ARG CYPRESS_VERSION=6.4.0
 ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
-ENV CI true npm install cypress
+ENV CI true
+RUN echo ${CYPRESS_VERSION}
 
 # set working directory
 WORKDIR /usr/src/app
