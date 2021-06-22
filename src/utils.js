@@ -20,6 +20,7 @@ function adjustCanvas(image, width, height) {
   return imageAdjustedCanvas;
 }
 
+// eslint-disable-next-line arrow-body-style
 const mkdirp = async (folderPath) => {
   return new Promise((resolve, reject) => {
     fs.mkdir(folderPath, { recursive: true }, (error) => {
@@ -47,6 +48,7 @@ const createFolder = async (folderPath, failSilently) => {
   return true;
 };
 
+// eslint-disable-next-line arrow-body-style
 const parseImage = async (image) => {
   return new Promise((resolve, reject) => {
     if (!fs.existsSync(image)) {
@@ -57,7 +59,7 @@ const parseImage = async (image) => {
     const fd = fs.createReadStream(image);
     /* eslint-disable func-names */
     fd.pipe(new PNG())
-      .on('parsed', function() {
+      .on('parsed', function () {
         const that = this;
         resolve(that);
       })
