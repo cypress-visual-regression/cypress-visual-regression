@@ -1,8 +1,8 @@
 # base image
-FROM cypress/browsers:node14.15.0-chrome86-ff82
+FROM cypress/browsers:node14.16.0-chrome90-ff88
 
 # set variables
-ARG CYPRESS_VERSION=6.4.0
+ARG CYPRESS_VERSION=7.5.0
 ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
 ENV CI true
 RUN echo ${CYPRESS_VERSION}
