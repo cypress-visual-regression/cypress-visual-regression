@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.5.8
+
+- Bumps all dependency versions
+
 ## v1.5.7
 
 - Bumps to Cypress v6.4.0
