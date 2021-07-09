@@ -49,11 +49,17 @@ compareSnapshotCommand();
 > ```
 >
 
-#### Use in typescript
+### Use in typescript
 
-If want to use it in a typescript, add the type definition to *cypress/support/commands.ts* file:
+If using typescript, use **command.ts** instead of **commands.js**, and configure it as follows.
+
+for more information on how to use typescript in cypress, please refer to [this document](https://docs.cypress.io/guides/tooling/typescript-support#Set-up-your-dev-environment).
 
 ```ts
+import compareSnapshotCommand from 'cypress-visual-regression/dist/command';
+
+compareSnapshotCommand();
+
 declare namespace Cypress {
   interface Chainable<Subject> {
     compareSnapshot(name: string, errorThreshold?: number ): void;
