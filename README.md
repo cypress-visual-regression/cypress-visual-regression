@@ -49,6 +49,19 @@ compareSnapshotCommand();
 > ```
 >
 
+#### Use in typescript
+
+If want to use it in a typescript, add the type definition to *cypress/support/commands.ts* file:
+
+```ts
+declare namespace Cypress {
+  interface Chainable<Subject> {
+    compareSnapshot(name: string, options?: Partial<Cypress.ScreenshotDefaultsOptions>): void;
+  }
+}
+
+```
+
 ### Options
 
 `failSilently` is enabled by default. Add the following config to your *cypress.json* file to see the errors:
