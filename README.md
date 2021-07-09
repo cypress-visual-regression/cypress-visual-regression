@@ -56,7 +56,7 @@ If want to use it in a typescript, add the type definition to *cypress/support/c
 ```ts
 declare namespace Cypress {
   interface Chainable<Subject> {
-    compareSnapshot(name: string, options?: Partial<Cypress.ScreenshotDefaultsOptions>): void;
+    compareSnapshot(name: string, errorThreshold?: number ): void;
   }
 }
 
