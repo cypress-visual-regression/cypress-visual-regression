@@ -2,7 +2,9 @@
 declare global {
   namespace Cypress {
     interface Chainable {
-      compareSnapshot(name: string, errorThreshold?: number ): void;
+      compareSnapshot(name: string): void;
+      compareSnapshot(name: string, errorThreshold?: number): void;
+      compareSnapshot(name: string, options?: Partial<Cypress.ScreenshotDefaultsOptions> ): void;
     }
   }
 }
