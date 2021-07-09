@@ -56,15 +56,9 @@ If using typescript, use **command.ts** instead of **commands.js**, and configur
 for more information on how to use typescript in cypress, please refer to [this document](https://docs.cypress.io/guides/tooling/typescript-support#Set-up-your-dev-environment).
 
 ```ts
-import compareSnapshotCommand from 'cypress-visual-regression/dist/command';
+import * compareSnapshotCommand from 'cypress-visual-regression/dist/command';
 
 compareSnapshotCommand();
-
-declare namespace Cypress {
-  interface Chainable<Subject> {
-    compareSnapshot(name: string, errorThreshold?: number ): void;
-  }
-}
 
 ```
 
