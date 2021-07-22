@@ -161,3 +161,57 @@ $ ./node_modules/.bin/cypress run --env type=actual
 ## Example
 
 ![example](./cypress-visual-regression.gif)
+
+## Tips & Tricks
+
+### Ignore some elements
+
+Following function creates a command that allows you to hide elements of the page based on their className:
+```ts
+/**
+ * To be called after you setup the command, in order to add a
+ * hook that does stuff before the command is triggered
+ */
+function beforeCompareSnapshotCommand(
+  /** Element you want to ignore */
+  ignoredElementsQuerySelector: string,
+  /** Main app element (if you want for the page to be loaded before triggering the command) */
+  appContentQuerySelector: string = "body"
+) {
+  Cypress.Commands.overwrite("compareSnapshot", (originalFn, ...args) => {
+    return cy
+      // wait for content to be ready 
+      .get(appContentQuerySelector)
+      // hide ignored elements
+      .then($app => {
+        return new Cypress.Promise((resolve, reject) => {
+          setTimeout(() => {
+            $app.find(ignoredElementsQuerySelector).css("visibility", "hidden");
+            resolve();
+            // add a very small delay to wait for the elements to be there, but you should
+            // make sure your test already handles this
+          }, 300);
+        });
+      })
+      .then(() => {
+        return originalFn(...args);
+      });
+  });
+}
+
+module.exports = beforeCompareSnapshotCommand;
+```
+You may then use this function like below:
+```js
+const compareSnapshotCommand = require("cypress-visual-regression/dist/command");
+const beforeCompareSnapshotCommand = require("./commands/beforeCompareSnapshots");
+compareSnapshotCommand({
+  errorThreshold: 0.1
+});
+// add a before hook to compareSnapshot (this must be called AFTER compareSnapshotCommand() so the command can be overriden)
+beforeCompareSnapshotCommand(
+  ".chromatic-ignore,[data-chromatic='ignore']",
+  "._app-content"
+);
+```
+In this example, we ignore the elements that are also ignored by 3rd party tool Chromatic.
