@@ -49,19 +49,6 @@ compareSnapshotCommand();
 > ```
 >
 
-### Use in typescript
-
-If using typescript, use **command.ts** instead of **commands.js**, and configure it as follows.
-
-for more information on how to use typescript in cypress, please refer to [this document](https://docs.cypress.io/guides/tooling/typescript-support#Set-up-your-dev-environment).
-
-```ts
-import * compareSnapshotCommand from 'cypress-visual-regression/dist/command';
-
-compareSnapshotCommand();
-
-```
-
 ### Options
 
 `failSilently` is enabled by default. Add the following config to your *cypress.json* file to see the errors:
@@ -215,3 +202,16 @@ beforeCompareSnapshotCommand(
 );
 ```
 In this example, we ignore the elements that are also ignored by 3rd party tool Chromatic.
+
+### Use in typescript
+
+If using typescript, use **command.ts** instead of **commands.js**, and configure it as follows.
+
+for more information on how to use typescript in cypress, please refer to [this document](https://docs.cypress.io/guides/tooling/typescript-support#Set-up-your-dev-environment).
+
+```ts
+import * compareSnapshotCommand from 'cypress-visual-regression/dist/command';
+
+compareSnapshotCommand();
+
+```
