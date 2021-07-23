@@ -203,15 +203,14 @@ beforeCompareSnapshotCommand(
 ```
 In this example, we ignore the elements that are also ignored by 3rd party tool Chromatic.
 
-### Use in typescript
+### TypeScript
 
-If using typescript, use **command.ts** instead of **commands.js**, and configure it as follows.
-
-for more information on how to use typescript in cypress, please refer to [this document](https://docs.cypress.io/guides/tooling/typescript-support#Set-up-your-dev-environment).
+If using TypeScript, use *command.ts* instead of *commands.js*, and configure it as follows:
 
 ```ts
 import * compareSnapshotCommand from 'cypress-visual-regression/dist/command';
 
 compareSnapshotCommand();
-
 ```
+
+For more info on how to use TypeScript with Cypress, please refer to [this document](https://docs.cypress.io/guides/tooling/typescript-support#Set-up-your-dev-environment).
