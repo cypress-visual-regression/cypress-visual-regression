@@ -1,3 +1,5 @@
+const { deserializeError } = require('./utils-browser');
+
 /* eslint-disable no-undef */
 
 function compareSnapshotCommand(defaultScreenshotOptions) {
@@ -52,7 +54,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
         };
         cy.task('compareSnapshotsPlugin', options).then((results) => {
           if (results.error) {
-            throw new Error(results.error);
+            throw deserializeError(results.error);
           }
 
           if (results.percentage > errorThreshold) {

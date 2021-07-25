@@ -5,7 +5,12 @@ const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
 const sanitize = require('sanitize-filename');
 
-const { adjustCanvas, createFolder, parseImage } = require('./utils');
+const {
+  adjustCanvas,
+  createFolder,
+  parseImage,
+  errorSerialize,
+} = require('./utils');
 
 let SNAPSHOT_BASE_DIRECTORY;
 let SNAPSHOT_DIFF_DIRECTORY;
@@ -100,7 +105,7 @@ async function compareSnapshotsPlugin(args) {
 
     diff.pack().pipe(fs.createWriteStream(options.diffImage));
   } catch (error) {
-    return { error };
+    return { error: errorSerialize(error) };
   }
   return {
     mismatchedPixels,
