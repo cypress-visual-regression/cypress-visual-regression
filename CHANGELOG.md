@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.5.10
+
+- Serialize error object with socket communication (PR #[94](https://github.com/mjhea0/cypress-visual-regression/pull/94))
+
 ## v1.5.9
 
 - Add TypeScript support
