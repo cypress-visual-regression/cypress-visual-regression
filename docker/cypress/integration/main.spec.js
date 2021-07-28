@@ -8,11 +8,13 @@ describe('Visual Regression Example', () => {
   it("handle missing base snapshot file as a failed spec", () => {
     cy.visit("/01.html");
     if (Cypress.env("type") === "actual") {
-      try {
-        cy.compareSnapshotTest("missing").should("be.false");
-      } catch (e) {
-        throw new Error("Missing snapshot file not handled correctly");
-      }
+      cy.compareSnapshotTest("missing").should(($error) => {
+        expect($error).to.be.a('string');
+        const json = JSON.parse($error);
+        expect(json).to.be.a('object');
+        expect(json.message).to.eq('Snapshot /usr/src/app/cypress/snapshots/base/main.spec.js/missing-base.png does not exist.');
+        expect(json.stack).to.include('Error: Snapshot /usr/src/app/cypress/snapshots/base/main.spec.js/missing-base.png does not exist.\n    at /usr/src/app/dist/utils.js');
+      });
     };
   });
 

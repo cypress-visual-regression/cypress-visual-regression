@@ -34,7 +34,7 @@ function compareSnapshotTestCommand() {
       cy.task('compareSnapshotsPlugin', options).then(results => {
         if (results.error) {
           console.log(results.error); // eslint-disable-line no-console
-          return false
+          return results.error;
         }
 
         if (results.percentage > errorThreshold) {

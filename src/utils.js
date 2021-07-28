@@ -68,4 +68,21 @@ const parseImage = async (image) => {
   });
 };
 
-module.exports = { adjustCanvas, createFolder, mkdirp, parseImage };
+const errorSerialize = (error) =>
+  JSON.stringify(
+    Object.getOwnPropertyNames(error).reduce(
+      (obj, prop) =>
+        Object.assign(obj, {
+          [prop]: error[prop],
+        }),
+      {}
+    )
+  );
+
+module.exports = {
+  adjustCanvas,
+  createFolder,
+  mkdirp,
+  parseImage,
+  errorSerialize,
+};
