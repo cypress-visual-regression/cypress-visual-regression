@@ -208,7 +208,7 @@ In this example, we ignore the elements that are also ignored by 3rd party tool 
 If using TypeScript, use *command.ts* instead of *commands.js*, and configure it as follows:
 
 ```ts
-import * compareSnapshotCommand from 'cypress-visual-regression/dist/command';
+import * as compareSnapshotCommand from 'cypress-visual-regression/dist/command';
 
 compareSnapshotCommand();
 ```
