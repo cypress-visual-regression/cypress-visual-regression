@@ -6,7 +6,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
   Cypress.Commands.add(
     'compareSnapshot',
     { prevSubject: 'optional' },
-    (subject, name, params = 0.0) => {
+    (subject, name, params = {}) => {
       const SNAPSHOT_BASE_DIRECTORY = Cypress.env('SNAPSHOT_BASE_DIRECTORY');
       const SNAPSHOT_DIFF_DIRECTORY = Cypress.env('SNAPSHOT_DIFF_DIRECTORY');
 
