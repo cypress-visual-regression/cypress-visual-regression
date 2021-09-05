@@ -6,5 +6,5 @@
     "rules": {
       "prefer-object-spread": 0
     },
-    "ignorePatterns": ["src/command.d.ts"]
+    "ignorePatterns": ["src/*.d.ts"]
 }
