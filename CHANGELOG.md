@@ -2,17 +2,22 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## v1.6.1
+
+- Uses `errorThreshold` from global options (PR #[80](https://github.com/mjhea0/cypress-visual-regression/pull/80))
+
 ## v1.6.0
 
 - Fixes packaging of distribution (PR #[95](https://github.com/mjhea0/cypress-visual-regression/pull/95))
 
 ## v1.5.10
 
-- Serialize error object with socket communication (PR #[94](https://github.com/mjhea0/cypress-visual-regression/pull/94))
+- Fixes serialize error object with socket communication (PR #[94](https://github.com/mjhea0/cypress-visual-regression/pull/94))
 
 ## v1.5.9
 
-- Add TypeScript support
+- Adds TypeScript support
 
 ## v1.5.8
 
