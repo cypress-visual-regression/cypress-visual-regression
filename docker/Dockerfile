@@ -2,7 +2,7 @@
 FROM cypress/browsers:node14.16.0-chrome90-ff88
 
 # set variables
-ARG CYPRESS_VERSION=8.0.0
+ARG CYPRESS_VERSION=8.6.0
 ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
 ENV CI true
 RUN echo ${CYPRESS_VERSION}
