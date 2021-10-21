@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.6.2
+
+- Adds missing `compareSnapshot` TypeScript types (PR #[102](https://github.com/mjhea0/cypress-visual-regression/pull/102))
 
 ## v1.6.1
 
