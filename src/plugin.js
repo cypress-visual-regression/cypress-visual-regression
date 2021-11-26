@@ -33,15 +33,18 @@ function setupSnapshotPaths(args) {
 function visualRegressionCopy(args) {
   setupSnapshotPaths(args);
   const baseDir = path.join(SNAPSHOT_BASE_DIRECTORY, args.specName);
-  const from = path.join(
-    CYPRESS_SCREENSHOT_DIR,
-    args.specName,
-    `${args.from}.png`
-  );
+  // Fallback until https://github.com/cypress-io/cypress/issues/1586 is fixed
+  // When a user runs in the GUI - screenshots will be saved in All Specs
+  const from = path.join(CYPRESS_SCREENSHOT_DIR, args.specName, `${args.from}.png`);
+  const fallbackFrom = path.join(CYPRESS_SCREENSHOT_DIR, 'All Specs', `${args.from}.png`);
   const to = path.join(baseDir, `${args.to}.png`);
 
   return createFolder(baseDir, false).then(() => {
     fs.copyFileSync(from, to);
+    return true;
+  }).catch((e) => {
+    fs.copyFileSync(fallbackFrom, to)
+    fs.rmSync(fallbackFrom)
     return true;
   });
 }
