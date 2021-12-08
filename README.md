@@ -74,6 +74,19 @@ import compareSnapshotCommand from 'cypress-visual-regression/dist/command';
 compareSnapshotCommand();
 ```
 
+*cypress/tsconfig.json*
+
+```json:
+{
+  "compilerOptions": {
+    "types": [
+      "cypress",
+      "cypress-visual-regression"
+    ]
+  }
+}
+```
+
 For more info on how to use TypeScript with Cypress, please refer to [this document](https://docs.cypress.io/guides/tooling/typescript-support#Set-up-your-dev-environment).
 
 
