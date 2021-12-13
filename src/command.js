@@ -51,16 +51,11 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
           specDirectory: Cypress.spec.name,
           baseDir: SNAPSHOT_BASE_DIRECTORY,
           diffDir: SNAPSHOT_DIFF_DIRECTORY,
+          errorThreshold,
         };
         cy.task('compareSnapshotsPlugin', options).then((results) => {
           if (results.error) {
             throw deserializeError(results.error);
-          }
-
-          if (results.percentage > errorThreshold) {
-            throw new Error(
-              `The "${name}" image is different. Threshold limit exceeded! \nExpected: ${errorThreshold} \nActual: ${results.percentage}`
-            );
           }
         });
       }

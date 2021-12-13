@@ -103,7 +103,12 @@ async function compareSnapshotsPlugin(args) {
     );
     percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5;
 
-    diff.pack().pipe(fs.createWriteStream(options.diffImage));
+    if (percentage > args.errorThreshold) {
+      diff.pack().pipe(fs.createWriteStream(options.diffImage));
+      throw new Error(
+        `The "${fileName}" image is different. Threshold limit exceeded! \nExpected: ${args.errorThreshold} \nActual: ${percentage}`
+      );
+    }
   } catch (error) {
     return { error: errorSerialize(error) };
   }
