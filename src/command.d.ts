@@ -1,5 +1,6 @@
 interface CompareSnapshotOptions {
   errorThreshold: number;
+  perPixelMismatchTolerance: number;
 }
 
 declare global {
