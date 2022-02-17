@@ -12,6 +12,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
 
       let screenshotOptions = defaultScreenshotOptions;
       let errorThreshold = 0.0;
+      let perPixelMismatchTolerance = 0.1;
       if (typeof params === 'number') {
         errorThreshold = params;
       } else if (typeof params === 'object') {
@@ -20,6 +21,15 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
           (defaultScreenshotOptions &&
             defaultScreenshotOptions.errorThreshold) ||
           0.0;
+        if (params.perPixelMismatchTolerance !== undefined) {
+          perPixelMismatchTolerance = params.perPixelMismatchTolerance;
+        } else if (
+          defaultScreenshotOptions &&
+          defaultScreenshotOptions.perPixelMismatchTolerance !== undefined
+        ) {
+          perPixelMismatchTolerance =
+            defaultScreenshotOptions.perPixelMismatchTolerance;
+        }
         screenshotOptions = Object.assign({}, defaultScreenshotOptions, params);
       }
       let title = 'actual';
@@ -51,6 +61,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
           specDirectory: Cypress.spec.name,
           baseDir: SNAPSHOT_BASE_DIRECTORY,
           diffDir: SNAPSHOT_DIFF_DIRECTORY,
+          perPixelMismatchTolerance,
         };
         cy.task('compareSnapshotsPlugin', options).then((results) => {
           if (results.error) {
