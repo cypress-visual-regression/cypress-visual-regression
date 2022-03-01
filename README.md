@@ -125,6 +125,18 @@ You can control where snapshots should be located by setting two environment var
 
 The `actual` directory always points to the configured screenshot directory.
 
+**display difference base64 in the console**
+
+By setting the environment variable `SHOW_DIFF_BASE64_CONSOLE` to `true`, when a image diff error occurs, the base64 image string of the diff will be displayed in the console.
+
+```json
+{
+  "env": {
+    "SHOW_DIFF_BASE64_CONSOLE": true
+  }
+}
+```
+
 ## To Use
 
 Add `cy.compareSnapshot('home');` in your tests specs whenever you want to test for visual regressions, making sure to replace `home` with a relevant name. You can also add an optional error threshold: Value can range from 0.00 (no difference) to 1.00 (every pixel is different). So, if you enter an error threshold of 0.51, the test would fail only if > 51% of pixels are different.
