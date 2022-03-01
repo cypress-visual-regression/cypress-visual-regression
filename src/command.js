@@ -9,6 +9,9 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
     (subject, name, params = {}) => {
       const SNAPSHOT_BASE_DIRECTORY = Cypress.env('SNAPSHOT_BASE_DIRECTORY');
       const SNAPSHOT_DIFF_DIRECTORY = Cypress.env('SNAPSHOT_DIFF_DIRECTORY');
+      const SHOW_DIFF_BASE64_CONSOLE = Boolean(
+        Cypress.env('SHOW_DIFF_BASE64_CONSOLE')
+      );
 
       let screenshotOptions = defaultScreenshotOptions;
       let errorThreshold = 0.0;
@@ -39,6 +42,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
             from: `${identifier}`,
             to: `${fileName}`,
             baseDir: SNAPSHOT_BASE_DIRECTORY,
+            isShowDiffConsole: SHOW_DIFF_BASE64_CONSOLE,
           });
       } else {
         objToOperateOn.screenshot(`${fileName}`, screenshotOptions);
@@ -51,6 +55,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
           specDirectory: Cypress.spec.name,
           baseDir: SNAPSHOT_BASE_DIRECTORY,
           diffDir: SNAPSHOT_DIFF_DIRECTORY,
+          isShowDiffConsole: SHOW_DIFF_BASE64_CONSOLE,
         };
         cy.task('compareSnapshotsPlugin', options).then((results) => {
           if (results.error) {
@@ -58,8 +63,16 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
           }
 
           if (results.percentage > errorThreshold) {
+            const base64message = () => {
+              if (SHOW_DIFF_BASE64_CONSOLE && results.base64) {
+                return `\nBase64: data:image/png;base64,${results.base64}`;
+              }
+              return '';
+            };
             throw new Error(
-              `The "${name}" image is different. Threshold limit exceeded! \nExpected: ${errorThreshold} \nActual: ${results.percentage}`
+              `The "${name}" image is different. Threshold limit exceeded! \nExpected: ${errorThreshold} \nActual: ${
+                results.percentage
+              } ${base64message()}`
             );
           }
         });

@@ -71,6 +71,7 @@ async function compareSnapshotsPlugin(args) {
 
   let mismatchedPixels = 0;
   let percentage = 0;
+  let base64 = '';
   try {
     await createFolder(SNAPSHOT_DIFF_DIRECTORY, args.failSilently);
     const specFolder = path.join(SNAPSHOT_DIFF_DIRECTORY, args.specDirectory);
@@ -104,12 +105,25 @@ async function compareSnapshotsPlugin(args) {
     percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5;
 
     diff.pack().pipe(fs.createWriteStream(options.diffImage));
+
+    if (args.isShowDiffConsole) {
+      base64 = await new Promise((resolve) => {
+        const chunks = [];
+        diff.on('data', (chunk) => {
+          chunks.push(chunk);
+        });
+        diff.on('end', () => {
+          resolve(Buffer.concat(chunks).toString('base64'));
+        });
+      });
+    }
   } catch (error) {
     return { error: errorSerialize(error) };
   }
   return {
     mismatchedPixels,
     percentage,
+    base64,
   };
 }
 
