@@ -15,6 +15,7 @@ const {
 let SNAPSHOT_BASE_DIRECTORY;
 let SNAPSHOT_DIFF_DIRECTORY;
 let CYPRESS_SCREENSHOT_DIR;
+let ALWAYS_GENERATE_DIFF;
 
 function setupScreenshotPath(config) {
   // use cypress default path as fallback
@@ -28,6 +29,11 @@ function setupSnapshotPaths(args) {
 
   SNAPSHOT_DIFF_DIRECTORY =
     args.diffDir || path.join(process.cwd(), 'cypress', 'snapshots', 'diff');
+}
+
+function setupDiffImageGeneration(args) {
+  ALWAYS_GENERATE_DIFF = true;
+  if (args.keepDiff === false) ALWAYS_GENERATE_DIFF = false;
 }
 
 function visualRegressionCopy(args) {
@@ -48,6 +54,7 @@ function visualRegressionCopy(args) {
 
 async function compareSnapshotsPlugin(args) {
   setupSnapshotPaths(args);
+  setupDiffImageGeneration(args);
 
   const fileName = sanitize(args.fileName);
 
@@ -73,8 +80,6 @@ async function compareSnapshotsPlugin(args) {
   let percentage = 0;
   try {
     await createFolder(SNAPSHOT_DIFF_DIRECTORY, args.failSilently);
-    const specFolder = path.join(SNAPSHOT_DIFF_DIRECTORY, args.specDirectory);
-    await createFolder(specFolder, args.failSilently);
     const imgExpected = await parseImage(options.expectedImage);
     const imgActual = await parseImage(options.actualImage);
     const diff = new PNG({
@@ -104,10 +109,16 @@ async function compareSnapshotsPlugin(args) {
     percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5;
 
     if (percentage > args.errorThreshold) {
+      const specFolder = path.join(SNAPSHOT_DIFF_DIRECTORY, args.specDirectory);
+      await createFolder(specFolder, args.failSilently);
       diff.pack().pipe(fs.createWriteStream(options.diffImage));
       throw new Error(
         `The "${fileName}" image is different. Threshold limit exceeded! \nExpected: ${args.errorThreshold} \nActual: ${percentage}`
       );
+    } else if (ALWAYS_GENERATE_DIFF) {
+      const specFolder = path.join(SNAPSHOT_DIFF_DIRECTORY, args.specDirectory);
+      await createFolder(specFolder, args.failSilently);
+      diff.pack().pipe(fs.createWriteStream(options.diffImage));
     }
   } catch (error) {
     return { error: errorSerialize(error) };
