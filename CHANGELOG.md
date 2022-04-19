@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v1.7.0
+
+- Saves diff images only on failed tests (PR #[110](https://github.com/mjhea0/cypress-visual-regression/pull/110))
+
 ## v1.6.3
 
 - TypeScript: Update docs and add type for plugin (PR #[98](https://github.com/mjhea0/cypress-visual-regression/pull/98))
