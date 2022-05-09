@@ -16,7 +16,7 @@ let SNAPSHOT_BASE_DIRECTORY;
 let SNAPSHOT_DIFF_DIRECTORY;
 let CYPRESS_SCREENSHOT_DIR;
 let ALWAYS_GENERATE_DIFF;
-let ALLOW_TO_FAIL;
+let ALLOW_VISUAL_REGRESSION_TO_FAIL;
 
 function setupScreenshotPath(config) {
   // use cypress default path as fallback
@@ -35,8 +35,8 @@ function setupSnapshotPaths(args) {
 function setupDiffImageGeneration(args) {
   ALWAYS_GENERATE_DIFF = true;
   if (args.keepDiff === false) ALWAYS_GENERATE_DIFF = false;
-  ALLOW_TO_FAIL = false;
-  if (args.allowToFail) ALLOW_TO_FAIL = true;
+  ALLOW_VISUAL_REGRESSION_TO_FAIL = false;
+  if (args.allowVisualRegressionToFail) ALLOW_VISUAL_REGRESSION_TO_FAIL = true;
 }
 
 function visualRegressionCopy(args) {
@@ -115,7 +115,7 @@ async function compareSnapshotsPlugin(args) {
       const specFolder = path.join(SNAPSHOT_DIFF_DIRECTORY, args.specDirectory);
       await createFolder(specFolder, args.failSilently);
       diff.pack().pipe(fs.createWriteStream(options.diffImage));
-      if (!ALLOW_TO_FAIL) {
+      if (!ALLOW_VISUAL_REGRESSION_TO_FAIL) {
         throw new Error(
             `The "${fileName}" image is different. Threshold limit exceeded! \nExpected: ${args.errorThreshold} \nActual: ${percentage}`
         );

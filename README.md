@@ -134,12 +134,12 @@ typically set in field `env` in `cypress.json`.
 | Variable             | Description               |
 |----------------------|---------------------------|
 | ALWAYS_GENERATE_DIFF | Boolean, defaults to true |
-| ALLOW_TO_FAIL        | Boolean, defaults to false|
+| ALLOW_VISUAL_REGRESSION_TO_FAIL        | Boolean, defaults to false|
 
 
 `ALWAYS_GENERATE_DIFF` specifies if diff images are generated for successful tests.
 
-If you only want the tests to create diff images based on your threshold without the tests to fail, you can set `ALLOW_TO_FAIL`.
+If you only want the tests to create diff images based on your threshold without the tests to fail, you can set `ALLOW_VISUAL_REGRESSION_TO_FAIL`.
 If this variable is set, diffs will be computed using your thresholds but tests will not fail if a diff is found.
 
 If you want to see all diff images which are different (based on your thresholds), use the following in your `cypress.json`:
@@ -147,7 +147,7 @@ If you want to see all diff images which are different (based on your thresholds
 ...
 "env": {
   "ALWAYS_GENERATE_DIFF": false,
-  "ALLOW_TO_FAIL": true
+  "ALLOW_VISUAL_REGRESSION_TO_FAIL": true
 }
 ```
 

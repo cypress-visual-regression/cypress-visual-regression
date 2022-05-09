@@ -107,8 +107,8 @@ describe('Visual Regression Example', () => {
     });
   });
 
-  it('should not fail if ALLOW_TO_FAIL is set', {
-    env: {ALLOW_TO_FAIL: true}
+  it('should not fail if ALLOW_VISUAL_REGRESSION_TO_FAIL is set', {
+    env: {ALLOW_VISUAL_REGRESSION_TO_FAIL: true}
   },  () => {
     if (Cypress.env('type') === 'base') {
       cy.visit('/04.html');
@@ -126,8 +126,8 @@ describe('Visual Regression Example', () => {
     }
   });
 
-  it('should not fail if ALLOW_TO_FAIL is not set', {
-    env: {ALLOW_TO_FAIL: false}
+  it('should not fail if ALLOW_VISUAL_REGRESSION_TO_FAIL is not set', {
+    env: {ALLOW_VISUAL_REGRESSION_TO_FAIL: false}
   },  () => {
     // this test equals 'should handle custom error thresholds correctly'
     if (Cypress.env('type') === 'base') {
