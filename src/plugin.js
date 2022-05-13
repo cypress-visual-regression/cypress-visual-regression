@@ -42,7 +42,7 @@ function visualRegressionCopy(args) {
   return createFolder(baseDir, false).then(() => {
     fs.copyFileSync(from, to);
     return true;
-  }).catch((e) => {
+  }).catch(() => {
     fs.copyFileSync(fallbackFrom, to)
     fs.rmSync(fallbackFrom)
     return true;
