@@ -1,7 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const { PNG } = require('pngjs');
+const {
+  PNG
+} = require('pngjs');
 const pixelmatch = require('pixelmatch');
 const sanitize = require('sanitize-filename');
 
@@ -101,14 +103,17 @@ async function compareSnapshotsPlugin(args) {
       imgExpectedFullCanvas.data,
       diff.data,
       diff.width,
-      diff.height,
-      { threshold: 0.1 }
+      diff.height, {
+        threshold: 0.1
+      }
     );
     percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5;
 
     diff.pack().pipe(fs.createWriteStream(options.diffImage));
   } catch (error) {
-    return { error: errorSerialize(error) };
+    return {
+      error: errorSerialize(error)
+    };
   }
   return {
     mismatchedPixels,
