@@ -1,10 +1,8 @@
 {
-    "extends": [
-      "airbnb-base",
-      "prettier"
-    ],
-    "rules": {
-      "prefer-object-spread": 0
-    },
-    "ignorePatterns": ["src/*.d.ts"]
+  "extends": ["airbnb-base", "prettier"],
+  "parserOptions": { "ecmaVersion": "latest" },
+  "rules": {
+    "prefer-object-spread": 0
+  },
+  "ignorePatterns": ["src/*.d.ts"]
 }
