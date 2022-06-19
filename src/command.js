@@ -1,66 +1,89 @@
-const { deserializeError } = require('./utils-browser');
+const { deserializeError } = require("./utils-browser");
 
 /* eslint-disable no-undef */
 
-function compareSnapshotCommand(defaultScreenshotOptions) {
-  Cypress.Commands.add(
-    'compareSnapshot',
-    { prevSubject: 'optional' },
-    (subject, name, params = {}) => {
-      const SNAPSHOT_BASE_DIRECTORY = Cypress.env('SNAPSHOT_BASE_DIRECTORY');
-      const SNAPSHOT_DIFF_DIRECTORY = Cypress.env('SNAPSHOT_DIFF_DIRECTORY');
-      const ALWAYS_GENERATE_DIFF = Cypress.env('ALWAYS_GENERATE_DIFF');
+/** return the errorThreshold from the options settings */
+function thresholdOption(defaultScreenshotOptions, params) {
+  if (typeof params === "number") {
+    return params;
+  }
+  if (typeof params === "object" && params.errorThreshold) {
+    return params.errorThreshold;
+  }
 
-      let screenshotOptions = defaultScreenshotOptions;
-      let errorThreshold = 0.0;
-      if (typeof params === 'number') {
-        errorThreshold = params;
-      } else if (typeof params === 'object') {
-        errorThreshold =
-          params.errorThreshold ||
-          (defaultScreenshotOptions &&
-            defaultScreenshotOptions.errorThreshold) ||
-          0.0;
-        screenshotOptions = Object.assign({}, defaultScreenshotOptions, params);
-      }
-      let title = 'actual';
-      if (Cypress.env('type') === 'base') {
-        title = 'base';
-      }
+  return defaultScreenshotOptions?.errorThreshold || 0;
+}
 
-      // take snapshot
-      const objToOperateOn = subject ? cy.get(subject) : cy;
-      const fileName = `${name}-${title}`;
-      if (Cypress.env('type') === 'base') {
-        const identifier = `${fileName}-${new Date().getTime()}`;
-        objToOperateOn
-          .screenshot(`${identifier}`, screenshotOptions)
-          .task('visualRegressionCopy', {
-            specName: Cypress.spec.name,
-            from: `${identifier}`,
-            to: `${fileName}`,
-            baseDir: SNAPSHOT_BASE_DIRECTORY,
-          });
-      } else {
-        objToOperateOn.screenshot(`${fileName}`, screenshotOptions);
-      }
+/** Take a screenshot and move the file to specified folder */
+function screenshotToDir(subject, baseFileName, screenshotOptions, toDir) {
+  let fromPath;
+  const objToOperateOn = subject ? cy.get(subject) : cy;
 
-      // run visual tests
-      if (Cypress.env('type') === 'actual') {
-        const options = {
-          fileName: name,
-          specDirectory: Cypress.spec.name,
-          baseDir: SNAPSHOT_BASE_DIRECTORY,
-          diffDir: SNAPSHOT_DIFF_DIRECTORY,
-          keepDiff: ALWAYS_GENERATE_DIFF,
-          errorThreshold,
-        };
-        cy.task('compareSnapshotsPlugin', options).then((results) => {
-          if (results.error) {
-            throw deserializeError(results.error);
-          }
+  // save the path to forward between screenshot and move tasks
+  function onAfterScreenshot(_doc, props) {
+    fromPath = props.path;
+  }
+
+  objToOperateOn
+    .screenshot(`${baseFileName}`, { ...screenshotOptions, onAfterScreenshot })
+    .then(() => {
+      if (toDir) {
+        cy.task("moveSnapshot", {
+          fromPath,
+          toDir,
+          specName: Cypress.spec.name,
+          fileName: `${baseFileName}.png`,
         });
       }
+    });
+}
+
+/** Take a screenshot and move screenshot to base or actual folder */
+function takeScreenshot(subject, name, screenshotOptions) {
+  if (Cypress.env("type") === "base") {
+    const toDir = Cypress.env("SNAPSHOT_BASE_DIRECTORY");
+    screenshotToDir(subject, `${name}-base`, screenshotOptions, toDir);
+  } else {
+    const toDir = Cypress.config().screenshotsFolder;
+    screenshotToDir(subject, `${name}-actual`, screenshotOptions, toDir);
+  }
+}
+
+/** Call the plugin to compare snapshot images and generate a diff */
+function compareScreenshots(name, errorThreshold) {
+  if (Cypress.env("type") === "base") {
+    return;
+  }
+
+  const options = {
+    fileName: name,
+    specDirectory: Cypress.spec.name,
+    baseDir: Cypress.env("SNAPSHOT_BASE_DIRECTORY"),
+    diffDir: Cypress.env("SNAPSHOT_DIFF_DIRECTORY"),
+    keepDiff: Cypress.env("ALWAYS_GENERATE_DIFF"),
+    errorThreshold,
+  };
+  cy.task("compareSnapshotsPlugin", options).then((results) => {
+    if (results.error) {
+      throw deserializeError(results.error);
+    }
+  });
+}
+
+/** Add custom cypress command to compare image snapshots of an element or the window. */
+function compareSnapshotCommand(defaultScreenshotOptions) {
+  Cypress.Commands.add(
+    "compareSnapshot",
+    { prevSubject: "optional" },
+    (subject, name, params = {}) => {
+      const errorThreshold = thresholdOption(defaultScreenshotOptions, params);
+      const screenshotOptions =
+        typeof params === "object"
+          ? { ...defaultScreenshotOptions, ...params }
+          : { ...defaultScreenshotOptions };
+
+      takeScreenshot(subject, name, screenshotOptions);
+      compareScreenshots(name, errorThreshold);
     }
   );
 }
