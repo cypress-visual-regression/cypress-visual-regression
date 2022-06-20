@@ -14,7 +14,7 @@
     "test": "./node_modules/.bin/cypress run --env type=actual",
     "base": "./node_modules/.bin/cypress run --env type=base",
     "prepublish": "npm run jest && npm run lint && npm run prettier:check && npm run build",
-    "lint": "./node_modules/.bin/eslint src/**",
+    "lint": "./node_modules/.bin/eslint 'src/**'",
     "prebuild": "./node_modules/.bin/rimraf dist",
     "build": "./node_modules/.bin/babel src --out-dir dist --extensions \".js\" --copy-files",
     "prepare": "npm run build",
