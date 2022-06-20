@@ -1,24 +1,24 @@
-const fs = require("fs");
-const fsp = require("fs/promises");
-const path = require("path");
+const fs = require('fs');
+const fsp = require('fs/promises');
+const path = require('path');
 
-const { PNG } = require("pngjs");
-const pixelmatch = require("pixelmatch");
-const sanitize = require("sanitize-filename");
+const { PNG } = require('pngjs');
+const pixelmatch = require('pixelmatch');
+const sanitize = require('sanitize-filename');
 
 const {
   adjustCanvas,
   createFolder,
   parseImage,
   errorSerialize,
-} = require("./utils");
+} = require('./utils');
 
 let CYPRESS_SCREENSHOT_DIR;
 
 function setupScreenshotPath(config) {
   // use cypress default path as fallback
   CYPRESS_SCREENSHOT_DIR =
-    (config || {}).screenshotsFolder || "cypress/screenshots";
+    (config || {}).screenshotsFolder || 'cypress/screenshots';
 }
 
 /** Move the snapshot .png file to a new path.
@@ -31,15 +31,15 @@ async function moveSnapshot(args) {
   return fsp.rename(fromPath, destFile).then(() => null);
 }
 
-/** Cypresss plugin to compare image snapshots & generate a diff image. 
- * 
+/** Cypresss plugin to compare image snapshots & generate a diff image.
+ *
  * Uses the pixelmatch library internally.
  */
 async function compareSnapshotsPlugin(args) {
   const snapshotBaseDirectory =
-    args.baseDir || path.join(process.cwd(), "cypress", "snapshots", "base");
+    args.baseDir || path.join(process.cwd(), 'cypress', 'snapshots', 'base');
   const snapshotDiffDirectory =
-    args.diffDir || path.join(process.cwd(), "cypress", "snapshots", "diff");
+    args.diffDir || path.join(process.cwd(), 'cypress', 'snapshots', 'diff');
   const alwaysGenerateDiff = !(args.keepDiff === false);
 
   const fileName = sanitize(args.fileName);
@@ -119,7 +119,7 @@ async function compareSnapshotsPlugin(args) {
  * (Also installs an internally used plugin to move snapshot files). */
 function getCompareSnapshotsPlugin(on, config) {
   setupScreenshotPath(config);
-  on("task", {
+  on('task', {
     compareSnapshotsPlugin,
     moveSnapshot,
   });

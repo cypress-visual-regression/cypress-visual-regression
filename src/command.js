@@ -1,13 +1,13 @@
-const { deserializeError } = require("./utils-browser");
+const { deserializeError } = require('./utils-browser');
 
 /* eslint-disable no-undef */
 
 /** return the errorThreshold from the options settings */
 function thresholdOption(defaultScreenshotOptions, params) {
-  if (typeof params === "number") {
+  if (typeof params === 'number') {
     return params;
   }
-  if (typeof params === "object" && params.errorThreshold) {
+  if (typeof params === 'object' && params.errorThreshold) {
     return params.errorThreshold;
   }
 
@@ -28,7 +28,7 @@ function screenshotToDir(subject, baseFileName, screenshotOptions, toDir) {
     .screenshot(`${baseFileName}`, { ...screenshotOptions, onAfterScreenshot })
     .then(() => {
       if (toDir) {
-        cy.task("moveSnapshot", {
+        cy.task('moveSnapshot', {
           fromPath,
           toDir,
           specName: Cypress.spec.name,
@@ -40,8 +40,8 @@ function screenshotToDir(subject, baseFileName, screenshotOptions, toDir) {
 
 /** Take a screenshot and move screenshot to base or actual folder */
 function takeScreenshot(subject, name, screenshotOptions) {
-  if (Cypress.env("type") === "base") {
-    const toDir = Cypress.env("SNAPSHOT_BASE_DIRECTORY");
+  if (Cypress.env('type') === 'base') {
+    const toDir = Cypress.env('SNAPSHOT_BASE_DIRECTORY');
     screenshotToDir(subject, `${name}-base`, screenshotOptions, toDir);
   } else {
     const toDir = Cypress.config().screenshotsFolder;
@@ -51,19 +51,19 @@ function takeScreenshot(subject, name, screenshotOptions) {
 
 /** Call the plugin to compare snapshot images and generate a diff */
 function compareScreenshots(name, errorThreshold) {
-  if (Cypress.env("type") === "base") {
+  if (Cypress.env('type') === 'base') {
     return;
   }
 
   const options = {
     fileName: name,
     specDirectory: Cypress.spec.name,
-    baseDir: Cypress.env("SNAPSHOT_BASE_DIRECTORY"),
-    diffDir: Cypress.env("SNAPSHOT_DIFF_DIRECTORY"),
-    keepDiff: Cypress.env("ALWAYS_GENERATE_DIFF"),
+    baseDir: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
+    diffDir: Cypress.env('SNAPSHOT_DIFF_DIRECTORY'),
+    keepDiff: Cypress.env('ALWAYS_GENERATE_DIFF'),
     errorThreshold,
   };
-  cy.task("compareSnapshotsPlugin", options).then((results) => {
+  cy.task('compareSnapshotsPlugin', options).then((results) => {
     if (results.error) {
       throw deserializeError(results.error);
     }
@@ -73,12 +73,12 @@ function compareScreenshots(name, errorThreshold) {
 /** Add custom cypress command to compare image snapshots of an element or the window. */
 function compareSnapshotCommand(defaultScreenshotOptions) {
   Cypress.Commands.add(
-    "compareSnapshot",
-    { prevSubject: "optional" },
+    'compareSnapshot',
+    { prevSubject: 'optional' },
     (subject, name, params = {}) => {
       const errorThreshold = thresholdOption(defaultScreenshotOptions, params);
       const screenshotOptions =
-        typeof params === "object"
+        typeof params === 'object'
           ? { ...defaultScreenshotOptions, ...params }
           : { ...defaultScreenshotOptions };
 
