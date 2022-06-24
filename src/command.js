@@ -12,6 +12,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
       const SHOW_DIFF_BASE64_CONSOLE = Boolean(
         Cypress.env('SHOW_DIFF_BASE64_CONSOLE')
       );
+      const ALWAYS_GENERATE_DIFF = Cypress.env('ALWAYS_GENERATE_DIFF');
 
       let screenshotOptions = defaultScreenshotOptions;
       let errorThreshold = 0.0;
@@ -56,6 +57,8 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
           baseDir: SNAPSHOT_BASE_DIRECTORY,
           diffDir: SNAPSHOT_DIFF_DIRECTORY,
           isShowDiffConsole: SHOW_DIFF_BASE64_CONSOLE,
+          keepDiff: ALWAYS_GENERATE_DIFF,
+          errorThreshold,
         };
         cy.task('compareSnapshotsPlugin', options).then((results) => {
           if (results.error) {
