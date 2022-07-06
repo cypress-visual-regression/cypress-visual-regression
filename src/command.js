@@ -21,7 +21,11 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
           (defaultScreenshotOptions &&
             defaultScreenshotOptions.errorThreshold) ||
           0.0;
-        screenshotOptions = Object.assign({}, defaultScreenshotOptions, params);
+        screenshotOptions = Object.assign(
+          { overwrite: true },
+          defaultScreenshotOptions,
+          params
+        );
       }
       let title = 'actual';
       if (Cypress.env('type') === 'base') {
@@ -31,19 +35,8 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
       // take snapshot
       const objToOperateOn = subject ? cy.get(subject) : cy;
       const fileName = `${name}-${title}`;
-      if (Cypress.env('type') === 'base') {
-        const identifier = `${fileName}-${new Date().getTime()}`;
-        objToOperateOn
-          .screenshot(`${identifier}`, screenshotOptions)
-          .task('visualRegressionCopy', {
-            specName: Cypress.spec.name,
-            from: `${identifier}`,
-            to: `${fileName}`,
-            baseDir: SNAPSHOT_BASE_DIRECTORY,
-          });
-      } else {
-        objToOperateOn.screenshot(`${fileName}`, screenshotOptions);
-      }
+
+      objToOperateOn.screenshot(`${fileName}`, screenshotOptions);
 
       // run visual tests
       if (Cypress.env('type') === 'actual') {
