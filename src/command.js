@@ -36,7 +36,15 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
       const objToOperateOn = subject ? cy.get(subject) : cy;
       const fileName = `${name}-${title}`;
 
-      objToOperateOn.screenshot(`${fileName}`, screenshotOptions);
+      if (Cypress.env('type') === 'base') {
+        const baseFilePath = path.join(
+          SNAPSHOT_BASE_DIRECTORY,
+          `${fileName}.png`
+        );
+        objToOperateOn.screenshot(baseFilePath, screenshotOptions);
+      } else {
+        objToOperateOn.screenshot(`${fileName}`, screenshotOptions);
+      }
 
       // run visual tests
       if (Cypress.env('type') === 'actual') {
