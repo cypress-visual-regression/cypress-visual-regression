@@ -165,7 +165,7 @@ You can target a single HTML element as well:
 cy.get('#my-header').compareSnapshot('just-header')
 ```
 
-You can pass arguments as an object to `cy.screenshot()`, rather than just an error threshold, as well:
+You can pass arguments as an object to `cy.compareSnapshot()`, rather than just an error threshold, as well:
 
 ```js
 it('should display the login page correctly', () => {
