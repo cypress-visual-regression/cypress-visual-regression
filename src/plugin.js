@@ -38,10 +38,10 @@ function setupDiffImageGeneration(args) {
 
 function visualRegressionCopy(args) {
   setupSnapshotPaths(args);
-  const baseDir = path.join(SNAPSHOT_BASE_DIRECTORY, args.specName);
+  const baseDir = path.join(SNAPSHOT_BASE_DIRECTORY/*, args.specName*/);
   const from = path.join(
     CYPRESS_SCREENSHOT_DIR,
-    args.specName,
+    /*args.specName,*/
     `${args.from}.png`
   );
   const to = path.join(baseDir, `${args.to}.png`);
@@ -61,17 +61,17 @@ async function compareSnapshotsPlugin(args) {
   const options = {
     actualImage: path.join(
       CYPRESS_SCREENSHOT_DIR,
-      args.specDirectory,
+      /*args.specDirectory,*/
       `${fileName}-actual.png`
     ),
     expectedImage: path.join(
       SNAPSHOT_BASE_DIRECTORY,
-      args.specDirectory,
+      /*args.specDirectory,*/
       `${fileName}-base.png`
     ),
     diffImage: path.join(
       SNAPSHOT_DIFF_DIRECTORY,
-      args.specDirectory,
+      /*args.specDirectory,*/
       `${fileName}-diff.png`
     ),
   };
@@ -109,14 +109,14 @@ async function compareSnapshotsPlugin(args) {
     percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5;
 
     if (percentage > args.errorThreshold) {
-      const specFolder = path.join(SNAPSHOT_DIFF_DIRECTORY, args.specDirectory);
+      const specFolder = path.join(SNAPSHOT_DIFF_DIRECTORY/*, args.specDirectory*/);
       await createFolder(specFolder, args.failSilently);
       diff.pack().pipe(fs.createWriteStream(options.diffImage));
       throw new Error(
         `The "${fileName}" image is different. Threshold limit exceeded! \nExpected: ${args.errorThreshold} \nActual: ${percentage}`
       );
     } else if (ALWAYS_GENERATE_DIFF) {
-      const specFolder = path.join(SNAPSHOT_DIFF_DIRECTORY, args.specDirectory);
+      const specFolder = path.join(SNAPSHOT_DIFF_DIRECTORY/*, args.specDirectory*/);
       await createFolder(specFolder, args.failSilently);
       diff.pack().pipe(fs.createWriteStream(options.diffImage));
     }
