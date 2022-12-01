@@ -11,35 +11,71 @@ const {
   createFolder,
   parseImage,
   errorSerialize,
+  getValueOrDefault,
 } = require('./utils');
 
 let CYPRESS_SCREENSHOT_DIR;
 
 function setupScreenshotPath(config) {
   // use cypress default path as fallback
-  CYPRESS_SCREENSHOT_DIR =
-    (config || {}).screenshotsFolder || 'cypress/screenshots';
+  CYPRESS_SCREENSHOT_DIR = getValueOrDefault(
+    config?.screenshotsFolder,
+    'cypress/screenshots'
+  );
 }
 
-/** Move the snapshot .png file to a new path.
+/** Move the generated snapshot .png file to its new path.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
 async function moveSnapshot(args) {
-  const { fromPath, toDir, specName, fileName } = args;
-  const destDir = path.join(toDir, specName);
-  await createFolder(destDir, false);
+  const { fromPath, specDirectory, fileName } = args;
+  const destDir = path.join(CYPRESS_SCREENSHOT_DIR, specDirectory);
   const destFile = path.join(destDir, fileName);
-  return fsp.rename(fromPath, destFile).then(() => null);
+
+  return createFolder(destDir, false)
+    .then(() => fsp.rename(fromPath, destFile))
+    .then(() => null);
 }
 
-/** Cypresss plugin to compare image snapshots & generate a diff image.
+/** Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
+ * The target path is constructed from parts at runtime in node to be OS independent.  */
+async function updateSnapshot(args) {
+  const { name, screenshotsFolder, snapshotBaseDirectory, specDirectory } =
+    args;
+  const toDir = getValueOrDefault(
+    snapshotBaseDirectory,
+    path.join(process.cwd(), 'cypress', 'snapshots', 'base')
+  );
+  const snapshotActualDirectory = getValueOrDefault(
+    screenshotsFolder,
+    'cypress/screenshots'
+  );
+
+  const destDir = path.join(toDir, specDirectory);
+  const fromPath = path.join(
+    snapshotActualDirectory,
+    specDirectory,
+    `${name}-actual.png`
+  );
+  const destFile = path.join(destDir, `${name}-base.png`);
+
+  return createFolder(destDir, false)
+    .then(() => fsp.copyFile(fromPath, destFile))
+    .then(() => null);
+}
+
+/** Cypress plugin to compare image snapshots & generate a diff image.
  *
  * Uses the pixelmatch library internally.
  */
 async function compareSnapshotsPlugin(args) {
-  const snapshotBaseDirectory =
-    args.baseDir || path.join(process.cwd(), 'cypress', 'snapshots', 'base');
-  const snapshotDiffDirectory =
-    args.diffDir || path.join(process.cwd(), 'cypress', 'snapshots', 'diff');
+  const snapshotBaseDirectory = getValueOrDefault(
+    args.baseDir,
+    path.join(process.cwd(), 'cypress', 'snapshots', 'base')
+  );
+  const snapshotDiffDirectory = getValueOrDefault(
+    args.diffDir,
+    path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
+  );
   const alwaysGenerateDiff = !(args.keepDiff === false);
 
   const fileName = sanitize(args.fileName);
@@ -122,6 +158,7 @@ function getCompareSnapshotsPlugin(on, config) {
   on('task', {
     compareSnapshotsPlugin,
     moveSnapshot,
+    updateSnapshot,
   });
 }
 
