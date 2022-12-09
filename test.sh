@@ -13,11 +13,10 @@ mv ../dist dist
 
 if [ -z "${1}" ]
 then
-  docker-compose build
+  docker build -t cypress-visaul-regression .
 else
-  docker-compose build --build-arg CYPRESS_VERSION=$1
+  docker build --build-arg CYPRESS_VERSION=$1 cypress-visaul-regression .
 fi
 
-docker-compose up -d
-docker-compose run cypress ./node_modules/.bin/cypress run --env type=base --config baseUrl=http://127.0.0.1
-docker-compose run cypress ./node_modules/.bin/cypress run --env type=actual --config baseUrl=http://127.0.0.1
+docker run --entrypoint /bin/bash cypress-visual-regression -c './node_modules/.bin/cypress run --env type=base'
+docker run --entrypoint /bin/bash cypress-visual-regression -c './node_modules/.bin/cypress run --env type=actual'
