@@ -15,23 +15,24 @@ Install:
 $ npm install cypress-visual-regression
 ```
 
-Add the following config to your *cypress.json* file:
-
-```json
-{
-  "screenshotsFolder": "./cypress/snapshots/actual",
-  "trashAssetsBeforeRuns": true
-}
-```
-
-Add the plugin to *cypress/plugins/index.js*:
+Add the following config to your *cypress.config.js* file:
 
 ```javascript
+const { defineConfig } = require("cypress");
 const getCompareSnapshotsPlugin = require('cypress-visual-regression/dist/plugin');
 
-module.exports = (on, config) => {
-  getCompareSnapshotsPlugin(on, config);
-};
+module.exports = defineConfig({
+  env: {
+    screenshotsFolder: './cypress/snapshots/actual',
+    trashAssetsBeforeRuns: true,
+    video: false
+  },
+  e2e: {
+    setupNodeEvents(on, config) {
+      getCompareSnapshotsPlugin(on, config);
+    },
+  },
+});
 ```
 
 Add the command to *cypress/support/commands.js*:
@@ -42,7 +43,7 @@ const compareSnapshotCommand = require('cypress-visual-regression/dist/command')
 compareSnapshotCommand();
 ```
 
-> Make sure you import *commands.js* in *cypress/support/index.js*:
+> Make sure you import *commands.js* in *cypress/support/e2e.js*:
 >
 > ```javascript
 > import './commands'
@@ -52,18 +53,24 @@ compareSnapshotCommand();
 
 If you're using TypeScript, use files with a `.ts` extension, as follows:
 
-*cypress/plugins/index.ts*
+*cypress/cypress.config.ts*
 
 ```ts
-import type Cypress from 'cypress';
+import { defineConfig } from 'cypress';
 import getCompareSnapshotsPlugin from 'cypress-visual-regression/dist/plugin';
 
-export default function configurePlugins(
-  on: Cypress.PluginEvents,
-  config: Cypress.PluginConfigOptions,
-) {
-  getCompareSnapshotsPlugin(on, config);
-}
+export default defineConfig({
+  env: {
+    screenshotsFolder: './cypress/snapshots/actual',
+    trashAssetsBeforeRuns: true,
+    video: false
+  },
+  e2e: {
+    setupNodeEvents(on, config) {
+      getCompareSnapshotsPlugin(on, config);
+    },
+  },
+});
 ```
 
 *cypress/support/commands.ts*
@@ -92,12 +99,12 @@ For more info on how to use TypeScript with Cypress, please refer to [this docum
 
 ### Options
 
-`failSilently` is enabled by default. Add the following config to your *cypress.json* file to see the errors:
+`failSilently` is enabled by default. Add the following config to your *cypress.config.js* file to see the errors:
 
-```json
+```javascript
 {
-  "env": {
-    "failSilently": false
+  env: {
+    failSilently: false
   }
 }
 ```
