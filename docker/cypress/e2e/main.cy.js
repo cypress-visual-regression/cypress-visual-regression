@@ -5,7 +5,7 @@ describe('Visual Regression Example', () => {
     cy.compareSnapshot('home');
   });
 
-  it.only('handle missing base snapshot file as a failed spec', () => {
+  it('handle missing base snapshot file as a failed spec', () => {
     cy.visit('../../web/01.html');
     if (Cypress.env('type') === 'actual') {
       cy.compareSnapshotTest('missing').should(($error) => {

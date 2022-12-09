@@ -15,7 +15,7 @@ if [ -z "${1}" ]
 then
   docker build -t cypress-visaul-regression .
 else
-  docker build --build-arg CYPRESS_VERSION=$1 cypress-visaul-regression .
+  docker build --build-arg CYPRESS_VERSION=$1 -t cypress-visaul-regression .
 fi
 
 docker run --entrypoint /bin/bash cypress-visual-regression -c './node_modules/.bin/cypress run --env type=base'
