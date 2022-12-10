@@ -1,9 +1,8 @@
 # base image
-ARG CYPRESS_VERSION=10.11.0
-FROM cypress/included:${CYPRESS_VERSION}
+FROM cypress/browsers:node14.16.0-chrome90-ff88
 
 # set variables
-ARG CYPRESS_VERSION
+ARG CYPRESS_VERSION=10.11.0
 ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
 ENV CI true
 RUN echo ${CYPRESS_VERSION}
@@ -13,6 +12,7 @@ WORKDIR /usr/src/app
 
 # install cypress, and cypress-visual-regression
 COPY package.json /usr/src/app/package.json
+RUN npm install cypress@${CYPRESS_VERSION}
 RUN npm install
 
 # copy cypress files and folders
