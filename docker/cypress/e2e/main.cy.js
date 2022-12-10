@@ -12,8 +12,8 @@ describe('Visual Regression Example', () => {
         expect($error).to.be.a('string');
         const json = JSON.parse($error);
         expect(json).to.be.a('object');
-        expect(json.message).to.eq('Snapshot /usr/src/app/cypress/snapshots/base/main.spec.js/missing-base.png does not exist.');
-        expect(json.stack).to.include('Error: Snapshot /usr/src/app/cypress/snapshots/base/main.spec.js/missing-base.png does not exist.\n    at /usr/src/app/dist/utils.js');
+        expect(json.message).to.eq('Snapshot /usr/src/app/cypress/snapshots/base/main.cy.js/missing-base.png does not exist.');
+        expect(json.stack).to.include('Error: Snapshot /usr/src/app/cypress/snapshots/base/main.cy.js/missing-base.png does not exist.\n    at /usr/src/app/dist/utils.js');
       });
     };
   });
@@ -37,7 +37,7 @@ describe('Visual Regression Example', () => {
       cy.get('H1').contains('Login');
       cy.get('form').compareSnapshot('login-form');
     } else {
-      cy.visit('/03.html');
+      cy.visit('../../web/03.html');
       cy.get('H1').contains('Login');
       cy.get('form').compareSnapshotTest('login-form').should('be.true');
       cy.get('form').compareSnapshotTest('login-form', 0.02).should('be.true');
