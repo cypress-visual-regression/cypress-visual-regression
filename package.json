@@ -1,6 +1,6 @@
 {
   "name": "cypress-visual-regression",
-  "version": "1.7.0",
+  "version": "2.0.0",
   "description": "Module for adding visual regression testing to Cypress",
   "repository": "https://github.com/cypress-visual-regression/cypress-visual-regression",
   "author": "Michael Herman <michael@mherman.org>",
@@ -15,8 +15,8 @@
     "base": "./node_modules/.bin/cypress run --env type=base",
     "prepublish": "npm run jest && npm run lint && npm run prettier:check && npm run build",
     "lint": "./node_modules/.bin/eslint 'src/**'",
-    "prebuild": "./node_modules/.bin/rimraf dist",
-    "build": "./node_modules/.bin/babel src --out-dir dist --extensions \".js\" --copy-files",
+    "prebuild": "rimraf dist",
+    "build": "babel src --out-dir dist --extensions \".js\" --copy-files",
     "prepare": "npm run build",
     "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
     "prettier:check": "prettier --check --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
@@ -34,15 +34,15 @@
     "rimraf": "^3.0.2"
   },
   "peerDependencies": {
-    "cypress": ">=5.6.0"
+    "cypress": ">=9.7.0"
   },
   "files": [
     "dist/**/*"
   ],
   "ignore": [
     "src",
-    "cypress",
-    "cypress.json"
+    "docker",
+    "tests"
   ],
   "dependencies": {
     "pixelmatch": "^5.2.1",

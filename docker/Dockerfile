@@ -2,7 +2,7 @@
 FROM cypress/browsers:node14.16.0-chrome90-ff88
 
 # set variables
-ARG CYPRESS_VERSION=9.0.0
+ARG CYPRESS_VERSION=10.11.0
 ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
 ENV CI true
 RUN echo ${CYPRESS_VERSION}
@@ -17,7 +17,8 @@ RUN npm install
 
 # copy cypress files and folders
 COPY cypress /usr/src/app/cypress
-COPY cypress.json /usr/src/app/cypress.json
+COPY cypress.config.js /usr/src/app/cypress.config.js
+COPY web /usr/src/app/web
 
 # copy dist
 COPY dist /usr/src/app/dist
