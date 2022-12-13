@@ -41,8 +41,8 @@
   ],
   "ignore": [
     "src",
-    "cypress",
-    "cypress.json"
+    "docker",
+    "tests"
   ],
   "dependencies": {
     "pixelmatch": "^5.2.1",

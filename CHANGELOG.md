@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v2.0.0
+
+- Use relative spec path to compute the snapshot directory (PR #[139](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/139))
+- Drop support for node v12, v15 and v17
+- Add support for node v18
+- Drop support for Cypress below v10
+- Add support for Cypress v10, v11 and v12
+
 ## v1.7.0
 
 - Saves diff images only on failed tests (PR #[110](https://github.com/mjhea0/cypress-visual-regression/pull/110))
