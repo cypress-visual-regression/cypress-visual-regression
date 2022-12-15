@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v2.0.1
+
+- fix: compile optional chaining (PR #[145](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/145))
+
 ## v2.0.0
 
 - Use relative spec path to compute the snapshot directory (PR #[139](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/139))
