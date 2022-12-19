@@ -79,10 +79,13 @@ const errorSerialize = (error) =>
     )
   );
 
+const getValueOrDefault = (value, defaultValue) => value || defaultValue;
+
 module.exports = {
   adjustCanvas,
   createFolder,
   mkdirp,
   parseImage,
   errorSerialize,
+  getValueOrDefault,
 };
