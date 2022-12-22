@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x, 16.x, 18.x, 19.x]
-        cypress-version: [10.11.0, 11.2.0, 12.0.2]
+        cypress-version: [10.11.0, 11.2.0, 12.2.0]
 
     steps:
       - uses: actions/checkout@v2
