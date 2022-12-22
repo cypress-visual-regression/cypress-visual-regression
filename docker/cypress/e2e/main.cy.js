@@ -106,4 +106,43 @@ describe('Visual Regression Example', () => {
       capture: 'fullPage'
     });
   });
+
+  it('should not fail if ALLOW_VISUAL_REGRESSION_TO_FAIL is set', {
+    env: {ALLOW_VISUAL_REGRESSION_TO_FAIL: true}
+  },  () => {
+    if (Cypress.env('type') === 'base') {
+      cy.visit('../../web/04.html');
+      cy.get('H1').contains('bar');
+      cy.compareSnapshot('foo');
+      cy.get('H1').compareSnapshot('h1');
+    } else {
+      cy.visit('../../web/05.html');
+      cy.get('H1').contains('none');
+      cy.compareSnapshot('foo', 0.02);
+      cy.compareSnapshotTest('foo', 0.02).should('be.true');
+      cy.compareSnapshot('foo', 0.017);
+      cy.get('H1').compareSnapshotTest('h1', 0.08).should('be.true');
+      cy.get('H1').compareSnapshot('h1', 0.07);
+    }
+  });
+
+  it('should not fail if ALLOW_VISUAL_REGRESSION_TO_FAIL is not set', {
+    env: {ALLOW_VISUAL_REGRESSION_TO_FAIL: false}
+  },  () => {
+    // this test equals 'should handle custom error thresholds correctly'
+    if (Cypress.env('type') === 'base') {
+      cy.visit('../../web/04.html');
+      cy.get('H1').contains('bar');
+      cy.compareSnapshot('foo');
+      cy.get('H1').compareSnapshot('h1');
+    } else {
+      cy.visit('../../web/05.html');
+      cy.get('H1').contains('none');
+      cy.compareSnapshot('foo', 0.02);
+      cy.compareSnapshotTest('foo', 0.02).should('be.true');
+      cy.compareSnapshotTest('foo', 0.017).should('be.false');
+      cy.get('H1').compareSnapshotTest('h1', 0.08).should('be.true');
+      cy.get('H1').compareSnapshotTest('h1', 0.07).should('be.false');
+    }
+  });
 });

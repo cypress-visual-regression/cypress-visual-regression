@@ -63,6 +63,7 @@ function compareScreenshots(name, errorThreshold) {
     baseDir: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
     diffDir: Cypress.env('SNAPSHOT_DIFF_DIRECTORY'),
     keepDiff: Cypress.env('ALWAYS_GENERATE_DIFF'),
+    allowVisualRegressionToFail: Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL'),
     errorThreshold,
   };
 
