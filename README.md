@@ -150,10 +150,11 @@ If this variable is set, diffs will be computed using your thresholds but tests 
 
 If you want to see all diff images which are different (based on your thresholds), use the following in your `cypress.config.json`:
 ```json
-...
-"env": {
-  "ALWAYS_GENERATE_DIFF": false,
-  "ALLOW_VISUAL_REGRESSION_TO_FAIL": true
+{
+  "env": {
+    "ALWAYS_GENERATE_DIFF": false,
+    "ALLOW_VISUAL_REGRESSION_TO_FAIL": true
+  }
 }
 ```
 
