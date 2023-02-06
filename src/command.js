@@ -1,5 +1,4 @@
-const { deserializeError } = require('./utils-browser');
-const { getValueOrDefault } = require('./utils');
+const { deserializeError, getValueOrDefault } = require('./utils-browser');
 
 /* eslint-disable no-undef */
 

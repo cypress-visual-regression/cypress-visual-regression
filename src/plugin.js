@@ -11,8 +11,8 @@ const {
   createFolder,
   parseImage,
   errorSerialize,
-  getValueOrDefault,
 } = require('./utils');
+const { getValueOrDefault } = require('./utils-browser');
 
 let CYPRESS_SCREENSHOT_DIR;
 
