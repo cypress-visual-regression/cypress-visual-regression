@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v2.1.1
+
+- fix: Prevent implicit dependency to fs in command.js (PR #[161](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/161))
+
 ## v2.1.0
 
 - feat: add environment-variable ALLOW_TO_FAIL (PR #[146](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/126))
