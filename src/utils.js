@@ -100,17 +100,25 @@ const combineImages = async (file1, file2, file3, output) => {
         .pipe(new PNG())
         .on('error', reject)
         .on('parsed', () => resolve(this));
-    })
+    }),
   ]);
 
   const combinedImg = new PNG({
     width: img1.width + img2.width + img3.width,
-    height: Math.max(img1.height, img2.height, img3.height)
+    height: Math.max(img1.height, img2.height, img3.height),
   });
 
   img1.bitblt(combinedImg, 0, 0, img1.width, img1.height, 0, 0);
   img2.bitblt(combinedImg, 0, 0, img2.width, img2.height, img1.width, 0);
-  img3.bitblt(combinedImg, 0, 0, img3.width, img3.height, img1.width + img2.width, 0);
+  img3.bitblt(
+    combinedImg,
+    0,
+    0,
+    img3.width,
+    img3.height,
+    img1.width + img2.width,
+    0
+  );
 
   const stream = fs.createWriteStream(output);
   await new Promise((resolve, reject) => {
@@ -118,7 +126,7 @@ const combineImages = async (file1, file2, file3, output) => {
     stream.on('close', resolve);
     combinedImg.pack().pipe(stream);
   });
-}
+};
 
 module.exports = {
   adjustCanvas,

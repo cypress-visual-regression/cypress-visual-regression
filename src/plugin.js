@@ -64,7 +64,6 @@ async function updateSnapshot(args) {
     .then(() => null);
 }
 
-
 /** Cypress plugin to compare image snapshots & generate a diff image.
  *
  * Uses the pixelmatch library internally.
@@ -109,7 +108,7 @@ async function compareSnapshotsPlugin(args) {
     const imgExpected = await parseImage(options.expectedImage);
     const imgActual = await parseImage(options.actualImage);
     const diffWidth = Math.max(imgActual.width, imgExpected.width);
-    const  diffHeight = Math.max(imgActual.height, imgExpected.height);
+    const diffHeight = Math.max(imgActual.height, imgExpected.height);
 
     const diff = new PNG({
       width: diffWidth,
