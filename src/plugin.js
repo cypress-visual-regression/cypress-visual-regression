@@ -9,6 +9,7 @@ const sanitize = require('sanitize-filename');
 const {
   adjustCanvas,
   createFolder,
+  combineImages,
   parseImage,
   errorSerialize,
 } = require('./utils');
@@ -63,6 +64,7 @@ async function updateSnapshot(args) {
     .then(() => null);
 }
 
+
 /** Cypress plugin to compare image snapshots & generate a diff image.
  *
  * Uses the pixelmatch library internally.
@@ -78,6 +80,7 @@ async function compareSnapshotsPlugin(args) {
   );
   const alwaysGenerateDiff = !(args.keepDiff === false);
   const allowVisualRegressionToFail = args.allowVisualRegressionToFail === true;
+  const generateSideBySideDiffs = args.sideBySideDiffs === true;
 
   const fileName = sanitize(args.fileName);
 
@@ -105,9 +108,12 @@ async function compareSnapshotsPlugin(args) {
     await createFolder(snapshotDiffDirectory, args.failSilently);
     const imgExpected = await parseImage(options.expectedImage);
     const imgActual = await parseImage(options.actualImage);
+    let diffWidth = Math.max(imgActual.width, imgExpected.width);
+    let diffHeight = Math.max(imgActual.height, imgExpected.height);
+
     const diff = new PNG({
-      width: Math.max(imgActual.width, imgExpected.width),
-      height: Math.max(imgActual.height, imgExpected.height),
+      width: diffWidth,
+      height: diffHeight,
     });
 
     const imgActualFullCanvas = adjustCanvas(
@@ -115,6 +121,7 @@ async function compareSnapshotsPlugin(args) {
       diff.width,
       diff.height
     );
+
     const imgExpectedFullCanvas = adjustCanvas(
       imgExpected,
       diff.width,
@@ -134,7 +141,11 @@ async function compareSnapshotsPlugin(args) {
     if (percentage > args.errorThreshold) {
       const specFolder = path.join(snapshotDiffDirectory, args.specDirectory);
       await createFolder(specFolder, args.failSilently);
-      diff.pack().pipe(fs.createWriteStream(options.diffImage));
+      if (generateSideBySideDiffs) {
+        await combineImages(imgExpected, diff, imgActual, options.diffImage);
+      } else {
+        diff.pack().pipe(fs.createWriteStream(options.diffImage));
+      }
       if (!allowVisualRegressionToFail)
         throw new Error(
           `The "${fileName}" image is different. Threshold limit exceeded! \nExpected: ${args.errorThreshold} \nActual: ${percentage}`
