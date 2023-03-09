@@ -79,15 +79,6 @@ const errorSerialize = (error) =>
     )
   );
 
-module.exports = {
-  adjustCanvas,
-  combineImages,
-  createFolder,
-  mkdirp,
-  parseImage,
-  errorSerialize,
-};
-
 // Combines 3 images side by side
 // Courtesy of ChatGPT!
 const combineImages = async (file1, file2, file3, output) => {
@@ -128,3 +119,12 @@ const combineImages = async (file1, file2, file3, output) => {
     combinedImg.pack().pipe(stream);
   });
 }
+
+module.exports = {
+  adjustCanvas,
+  combineImages,
+  createFolder,
+  mkdirp,
+  parseImage,
+  errorSerialize,
+};
