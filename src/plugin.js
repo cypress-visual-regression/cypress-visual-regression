@@ -108,8 +108,8 @@ async function compareSnapshotsPlugin(args) {
     await createFolder(snapshotDiffDirectory, args.failSilently);
     const imgExpected = await parseImage(options.expectedImage);
     const imgActual = await parseImage(options.actualImage);
-    let diffWidth = Math.max(imgActual.width, imgExpected.width);
-    let diffHeight = Math.max(imgActual.height, imgExpected.height);
+    const diffWidth = Math.max(imgActual.width, imgExpected.width);
+    const  diffHeight = Math.max(imgActual.height, imgExpected.height);
 
     const diff = new PNG({
       width: diffWidth,
