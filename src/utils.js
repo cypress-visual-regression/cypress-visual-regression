@@ -81,6 +81,7 @@ const errorSerialize = (error) =>
 
 module.exports = {
   adjustCanvas,
+  combineImages,
   createFolder,
   mkdirp,
   parseImage,
