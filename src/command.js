@@ -34,11 +34,16 @@ function takeScreenshot(subject, name, screenshotOptions) {
     screenshotPath = props.path;
   }
 
+  const suffixActual = Cypress.env('REMOVE_SUFFIX') ? '' : '-actual';
+
   objToOperateOn
-    .screenshot(`${name}-actual`, { ...screenshotOptions, onAfterScreenshot })
+    .screenshot(`${name}${suffixActual}`, {
+      ...screenshotOptions,
+      onAfterScreenshot,
+    })
     .then(() => {
       cy.task('moveSnapshot', {
-        fileName: `${name}-actual.png`,
+        fileName: `${name}${suffixActual}.png`,
         fromPath: screenshotPath,
         specDirectory: getSpecRelativePath(),
       });
@@ -51,6 +56,7 @@ function updateScreenshot(name) {
     specDirectory: getSpecRelativePath(),
     screenshotsFolder: Cypress.config().screenshotsFolder,
     snapshotBaseDirectory: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
+    removeSuffix: Cypress.env('REMOVE_SUFFIX'),
   });
 }
 
@@ -62,6 +68,7 @@ function compareScreenshots(name, errorThreshold) {
     baseDir: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
     diffDir: Cypress.env('SNAPSHOT_DIFF_DIRECTORY'),
     keepDiff: Cypress.env('ALWAYS_GENERATE_DIFF'),
+    removeSuffix: Cypress.env('REMOVE_SUFFIX'),
     allowVisualRegressionToFail: Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL'),
     errorThreshold,
   };

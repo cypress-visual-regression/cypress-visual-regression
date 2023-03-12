@@ -30,3 +30,26 @@ describe('Visual Regression Example with setting paths by environment variables'
     }
   });
 });
+
+describe('Visual Regression Example with setting paths by environment variables', {
+  env: {
+    REMOVE_SUFFIX: true
+  }
+},() => {
+  it('take screenshot with parent command', () => {
+    if (Cypress.env('type') === 'base') {
+      cy.visit('../../web/01.html');
+      cy.get('H1').contains('Hello, World');
+      cy.compareSnapshot('home');
+    }
+    else {
+      cy.visit('../../web/01.html');
+      cy.get('H1').contains('Hello, World');
+      cy.compareSnapshot('home');
+      cy.task("doesExist", "./cypress/snapshots/base/main.env.cy.js/home.png").should("be.true");
+      cy.task("doesExist", "./cypress/snapshots/diff/main.env.cy.js/home.png").should("be.true");
+      cy.task("doesExist", "./cypress/snapshots/actual/main.env.cy.js/home.png").should("be.true");
+    }
+
+  });
+});

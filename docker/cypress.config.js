@@ -11,9 +11,7 @@ module.exports = defineConfig({
       getCompareSnapshotsPlugin(on, config);
 
       on("task", {
-        doesExist: path => {
-          return fs.existsSync(path);
-        }
+        doesExist: path => fs.existsSync(path)
       })
     },
   },
