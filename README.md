@@ -99,6 +99,19 @@ For more info on how to use TypeScript with Cypress, please refer to [this docum
 
 ### Options
 
+`REMOVE_SUFFIX` is set to `false` by default. This means that generated images will be suffixed with `-base`, `-actual` or `-diff`.
+
+If you want to remove the suffixes you can set `REMOVE_SUFFIX` to `true` in your *cypress.config.js* file:
+
+```javascript
+{
+  env: {
+    REMOVE_SUFFIX: true
+  }
+}
+```
+
+
 `failSilently` is enabled by default. Add the following config to your *cypress.config.js* file to see the errors:
 
 ```javascript
@@ -144,7 +157,7 @@ typically set by using the field `env` in configuration in `cypress.config.json`
 | ALLOW_VISUAL_REGRESSION_TO_FAIL | Boolean, defaults to false |
 
 
-`ALWAYS_GENERATE_DIFF` specifies if diff images are generated for successful tests.  
+`ALWAYS_GENERATE_DIFF` specifies if diff images are generated for successful tests.
 If you only want the tests to create diff images based on your threshold without the tests to fail, you can set `ALLOW_VISUAL_REGRESSION_TO_FAIL`.
 If this variable is set, diffs will be computed using your thresholds but tests will not fail if a diff is found.
 
@@ -241,7 +254,7 @@ function beforeCompareSnapshotCommand(
 ) {
   Cypress.Commands.overwrite("compareSnapshot", (originalFn, ...args) => {
     return cy
-      // wait for content to be ready 
+      // wait for content to be ready
       .get(appContentQuerySelector)
       // hide ignored elements
       .then($app => {
