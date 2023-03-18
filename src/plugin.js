@@ -16,18 +16,6 @@ const { getValueOrDefault } = require('./utils-browser');
 
 let CYPRESS_SCREENSHOT_DIR;
 
-function suffixActual(removeSuffix) {
-  return removeSuffix ? '' : '-actual';
-}
-
-function suffixBase(removeSuffix) {
-  return removeSuffix ? '' : '-base';
-}
-
-function suffixDiff(removeSuffix) {
-  return removeSuffix ? '' : '-diff';
-}
-
 function setupScreenshotPath(config) {
   // use cypress default path as fallback
   CYPRESS_SCREENSHOT_DIR = getValueOrDefault(
@@ -51,13 +39,8 @@ async function moveSnapshot(args) {
 /** Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
 async function updateSnapshot(args) {
-  const {
-    name,
-    screenshotsFolder,
-    snapshotBaseDirectory,
-    specDirectory,
-    removeSuffix,
-  } = args;
+  const { name, screenshotsFolder, snapshotBaseDirectory, specDirectory } =
+    args;
   const toDir = getValueOrDefault(
     snapshotBaseDirectory,
     path.join(process.cwd(), 'cypress', 'snapshots', 'base')
@@ -71,10 +54,10 @@ async function updateSnapshot(args) {
   const fromPath = path.join(
     snapshotActualDirectory,
     specDirectory,
-    `${name}${suffixActual(removeSuffix)}.png`
+    `${name}.png`
   );
 
-  const destFile = path.join(destDir, `${name}${suffixBase(removeSuffix)}.png`);
+  const destFile = path.join(destDir, `${name}.png`);
 
   return createFolder(destDir, false)
     .then(() => fsp.copyFile(fromPath, destFile))
@@ -103,17 +86,17 @@ async function compareSnapshotsPlugin(args) {
     actualImage: path.join(
       CYPRESS_SCREENSHOT_DIR,
       args.specDirectory,
-      `${fileName}${suffixActual(args.removeSuffix)}.png`
+      `${fileName}.png`
     ),
     expectedImage: path.join(
       snapshotBaseDirectory,
       args.specDirectory,
-      `${fileName}${suffixBase(args.removeSuffix)}.png`
+      `${fileName}.png`
     ),
     diffImage: path.join(
       snapshotDiffDirectory,
       args.specDirectory,
-      `${fileName}${suffixDiff(args.removeSuffix)}.png`
+      `${fileName}.png`
     ),
   };
 
