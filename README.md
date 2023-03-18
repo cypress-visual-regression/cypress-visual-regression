@@ -99,19 +99,6 @@ For more info on how to use TypeScript with Cypress, please refer to [this docum
 
 ### Options
 
-`REMOVE_SUFFIX` is set to `false` by default. This means that generated images will be suffixed with `-base`, `-actual` or `-diff`.
-
-If you want to remove the suffixes you can set `REMOVE_SUFFIX` to `true` in your *cypress.config.js* file:
-
-```javascript
-{
-  env: {
-    REMOVE_SUFFIX: true
-  }
-}
-```
-
-
 `failSilently` is enabled by default. Add the following config to your *cypress.config.js* file to see the errors:
 
 ```javascript

@@ -16,9 +16,9 @@ function compareSnapshotTestCommand() {
     const specDirectory = Cypress.spec.relative.replace('cypress/e2e', '');
     // take snapshot
     if (subject) {
-      cy.get(subject).screenshot(`${name}`, screenshotOptions);
+      cy.get(subject).screenshot(name, screenshotOptions);
     } else {
-      cy.screenshot(`${name}`, screenshotOptions);
+      cy.screenshot(name, screenshotOptions);
     }
 
     // run visual tests
