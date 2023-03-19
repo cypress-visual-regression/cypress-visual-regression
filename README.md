@@ -130,6 +130,7 @@ You can control where snapshots should be located by setting two environment var
 | INTEGRATION_FOLDER        | Used for computing correct snapshot directories |
 
 The `actual` directory always points to the configured screenshot directory.
+
 For more information regarding `INTEGRATION_FOLDER` please refer to [PR#139](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/139)
 
 **Configure snapshot generation**
