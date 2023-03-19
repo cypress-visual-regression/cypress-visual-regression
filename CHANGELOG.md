@@ -7,10 +7,6 @@ All notable changes to this project will be documented in this file. This projec
 - **BREAKING**: Remove file name suffix (PR #[172](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/172))
 - doc: update README
 
-## v2.1.2
-
-- fix: Bump json5 from 1.0.1 to 1.0.2 (PR #[163](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/163))
-
 ## v2.1.1
 
 - fix: Prevent implicit dependency to fs in command.js (PR #[161](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/161))
