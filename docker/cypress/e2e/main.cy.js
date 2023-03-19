@@ -1,4 +1,5 @@
 describe('Visual Regression Example', () => {
+
   it('should display the home page correctly', () => {
     cy.visit('../../web/01.html');
     cy.get('H1').contains('Hello, World');
@@ -12,8 +13,8 @@ describe('Visual Regression Example', () => {
         expect($error).to.be.a('string');
         const json = JSON.parse($error);
         expect(json).to.be.a('object');
-        expect(json.message).to.eq('Snapshot /usr/src/app/cypress/snapshots/base/main.cy.js/missing-base.png does not exist.');
-        expect(json.stack).to.include('Error: Snapshot /usr/src/app/cypress/snapshots/base/main.cy.js/missing-base.png does not exist.\n    at /usr/src/app/dist/utils.js');
+        expect(json.message).to.eq('Snapshot /usr/src/app/cypress/snapshots/base/main.cy.js/missing.png does not exist.');
+        expect(json.stack).to.include('Error: Snapshot /usr/src/app/cypress/snapshots/base/main.cy.js/missing.png does not exist.\n    at /usr/src/app/dist/utils.js');
       });
     };
   });
@@ -145,4 +146,5 @@ describe('Visual Regression Example', () => {
       cy.get('H1').compareSnapshotTest('h1', 0.07).should('be.false');
     }
   });
+
 });

@@ -144,7 +144,7 @@ typically set by using the field `env` in configuration in `cypress.config.json`
 | ALLOW_VISUAL_REGRESSION_TO_FAIL | Boolean, defaults to false |
 
 
-`ALWAYS_GENERATE_DIFF` specifies if diff images are generated for successful tests.  
+`ALWAYS_GENERATE_DIFF` specifies if diff images are generated for successful tests.
 If you only want the tests to create diff images based on your threshold without the tests to fail, you can set `ALLOW_VISUAL_REGRESSION_TO_FAIL`.
 If this variable is set, diffs will be computed using your thresholds but tests will not fail if a diff is found.
 
@@ -241,7 +241,7 @@ function beforeCompareSnapshotCommand(
 ) {
   Cypress.Commands.overwrite("compareSnapshot", (originalFn, ...args) => {
     return cy
-      // wait for content to be ready 
+      // wait for content to be ready
       .get(appContentQuerySelector)
       // hide ignored elements
       .then($app => {

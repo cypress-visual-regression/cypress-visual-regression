@@ -1,5 +1,5 @@
-const compareSnapshotCommand = require('../../dist/command.js');
 const path = require('path');
+const compareSnapshotCommand = require('../../dist/command.js');
 
 function compareSnapshotTestCommand() {
   Cypress.Commands.add('compareSnapshotTest', { prevSubject: 'optional' }, (subject, name, params = 0.0) => {
@@ -12,27 +12,20 @@ function compareSnapshotTestCommand() {
       // eslint-disable-next-line prefer-object-spread
       screenshotOptions = Object.assign({}, params);
     }
-    // get image title from the 'type' environment variable
-    let title = 'actual';
-    if (Cypress.env('type') === 'base') {
-      title = 'base';
-    }
 
     const specDirectory = Cypress.spec.relative.replace('cypress/e2e', '');
-    const screenshotPath = path.join(specDirectory, `${name}-${title}`);
-
     // take snapshot
     if (subject) {
-      cy.get(subject).screenshot(`${name}-${title}`, screenshotOptions);
+      cy.get(subject).screenshot(name, screenshotOptions);
     } else {
-      cy.screenshot(`${name}-${title}`, screenshotOptions);
+      cy.screenshot(name, screenshotOptions);
     }
 
     // run visual tests
     if (Cypress.env('type') === 'actual') {
       const options = {
         fileName: name,
-        specDirectory: specDirectory,
+        specDirectory,
         failSilently: Cypress.env('failSilently') !== undefined ? Cypress.env('failSilently') : true
       };
       cy.task('compareSnapshotsPlugin', options).then(results => {

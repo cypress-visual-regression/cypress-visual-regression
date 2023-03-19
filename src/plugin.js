@@ -54,9 +54,10 @@ async function updateSnapshot(args) {
   const fromPath = path.join(
     snapshotActualDirectory,
     specDirectory,
-    `${name}-actual.png`
+    `${name}.png`
   );
-  const destFile = path.join(destDir, `${name}-base.png`);
+
+  const destFile = path.join(destDir, `${name}.png`);
 
   return createFolder(destDir, false)
     .then(() => fsp.copyFile(fromPath, destFile))
@@ -85,17 +86,17 @@ async function compareSnapshotsPlugin(args) {
     actualImage: path.join(
       CYPRESS_SCREENSHOT_DIR,
       args.specDirectory,
-      `${fileName}-actual.png`
+      `${fileName}.png`
     ),
     expectedImage: path.join(
       snapshotBaseDirectory,
       args.specDirectory,
-      `${fileName}-base.png`
+      `${fileName}.png`
     ),
     diffImage: path.join(
       snapshotDiffDirectory,
       args.specDirectory,
-      `${fileName}-diff.png`
+      `${fileName}.png`
     ),
   };
 

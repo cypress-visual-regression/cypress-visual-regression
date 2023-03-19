@@ -35,10 +35,13 @@ function takeScreenshot(subject, name, screenshotOptions) {
   }
 
   objToOperateOn
-    .screenshot(`${name}-actual`, { ...screenshotOptions, onAfterScreenshot })
+    .screenshot(name, {
+      ...screenshotOptions,
+      onAfterScreenshot,
+    })
     .then(() => {
       cy.task('moveSnapshot', {
-        fileName: `${name}-actual.png`,
+        fileName: `${name}.png`,
         fromPath: screenshotPath,
         specDirectory: getSpecRelativePath(),
       });
