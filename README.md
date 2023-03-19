@@ -22,11 +22,9 @@ const { defineConfig } = require("cypress");
 const getCompareSnapshotsPlugin = require('cypress-visual-regression/dist/plugin');
 
 module.exports = defineConfig({
-  env: {
-    screenshotsFolder: './cypress/snapshots/actual',
-    trashAssetsBeforeRuns: true,
-    video: false
-  },
+  screenshotsFolder: './cypress/snapshots/actual',
+  trashAssetsBeforeRuns: true,
+  video: false,
   e2e: {
     setupNodeEvents(on, config) {
       getCompareSnapshotsPlugin(on, config);
@@ -125,23 +123,25 @@ These will be used by default when no parameters are passed to the `compareSnaps
 
 You can control where snapshots should be located by setting two environment variables:
 
-| Variable | Description |
-|----------|-------------|
-| SNAPSHOT_BASE_DIRECTORY | Directory of the base snapshots |
-| SNAPSHOT_DIFF_DIRECTORY | Directory for the snapshot diff |
+| Variable                  | Description                                     |
+|---------------------------|-------------------------------------------------|
+| SNAPSHOT_BASE_DIRECTORY   | Directory of the base snapshots                 |
+| SNAPSHOT_DIFF_DIRECTORY   | Directory for the snapshot difference           |
+| INTEGRATION_FOLDER        | Used for computing correct snapshot directories |
 
 The `actual` directory always points to the configured screenshot directory.
 
+For more information regarding `INTEGRATION_FOLDER` please refer to [PR#139](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/139)
 
 **Configure snapshot generation**
 
 In order to control the creation of diff images you may want to use the following environment variables which are
 typically set by using the field `env` in configuration in `cypress.config.json`.
 
-| Variable                        | Description                |
-|---------------------------------|----------------------------|
-| ALWAYS_GENERATE_DIFF            | Boolean, defaults to true  |
-| ALLOW_VISUAL_REGRESSION_TO_FAIL | Boolean, defaults to false |
+| Variable                        | Description                  |
+|---------------------------------|------------------------------|
+| ALWAYS_GENERATE_DIFF            | Boolean, defaults to `true`  |
+| ALLOW_VISUAL_REGRESSION_TO_FAIL | Boolean, defaults to `false` |
 
 
 `ALWAYS_GENERATE_DIFF` specifies if diff images are generated for successful tests.
