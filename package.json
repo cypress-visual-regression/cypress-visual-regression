@@ -23,16 +23,23 @@
     "prettier:fix": "prettier --write --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
     "jest": "jest tests"
   },
+  "dependencies": {
+    "pixelmatch": "^5.2.1",
+    "pngjs": "^6.0.0",
+    "sanitize-filename": "^1.6.3"
+  },
   "devDependencies": {
     "@babel/cli": "^7.17.10",
     "@babel/plugin-proposal-optional-chaining": "^7.18.9",
+    "@tsconfig/node18": "^1.0.1",
     "eslint": "^8.18.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "jest": "^28.1.1",
     "prettier": "2.7.1",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "typescript": "^5.0.2"
   },
   "peerDependencies": {
     "cypress": ">=9.7.0"
@@ -45,10 +52,5 @@
     "docker",
     "tests"
   ],
-  "dependencies": {
-    "pixelmatch": "^5.2.1",
-    "pngjs": "^6.0.0",
-    "sanitize-filename": "^1.6.3"
-  },
   "types": "dist/command.d.ts"
 }
