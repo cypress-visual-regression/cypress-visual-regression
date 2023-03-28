@@ -13,7 +13,7 @@ function compareSnapshotTestCommand() {
       screenshotOptions = Object.assign({}, params);
     }
 
-    const specDirectory = Cypress.spec.relative.replace('cypress/e2e', '');
+    const specDirectory = Cypress.spec.relative.replace(path.join('cypress', 'e2e'), '');
     // take snapshot
     if (subject) {
       cy.get(subject).screenshot(name, screenshotOptions);
