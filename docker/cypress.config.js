@@ -1,9 +1,9 @@
 const { defineConfig } = require("cypress");
 const fs = require("fs");
-const getCompareSnapshotsPlugin = require('./dist/plugin.js');
+const getCompareSnapshotsPlugin = require("./dist/plugin.js");
 
 module.exports = defineConfig({
-  screenshotsFolder: './cypress/snapshots/actual',
+  screenshotsFolder: "./cypress/snapshots/actual",
   trashAssetsBeforeRuns: true,
   video: false,
   e2e: {
@@ -11,8 +11,8 @@ module.exports = defineConfig({
       getCompareSnapshotsPlugin(on, config);
 
       on("task", {
-        doesExist: path => fs.existsSync(path)
-      })
+        doesExist: (path) => fs.existsSync(path),
+      });
     },
   },
 });

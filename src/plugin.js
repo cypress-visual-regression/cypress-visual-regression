@@ -1,18 +1,18 @@
-const fs = require('fs');
-const fsp = require('fs/promises');
-const path = require('path');
+const fs = require("fs");
+const fsp = require("fs/promises");
+const path = require("path");
 
-const { PNG } = require('pngjs');
-const pixelmatch = require('pixelmatch');
-const sanitize = require('sanitize-filename');
+const { PNG } = require("pngjs");
+const pixelmatch = require("pixelmatch");
+const sanitize = require("sanitize-filename");
 
 const {
   adjustCanvas,
   createFolder,
   parseImage,
   errorSerialize,
-} = require('./utils');
-const { getValueOrDefault } = require('./utils-browser');
+} = require("./utils");
+const { getValueOrDefault } = require("./utils-browser");
 
 let CYPRESS_SCREENSHOT_DIR;
 
@@ -20,7 +20,7 @@ function setupScreenshotPath(config) {
   // use cypress default path as fallback
   CYPRESS_SCREENSHOT_DIR = getValueOrDefault(
     config?.screenshotsFolder,
-    'cypress/screenshots'
+    "cypress/screenshots"
   );
 }
 
@@ -43,11 +43,11 @@ async function updateSnapshot(args) {
     args;
   const toDir = getValueOrDefault(
     snapshotBaseDirectory,
-    path.join(process.cwd(), 'cypress', 'snapshots', 'base')
+    path.join(process.cwd(), "cypress", "snapshots", "base")
   );
   const snapshotActualDirectory = getValueOrDefault(
     screenshotsFolder,
-    'cypress/screenshots'
+    "cypress/screenshots"
   );
 
   const destDir = path.join(toDir, specDirectory);
@@ -71,11 +71,11 @@ async function updateSnapshot(args) {
 async function compareSnapshotsPlugin(args) {
   const snapshotBaseDirectory = getValueOrDefault(
     args.baseDir,
-    path.join(process.cwd(), 'cypress', 'snapshots', 'base')
+    path.join(process.cwd(), "cypress", "snapshots", "base")
   );
   const snapshotDiffDirectory = getValueOrDefault(
     args.diffDir,
-    path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
+    path.join(process.cwd(), "cypress", "snapshots", "diff")
   );
   const alwaysGenerateDiff = !(args.keepDiff === false);
   const allowVisualRegressionToFail = args.allowVisualRegressionToFail === true;
@@ -158,7 +158,7 @@ async function compareSnapshotsPlugin(args) {
  * (Also installs an internally used plugin to move snapshot files). */
 function getCompareSnapshotsPlugin(on, config) {
   setupScreenshotPath(config);
-  on('task', {
+  on("task", {
     compareSnapshotsPlugin,
     moveSnapshot,
     updateSnapshot,

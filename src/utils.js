@@ -1,6 +1,6 @@
-const fs = require('fs');
+const fs = require("fs");
 
-const { PNG } = require('pngjs');
+const { PNG } = require("pngjs");
 
 function adjustCanvas(image, width, height) {
   if (image.width === width && image.height === height) {
@@ -59,11 +59,11 @@ const parseImage = async (image) => {
     const fd = fs.createReadStream(image);
     /* eslint-disable func-names */
     fd.pipe(new PNG())
-      .on('parsed', function () {
+      .on("parsed", function () {
         const that = this;
         resolve(that);
       })
-      .on('error', (error) => reject(error));
+      .on("error", (error) => reject(error));
     /* eslint-enable func-names */
   });
 };

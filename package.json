@@ -11,14 +11,15 @@
     "cypress"
   ],
   "scripts": {
+    "lint": "eslint --ignore-path .eslintignore --ext .js,.ts ./src",
+    "lint:fix": "eslint --ignore-path .eslintignore --fix --ext .js,.ts ./src",
+    "format": "prettier --ignore-path .gitignore --check \"**/*.+(js|ts|json)\"",
     "format:fix": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
-    "format:check": "prettier --ignore-path .gitignore --check \"**/*.+(js|ts|json)\"",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "./node_modules/.bin/cypress run --env type=actual",
     "base": "./node_modules/.bin/cypress run --env type=base",
     "_prepublish": "npm run jest && npm run lint && npm run prettier:check && npm run build",
-    "lint": "eslint --ignore-path .eslintignore --ext .js,.ts ./src",
     "prebuild": "rimraf dist",
     "prepare": "npm run build",
     "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
