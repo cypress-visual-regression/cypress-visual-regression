@@ -17,13 +17,13 @@
     "format:fix": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "build": "tsc",
     "watch": "tsc -w",
+    "unit-test": "vitest",
     "test": "./node_modules/.bin/cypress run --env type=actual",
     "base": "./node_modules/.bin/cypress run --env type=base",
     "_prepublish": "npm run jest && npm run lint && npm run prettier:check && npm run build",
     "prebuild": "rimraf dist",
     "prepare": "npm run build",
-    "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
-    "jest": "jest tests"
+    "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test"
   },
   "dependencies": {
     "debug": "^4.3.4",
@@ -43,10 +43,10 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-promise": "^6.1.1",
-    "jest": "^28.1.1",
     "prettier": "^2.8.7",
     "rimraf": "^3.0.2",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.2",
+    "vitest": "^0.29.8"
   },
   "peerDependencies": {
     "cypress": ">=12.9.0"
