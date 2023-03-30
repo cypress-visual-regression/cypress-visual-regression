@@ -199,7 +199,7 @@ it('should display the login page correctly', () => {
   });
 });
 ```
-> Looking for more examples? Review [docker/cypress/integration/main.spec.js](https://github.com/mjhea0/cypress-visual-regression/blob/master/docker/cypress/integration/main.spec.js).
+> Looking for more examples? Review [docker/cypress/e2e/main.cy.js](https://github.com/mjhea0/cypress-visual-regression/blob/master/docker/cypress/e2e/main.cy.js).
 
 
 Take the base images:
