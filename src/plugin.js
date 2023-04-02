@@ -4,7 +4,6 @@ const path = require('path');
 
 const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
-const sanitize = require('sanitize-filename');
 
 const {
   adjustCanvas,
@@ -80,7 +79,7 @@ async function compareSnapshotsPlugin(args) {
   const alwaysGenerateDiff = !(args.keepDiff === false);
   const allowVisualRegressionToFail = args.allowVisualRegressionToFail === true;
 
-  const fileName = sanitize(args.fileName);
+  const { fileName } = args;
 
   const options = {
     actualImage: path.join(
@@ -133,7 +132,7 @@ async function compareSnapshotsPlugin(args) {
     percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5;
 
     if (percentage > args.errorThreshold) {
-      const specFolder = path.join(snapshotDiffDirectory, args.specDirectory);
+      const specFolder = path.dirname(options.diffImage);
       await createFolder(specFolder, args.failSilently);
       diff.pack().pipe(fs.createWriteStream(options.diffImage));
       if (!allowVisualRegressionToFail)
@@ -141,7 +140,7 @@ async function compareSnapshotsPlugin(args) {
           `The "${fileName}" image is different. Threshold limit exceeded! \nExpected: ${args.errorThreshold} \nActual: ${percentage}`
         );
     } else if (alwaysGenerateDiff) {
-      const specFolder = path.join(snapshotDiffDirectory, args.specDirectory);
+      const specFolder = path.dirname(options.diffImage);
       await createFolder(specFolder, args.failSilently);
       diff.pack().pipe(fs.createWriteStream(options.diffImage));
     }
