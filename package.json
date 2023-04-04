@@ -34,6 +34,10 @@
     "prettier": "2.7.1",
     "rimraf": "^3.0.2"
   },
+  "prettier": {
+    "printWidth": 120,
+    "singleQuote": true
+  },
   "peerDependencies": {
     "cypress": ">=9.7.0"
   },
