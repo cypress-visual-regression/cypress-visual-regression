@@ -19,8 +19,8 @@
     "build": "tsc --project tsconfig.json",
     "prepare": "npm run build",
     "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
-    "prettier:check": "prettier --check --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
-    "prettier:fix": "prettier --write --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
+    "prettier:check": "prettier --check src/**/*.js",
+    "prettier:fix": "prettier --write src/**/*.js",
     "jest": "jest tests"
   },
   "devDependencies": {

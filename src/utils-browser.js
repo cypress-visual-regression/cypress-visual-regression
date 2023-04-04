@@ -7,8 +7,7 @@ class CompareSnapshotsPluginError extends Error {
   }
 }
 
-const deserializeError = (error) =>
-  new CompareSnapshotsPluginError(JSON.parse(error));
+const deserializeError = (error) => new CompareSnapshotsPluginError(JSON.parse(error));
 
 const getValueOrDefault = (value, defaultValue) => value || defaultValue;
 
