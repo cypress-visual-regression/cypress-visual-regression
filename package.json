@@ -16,7 +16,7 @@
     "prepublish": "npm run jest && npm run lint && npm run prettier:check && npm run build",
     "lint": "eslint src",
     "prebuild": "rimraf dist",
-    "build": "babel src --out-dir dist --extensions \".js\" --copy-files --plugins @babel/plugin-proposal-optional-chaining",
+    "build": "tsc --project tsconfig.json",
     "prepare": "npm run build",
     "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
     "prettier:check": "prettier --check --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
@@ -24,15 +24,17 @@
     "jest": "jest tests"
   },
   "devDependencies": {
-    "@babel/cli": "^7.17.10",
-    "@babel/plugin-proposal-optional-chaining": "^7.18.9",
+    "@tsconfig/esm": "1.0.2",
+    "@tsconfig/node18": "1.0.1",
+    "@tsconfig/strictest": "2.0.0",
     "eslint": "^8.18.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "jest": "^28.1.1",
     "prettier": "2.7.1",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "typescript": "5.0.3"
   },
   "prettier": {
     "printWidth": 120,

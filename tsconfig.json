@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "allowJs": true
+  },
+  "extends": ["@tsconfig/node18/tsconfig", "@tsconfig/esm/tsconfig.json"],
+  "exclude": ["docker", "tests"]
+}
