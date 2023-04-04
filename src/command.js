@@ -16,10 +16,7 @@ function getErrorThreshold(defaultScreenshotOptions, params) {
 }
 
 function getSpecRelativePath() {
-  const integrationFolder = getValueOrDefault(
-    Cypress.env('INTEGRATION_FOLDER'),
-    'cypress/e2e'
-  );
+  const integrationFolder = getValueOrDefault(Cypress.env('INTEGRATION_FOLDER'), 'cypress/e2e');
 
   return Cypress.spec.relative.replace(integrationFolder, '');
 }
@@ -78,39 +75,28 @@ function compareScreenshots(name, errorThreshold) {
 
 /** Add custom cypress command to compare image snapshots of an element or the window. */
 function compareSnapshotCommand(defaultScreenshotOptions) {
-  Cypress.Commands.add(
-    'compareSnapshot',
-    { prevSubject: 'optional' },
-    (subject, name, params = {}) => {
-      const type = Cypress.env('type');
-      const screenshotOptions =
-        typeof params === 'object'
-          ? { ...defaultScreenshotOptions, ...params }
-          : { ...defaultScreenshotOptions };
+  Cypress.Commands.add('compareSnapshot', { prevSubject: 'optional' }, (subject, name, params = {}) => {
+    const type = Cypress.env('type');
+    const screenshotOptions =
+      typeof params === 'object' ? { ...defaultScreenshotOptions, ...params } : { ...defaultScreenshotOptions };
 
-      takeScreenshot(subject, name, screenshotOptions);
+    takeScreenshot(subject, name, screenshotOptions);
 
-      switch (type) {
-        case 'actual':
-          compareScreenshots(
-            name,
-            getErrorThreshold(defaultScreenshotOptions, params)
-          );
+    switch (type) {
+      case 'actual':
+        compareScreenshots(name, getErrorThreshold(defaultScreenshotOptions, params));
 
-          break;
+        break;
 
-        case 'base':
-          updateScreenshot(name);
+      case 'base':
+        updateScreenshot(name);
 
-          break;
+        break;
 
-        default:
-          throw new Error(
-            `The "type" environment variable is unknown. \nExpected: "actual" or "base" \nActual: ${type}`
-          );
-      }
+      default:
+        throw new Error(`The "type" environment variable is unknown. \nExpected: "actual" or "base" \nActual: ${type}`);
     }
-  );
+  });
 }
 
 /* eslint-enable no-undef */

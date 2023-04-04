@@ -6,22 +6,14 @@ const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
 const sanitize = require('sanitize-filename');
 
-const {
-  adjustCanvas,
-  createFolder,
-  parseImage,
-  errorSerialize,
-} = require('./utils');
+const { adjustCanvas, createFolder, parseImage, errorSerialize } = require('./utils');
 const { getValueOrDefault } = require('./utils-browser');
 
 let CYPRESS_SCREENSHOT_DIR;
 
 function setupScreenshotPath(config) {
   // use cypress default path as fallback
-  CYPRESS_SCREENSHOT_DIR = getValueOrDefault(
-    config?.screenshotsFolder,
-    'cypress/screenshots'
-  );
+  CYPRESS_SCREENSHOT_DIR = getValueOrDefault(config?.screenshotsFolder, 'cypress/screenshots');
 }
 
 /** Move the generated snapshot .png file to its new path.
@@ -39,23 +31,12 @@ async function moveSnapshot(args) {
 /** Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
 async function updateSnapshot(args) {
-  const { name, screenshotsFolder, snapshotBaseDirectory, specDirectory } =
-    args;
-  const toDir = getValueOrDefault(
-    snapshotBaseDirectory,
-    path.join(process.cwd(), 'cypress', 'snapshots', 'base')
-  );
-  const snapshotActualDirectory = getValueOrDefault(
-    screenshotsFolder,
-    'cypress/screenshots'
-  );
+  const { name, screenshotsFolder, snapshotBaseDirectory, specDirectory } = args;
+  const toDir = getValueOrDefault(snapshotBaseDirectory, path.join(process.cwd(), 'cypress', 'snapshots', 'base'));
+  const snapshotActualDirectory = getValueOrDefault(screenshotsFolder, 'cypress/screenshots');
 
   const destDir = path.join(toDir, specDirectory);
-  const fromPath = path.join(
-    snapshotActualDirectory,
-    specDirectory,
-    `${name}.png`
-  );
+  const fromPath = path.join(snapshotActualDirectory, specDirectory, `${name}.png`);
 
   const destFile = path.join(destDir, `${name}.png`);
 
@@ -83,21 +64,9 @@ async function compareSnapshotsPlugin(args) {
   const fileName = sanitize(args.fileName);
 
   const options = {
-    actualImage: path.join(
-      CYPRESS_SCREENSHOT_DIR,
-      args.specDirectory,
-      `${fileName}.png`
-    ),
-    expectedImage: path.join(
-      snapshotBaseDirectory,
-      args.specDirectory,
-      `${fileName}.png`
-    ),
-    diffImage: path.join(
-      snapshotDiffDirectory,
-      args.specDirectory,
-      `${fileName}.png`
-    ),
+    actualImage: path.join(CYPRESS_SCREENSHOT_DIR, args.specDirectory, `${fileName}.png`),
+    expectedImage: path.join(snapshotBaseDirectory, args.specDirectory, `${fileName}.png`),
+    diffImage: path.join(snapshotDiffDirectory, args.specDirectory, `${fileName}.png`),
   };
 
   let mismatchedPixels = 0;
@@ -111,16 +80,8 @@ async function compareSnapshotsPlugin(args) {
       height: Math.max(imgActual.height, imgExpected.height),
     });
 
-    const imgActualFullCanvas = adjustCanvas(
-      imgActual,
-      diff.width,
-      diff.height
-    );
-    const imgExpectedFullCanvas = adjustCanvas(
-      imgExpected,
-      diff.width,
-      diff.height
-    );
+    const imgActualFullCanvas = adjustCanvas(imgActual, diff.width, diff.height);
+    const imgExpectedFullCanvas = adjustCanvas(imgExpected, diff.width, diff.height);
 
     mismatchedPixels = pixelmatch(
       imgActualFullCanvas.data,
