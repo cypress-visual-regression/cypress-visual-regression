@@ -2,26 +2,39 @@
   "name": "cypress-visual-regression",
   "version": "3.0.0",
   "description": "Module for adding visual regression testing to Cypress",
-  "repository": "https://github.com/cypress-visual-regression/cypress-visual-regression",
-  "author": "Michael Herman <michael@mherman.org>",
-  "license": "MIT",
   "keywords": [
     "visual regression",
     "image diff",
     "cypress"
   ],
+  "repository": "https://github.com/cypress-visual-regression/cypress-visual-regression",
+  "license": "MIT",
+  "author": "Michael Herman <michael@mherman.org>",
+  "types": "dist/command.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
-    "test": "./node_modules/.bin/cypress run --env type=actual",
-    "base": "./node_modules/.bin/cypress run --env type=base",
-    "prepublish": "npm run jest && npm run lint && npm run prettier:check && npm run build",
-    "lint": "eslint src",
     "prebuild": "rimraf dist",
     "build": "tsc --project tsconfig.json",
-    "prepare": "npm run build",
     "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
+    "jest": "jest tests",
+    "lint": "eslint src",
+    "prepare": "npm run build",
     "prettier:check": "prettier --check src/**/*.js",
     "prettier:fix": "prettier --write src/**/*.js",
-    "jest": "jest tests"
+    "prepublish": "npm run jest && npm run lint && npm run prettier:check && npm run build",
+    "vr:base": "cypress run --env type=base",
+    "vr:test": "cypress run --env type=actual"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "singleQuote": true
+  },
+  "dependencies": {
+    "pixelmatch": "^5.2.1",
+    "pngjs": "^6.0.0",
+    "sanitize-filename": "^1.6.3"
   },
   "devDependencies": {
     "@tsconfig/esm": "1.0.2",
@@ -36,25 +49,12 @@
     "rimraf": "^3.0.2",
     "typescript": "5.0.3"
   },
-  "prettier": {
-    "printWidth": 120,
-    "singleQuote": true
-  },
   "peerDependencies": {
     "cypress": ">=9.7.0"
   },
-  "files": [
-    "dist/**/*"
-  ],
   "ignore": [
     "src",
     "docker",
     "tests"
-  ],
-  "dependencies": {
-    "pixelmatch": "^5.2.1",
-    "pngjs": "^6.0.0",
-    "sanitize-filename": "^1.6.3"
-  },
-  "types": "dist/command.d.ts"
+  ]
 }
