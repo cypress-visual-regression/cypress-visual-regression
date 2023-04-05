@@ -12,6 +12,8 @@ plugins:
 
 extends:
   - 'eslint:recommended'
+  - 'airbnb-base'
+  - 'airbnb-typescript/base'
   - 'plugin:@typescript-eslint/recommended'
   - 'plugin:@typescript-eslint/recommended-requiring-type-checking'
   - 'plugin:promise/recommended'
@@ -24,3 +26,8 @@ settings:
   import/resolver:
     typescript: true
     node: true
+
+rules:
+  'import/prefer-default-export': 'off'
+  'import/no-default-export': 'error'
+  'import/no-unresolved': 'error'
