@@ -18,12 +18,12 @@
     "prebuild": "rimraf dist",
     "build": "tsc --project tsconfig.json",
     "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
-    "test": "jest",
     "lint": "eslint src",
     "prepare": "npm run build",
     "prettier:check": "prettier --check src/**/*.js",
     "prettier:fix": "prettier --write src/**/*.js",
     "prepublish": "npm run test && npm run lint && npm run prettier:check && npm run build",
+    "test": "jest",
     "vr:base": "cypress run --env type=base",
     "vr:test": "cypress run --env type=actual"
   },
@@ -48,10 +48,16 @@
     "@types/jest": "29.5.0",
     "@types/pixelmatch": "5.2.4",
     "@types/pngjs": "6.0.1",
-    "eslint": "^8.18.0",
+    "@typescript-eslint/eslint-plugin": "5.57.1",
+    "@typescript-eslint/parser": "5.57.1",
+    "eslint": "8.37.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.26.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-import-resolver-typescript": "3.5.4",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-n": "15.7.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-promise": "6.1.1",
     "jest": "29.5.0",
     "prettier": "2.7.1",
     "rimraf": "^3.0.2",
@@ -65,5 +71,8 @@
     "src",
     "docker",
     "tests"
-  ]
+  ],
+  "overrides": {
+    "tsconfig-paths": "^4.0.0"
+  }
 }

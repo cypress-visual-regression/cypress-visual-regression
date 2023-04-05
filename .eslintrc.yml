@@ -1,0 +1,26 @@
+parser: '@typescript-eslint/parser'
+parserOptions:
+  project: './tsconfig.json'
+
+ignorePatterns:
+  - 'build'
+
+plugins:
+  - '@typescript-eslint'
+  - 'prettier'
+  - 'import'
+
+extends:
+  - 'eslint:recommended'
+  - 'plugin:@typescript-eslint/recommended'
+  - 'plugin:@typescript-eslint/recommended-requiring-type-checking'
+  - 'plugin:promise/recommended'
+  - 'plugin:import/recommended'
+  - 'plugin:import/typescript'
+  - 'plugin:n/recommended'
+  - 'plugin:prettier/recommended'
+
+settings:
+  import/resolver:
+    typescript: true
+    node: true
