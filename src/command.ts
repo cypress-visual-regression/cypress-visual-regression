@@ -119,4 +119,6 @@ export function compareSnapshotCommand(
   );
 }
 
-export default compareSnapshotCommand;
+// Re-export as module.exports for compatibility with CommonJS.
+// This will allow you to require this module using require()
+module.exports = compareSnapshotCommand;
