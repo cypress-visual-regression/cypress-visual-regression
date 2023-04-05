@@ -1,14 +1,25 @@
+interface ErrorProperties {
+  [key: string]: any;
+}
+
 class CompareSnapshotsPluginError extends Error {
-  constructor(error) {
+  [prop: string]: any;
+
+  constructor(error: Error) {
     super(error.message);
+
     Object.getOwnPropertyNames(error).forEach((prop) => {
-      this[prop] = error[prop];
+      this[prop] = (error as ErrorProperties)[prop];
     });
   }
 }
 
-const deserializeError = (error) => new CompareSnapshotsPluginError(JSON.parse(error));
+const deserializeError = (error: string): CompareSnapshotsPluginError => {
+  return new CompareSnapshotsPluginError(JSON.parse(error));
+};
 
-const getValueOrDefault = (value, defaultValue) => value || defaultValue;
+const getValueOrDefault = <T>(value: T | undefined, defaultValue: T): T => {
+  return value !== undefined ? value : defaultValue;
+};
 
-module.exports = { deserializeError, getValueOrDefault };
+export { CompareSnapshotsPluginError, deserializeError, getValueOrDefault };

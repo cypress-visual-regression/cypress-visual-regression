@@ -1,9 +1,21 @@
-const { deserializeError, getValueOrDefault } = require('./utils-browser');
+import { deserializeError, getValueOrDefault } from './utils-browser';
 
-/* eslint-disable no-undef */
+interface CompareSnapshotOptions {
+  errorThreshold: number;
+}
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      compareSnapshot(name: string): void;
+      compareSnapshot(name: string, errorThreshold?: number): void;
+      compareSnapshot(name: string, options?: Partial<Cypress.ScreenshotOptions | CompareSnapshotOptions>): void;
+    }
+  }
+}
 
 /** Return the errorThreshold from the options settings */
-function getErrorThreshold(defaultScreenshotOptions, params) {
+function getErrorThreshold(defaultScreenshotOptions: any, params: any): number {
   if (typeof params === 'number') {
     return params;
   }
@@ -15,19 +27,19 @@ function getErrorThreshold(defaultScreenshotOptions, params) {
   return getValueOrDefault(defaultScreenshotOptions?.errorThreshold, 0);
 }
 
-function getSpecRelativePath() {
+function getSpecRelativePath(): string {
   const integrationFolder = getValueOrDefault(Cypress.env('INTEGRATION_FOLDER'), 'cypress/e2e');
 
   return Cypress.spec.relative.replace(integrationFolder, '');
 }
 
 /** Take a screenshot and move screenshot to base or actual folder */
-function takeScreenshot(subject, name, screenshotOptions) {
-  let screenshotPath;
+function takeScreenshot(subject: any, name: string, screenshotOptions: any): void {
+  let screenshotPath: string;
   const objToOperateOn = subject ? cy.get(subject) : cy;
 
   // save the path to forward between screenshot and move tasks
-  function onAfterScreenshot(_doc, props) {
+  function onAfterScreenshot(_doc: any, props: any): void {
     screenshotPath = props.path;
   }
 
@@ -45,7 +57,7 @@ function takeScreenshot(subject, name, screenshotOptions) {
     });
 }
 
-function updateScreenshot(name) {
+function updateScreenshot(name: string): void {
   cy.task('updateSnapshot', {
     name,
     specDirectory: getSpecRelativePath(),
@@ -55,7 +67,7 @@ function updateScreenshot(name) {
 }
 
 /** Call the plugin to compare snapshot images and generate a diff */
-function compareScreenshots(name, errorThreshold) {
+function compareScreenshots(name: string, errorThreshold: number): void {
   const options = {
     fileName: name,
     specDirectory: getSpecRelativePath(),
@@ -66,39 +78,45 @@ function compareScreenshots(name, errorThreshold) {
     errorThreshold,
   };
 
-  cy.task('compareSnapshotsPlugin', options).then((results) => {
-    if (results.error) {
+  cy.task('compareSnapshotsPlugin', options).then((results: any) => {
+    if ('error' in results) {
       throw deserializeError(results.error);
     }
   });
 }
 
 /** Add custom cypress command to compare image snapshots of an element or the window. */
-function compareSnapshotCommand(defaultScreenshotOptions) {
-  Cypress.Commands.add('compareSnapshot', { prevSubject: 'optional' }, (subject, name, params = {}) => {
-    const type = Cypress.env('type');
-    const screenshotOptions =
-      typeof params === 'object' ? { ...defaultScreenshotOptions, ...params } : { ...defaultScreenshotOptions };
+export function compareSnapshotCommand(
+  defaultScreenshotOptions?: Partial<Cypress.ScreenshotOptions | CompareSnapshotOptions>
+): void {
+  Cypress.Commands.add(
+    'compareSnapshot',
+    { prevSubject: 'optional' },
+    (subject: any, name: string, params: any = {}): void => {
+      const type = Cypress.env('type');
+      const screenshotOptions =
+        typeof params === 'object' ? { ...defaultScreenshotOptions, ...params } : { ...defaultScreenshotOptions };
 
-    takeScreenshot(subject, name, screenshotOptions);
+      takeScreenshot(subject, name, screenshotOptions);
 
-    switch (type) {
-      case 'actual':
-        compareScreenshots(name, getErrorThreshold(defaultScreenshotOptions, params));
+      switch (type) {
+        case 'actual':
+          compareScreenshots(name, getErrorThreshold(defaultScreenshotOptions, params));
 
-        break;
+          break;
 
-      case 'base':
-        updateScreenshot(name);
+        case 'base':
+          updateScreenshot(name);
 
-        break;
+          break;
 
-      default:
-        throw new Error(`The "type" environment variable is unknown. \nExpected: "actual" or "base" \nActual: ${type}`);
+        default:
+          throw new Error(
+            `The "type" environment variable is unknown. \nExpected: "actual" or "base" \nActual: ${type}`
+          );
+      }
     }
-  });
+  );
 }
 
-/* eslint-enable no-undef */
-
-module.exports = compareSnapshotCommand;
+export default compareSnapshotCommand;

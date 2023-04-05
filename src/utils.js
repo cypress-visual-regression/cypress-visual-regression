@@ -1,17 +1,19 @@
-const fs = require('fs');
+import * as fs from 'fs';
+import { PNG } from 'pngjs';
 
-const { PNG } = require('pngjs');
-
-function adjustCanvas(image, width, height) {
+function adjustCanvas(image: PNG, width: number, height: number): PNG {
   if (image.width === width && image.height === height) {
     // fast-path
     return image;
   }
 
+  console.log('bitDepth is : ', (image as any).bitDepth);
+
   const imageAdjustedCanvas = new PNG({
     width,
     height,
-    bitDepth: image.bitDepth,
+    // todo: bitDepth should not exists on instance of of PNG, should investigate
+    bitDepth: (image as any).bitDepth,
     inputHasAlpha: true,
   });
 
@@ -20,8 +22,7 @@ function adjustCanvas(image, width, height) {
   return imageAdjustedCanvas;
 }
 
-// eslint-disable-next-line arrow-body-style
-const mkdirp = async (folderPath) => {
+const mkdirp = async (folderPath: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     fs.mkdir(folderPath, { recursive: true }, (error) => {
       if (error) {
@@ -33,7 +34,7 @@ const mkdirp = async (folderPath) => {
   });
 };
 
-const createFolder = async (folderPath, failSilently) => {
+const createFolder = async (folderPath: string, failSilently?: boolean): Promise<boolean> => {
   if (!fs.existsSync(folderPath)) {
     try {
       await mkdirp(folderPath);
@@ -48,15 +49,14 @@ const createFolder = async (folderPath, failSilently) => {
   return true;
 };
 
-// eslint-disable-next-line arrow-body-style
-const parseImage = async (image) => {
+const parseImage = async (path: string): Promise<PNG> => {
   return new Promise((resolve, reject) => {
-    if (!fs.existsSync(image)) {
-      reject(new Error(`Snapshot ${image} does not exist.`));
+    if (!fs.existsSync(path)) {
+      reject(new Error(`Snapshot ${path} does not exist.`));
       return;
     }
 
-    const fd = fs.createReadStream(image);
+    const fd = fs.createReadStream(path);
     /* eslint-disable func-names */
     fd.pipe(new PNG())
       .on('parsed', function () {
@@ -68,21 +68,19 @@ const parseImage = async (image) => {
   });
 };
 
-const errorSerialize = (error) =>
+interface ErrorProperties {
+  [key: string]: any;
+}
+
+const errorSerialize = (error: Error): string =>
   JSON.stringify(
     Object.getOwnPropertyNames(error).reduce(
       (obj, prop) =>
         Object.assign(obj, {
-          [prop]: error[prop],
+          [prop]: (error as ErrorProperties)[prop],
         }),
       {}
     )
   );
 
-module.exports = {
-  adjustCanvas,
-  createFolder,
-  mkdirp,
-  parseImage,
-  errorSerialize,
-};
+export { adjustCanvas, createFolder, mkdirp, parseImage, errorSerialize };
