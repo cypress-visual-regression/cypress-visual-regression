@@ -31,6 +31,12 @@
     "printWidth": 120,
     "singleQuote": true
   },
+  "jest": {
+    "preset": "ts-jest",
+    "testMatch": [
+      "<rootDir>/tests/**/*.spec.js"
+    ]
+  },
   "dependencies": {
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
@@ -39,15 +45,17 @@
   "devDependencies": {
     "@tsconfig/node18": "1.0.1",
     "@tsconfig/strictest": "2.0.0",
+    "@types/jest": "29.5.0",
     "@types/pixelmatch": "5.2.4",
     "@types/pngjs": "6.0.1",
     "eslint": "^8.18.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
-    "jest": "^28.1.1",
+    "jest": "29.5.0",
     "prettier": "2.7.1",
     "rimraf": "^3.0.2",
+    "ts-jest": "29.1.0",
     "typescript": "5.0.3"
   },
   "peerDependencies": {
