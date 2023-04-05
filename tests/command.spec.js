@@ -7,8 +7,7 @@ global.Cypress = {
   },
 };
 
-const compareSnapshotCommand = require('../src/command');
-
+const compareSnapshotCommand = require('../src/command.ts');
 
 describe('compareSnapshot command', () => {
   it('should be added', () => {
