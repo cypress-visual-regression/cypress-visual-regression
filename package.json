@@ -40,6 +40,8 @@
     "@tsconfig/esm": "1.0.2",
     "@tsconfig/node18": "1.0.1",
     "@tsconfig/strictest": "2.0.0",
+    "@types/pixelmatch": "5.2.4",
+    "@types/pngjs": "6.0.1",
     "eslint": "^8.18.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
