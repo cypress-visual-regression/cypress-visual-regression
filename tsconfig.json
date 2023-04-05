@@ -1,8 +1,9 @@
 {
+  "extends": ["@tsconfig/node18/tsconfig"],
   "compilerOptions": {
+    "declaration": true,
     "outDir": "dist",
-    "allowJs": true
+    "types": ["cypress"]
   },
-  "extends": ["@tsconfig/node18/tsconfig", "@tsconfig/esm/tsconfig.json"],
-  "exclude": ["docker", "tests"]
+  "include": ["src"]
 }
