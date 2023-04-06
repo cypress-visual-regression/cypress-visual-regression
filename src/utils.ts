@@ -1,86 +1,83 @@
-import * as fs from 'fs'
-import { PNG } from 'pngjs'
+import fs from "fs";
+import { PNG } from "pngjs";
+import Debug from "./debug";
 
-function adjustCanvas(image: PNG, width: number, height: number): PNG {
+const debug = Debug("utils");
+
+export const adjustCanvas = (
+  image: PNG,
+  width: number,
+  height: number
+): PNG => {
   if (image.width === width && image.height === height) {
-    // fast-path
-    return image
+    return image;
   }
-
-  console.log('bitDepth is : ', (image as any).bitDepth)
 
   const imageAdjustedCanvas = new PNG({
     width,
     height,
-    // todo: bitDepth should not exists on instance of of PNG, should investigate
-    bitDepth: (image as any).bitDepth,
-    inputHasAlpha: true
-  })
+    inputHasAlpha: true,
+  });
 
-  PNG.bitblt(image, imageAdjustedCanvas, 0, 0, image.width, image.height, 0, 0)
+  PNG.bitblt(image, imageAdjustedCanvas, 0, 0, image.width, image.height, 0, 0);
 
-  return imageAdjustedCanvas
-}
+  return imageAdjustedCanvas;
+};
 
-const mkdirp = async (folderPath: string): Promise<boolean> => {
-  return await new Promise((resolve, reject) => {
+export const mkdirp = async (folderPath: string): Promise<unknown> =>
+  await new Promise((resolve, reject) => {
     fs.mkdir(folderPath, { recursive: true }, (error) => {
       if (error != null) {
-        console.log(error) // eslint-disable-line no-console
-        reject(new Error(`Error in creating ${folderPath}`))
+        debug("mkdirp error:", error);
+        reject(new Error(`Error in creating ${folderPath}`));
       }
-      resolve(true)
-    })
-  })
-}
+      resolve(true);
+    });
+  });
 
-const createFolder = async (folderPath: string, failSilently?: boolean): Promise<boolean> => {
+export const createFolder = async (
+  folderPath: string,
+  failSilently: boolean
+): Promise<boolean> => {
   if (!fs.existsSync(folderPath)) {
     try {
-      await mkdirp(folderPath)
+      await mkdirp(folderPath);
     } catch (error) {
       if (failSilently) {
-        console.log(error) // eslint-disable-line no-console
-        return false
+        debug("failSilently", error);
+        return false;
       }
-      throw error
+      throw error;
     }
   }
-  return true
-}
+  return true;
+};
 
-const parseImage = async (path: string): Promise<PNG> => {
-  return await new Promise((resolve, reject) => {
-    if (!fs.existsSync(path)) {
-      reject(new Error(`Snapshot ${path} does not exist.`))
-      return
+export const parseImage = async (image: string): Promise<unknown> =>
+  await new Promise((resolve, reject) => {
+    if (!fs.existsSync(image)) {
+      reject(new Error(`Snapshot ${image} does not exist.`));
+      return;
     }
 
-    const fd = fs.createReadStream(path)
-    /* eslint-disable func-names */
+    const fd = fs.createReadStream(image);
+
     fd.pipe(new PNG())
-      .on('parsed', function () {
-        const that = this
-        resolve(that)
+      .on("parsed", function () {
+        resolve(this);
       })
-      .on('error', (error) => {
-        reject(error)
-      })
-    /* eslint-enable func-names */
-  })
-}
+      .on("error", (error) => {
+        reject(error);
+      });
+  });
 
-type ErrorProperties = Record<string, any>
-
-const errorSerialize = (error: Error): string =>
+export const errorSerialize = (error: Record<string, unknown>): string =>
   JSON.stringify(
     Object.getOwnPropertyNames(error).reduce(
       (obj, prop) =>
         Object.assign(obj, {
-          [prop]: (error as ErrorProperties)[prop]
+          [prop]: error[prop],
         }),
       {}
     )
-  )
-
-export { adjustCanvas, createFolder, mkdirp, parseImage, errorSerialize }
+  );
