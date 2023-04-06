@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "outDir": "dist",
-    "types": ["cypress"]
+    "types": ["cypress", "vitest/globals"]
   },
   "include": ["src"]
 }
