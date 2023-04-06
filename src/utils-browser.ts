@@ -1,23 +1,21 @@
-type ErrorProperties = Record<string, any>
+type ErrorOptions = Record<string, string | number>;
 
 class CompareSnapshotsPluginError extends Error {
-  [prop: string]: any
-
-  constructor(error: Error) {
-    super(error.message)
-
+  constructor(error: ErrorOptions) {
+    super(error["message"] as string);
     Object.getOwnPropertyNames(error).forEach((prop) => {
-      this[prop] = (error as ErrorProperties)[prop]
-    })
+      // @ts-expect-error  - we know that the error object has the prop
+      this[prop] = error[prop];
+    });
   }
 }
 
-const deserializeError = (error: string): CompareSnapshotsPluginError => {
-  return new CompareSnapshotsPluginError(JSON.parse(error))
-}
+const deserializeError = (error: string): Error =>
+  new CompareSnapshotsPluginError(JSON.parse(error));
 
-const getValueOrDefault = <T>(value: T | undefined, defaultValue: T): T => {
-  return value !== undefined ? value : defaultValue
-}
+const getValueOrDefault = (
+  value: string | undefined,
+  defaultValue: string
+): string => value ?? defaultValue;
 
-export { CompareSnapshotsPluginError, deserializeError, getValueOrDefault }
+export { deserializeError, getValueOrDefault };
