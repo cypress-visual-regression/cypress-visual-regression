@@ -12,10 +12,9 @@ plugins:
 
 extends:
   - 'eslint:recommended'
-  - 'airbnb-base'
-  - 'airbnb-typescript/base'
   - 'plugin:@typescript-eslint/recommended'
   - 'plugin:@typescript-eslint/recommended-requiring-type-checking'
+  - 'standard-with-typescript'
   - 'plugin:promise/recommended'
   - 'plugin:import/recommended'
   - 'plugin:import/typescript'
@@ -28,6 +27,8 @@ settings:
     node: true
 
 rules:
+  '@typescript-eslint/consistent-type-definitions': ['error', 'type']
+  '@typescript-eslint/promise-function-async': 'off'
   'import/prefer-default-export': 'off'
   'import/no-default-export': 'error'
   'import/no-unresolved': 'error'
