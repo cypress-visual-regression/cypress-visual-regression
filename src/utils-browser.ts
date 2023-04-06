@@ -1,25 +1,23 @@
-interface ErrorProperties {
-  [key: string]: any;
-}
+type ErrorProperties = Record<string, any>
 
 class CompareSnapshotsPluginError extends Error {
-  [prop: string]: any;
+  [prop: string]: any
 
   constructor(error: Error) {
-    super(error.message);
+    super(error.message)
 
     Object.getOwnPropertyNames(error).forEach((prop) => {
-      this[prop] = (error as ErrorProperties)[prop];
-    });
+      this[prop] = (error as ErrorProperties)[prop]
+    })
   }
 }
 
 const deserializeError = (error: string): CompareSnapshotsPluginError => {
-  return new CompareSnapshotsPluginError(JSON.parse(error));
-};
+  return new CompareSnapshotsPluginError(JSON.parse(error))
+}
 
 const getValueOrDefault = <T>(value: T | undefined, defaultValue: T): T => {
-  return value !== undefined ? value : defaultValue;
-};
+  return value !== undefined ? value : defaultValue
+}
 
-export { CompareSnapshotsPluginError, deserializeError, getValueOrDefault };
+export { CompareSnapshotsPluginError, deserializeError, getValueOrDefault }

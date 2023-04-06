@@ -18,10 +18,10 @@
     "prebuild": "rimraf dist",
     "build": "tsc --project tsconfig.json",
     "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
-    "lint": "eslint src",
+    "lint": "eslint src --ext .ts",
     "prepare": "npm run build",
-    "prettier:check": "prettier --check src/**/*.js",
-    "prettier:fix": "prettier --write src/**/*.js",
+    "format:check": "prettier --check src/**/*.ts",
+    "format:fix": "prettier --write src/**/*.ts",
     "prepublish": "npm run test && npm run lint && npm run prettier:check && npm run build",
     "test": "jest",
     "vr:base": "cypress run --env type=base",
@@ -29,7 +29,9 @@
   },
   "prettier": {
     "printWidth": 120,
-    "singleQuote": true
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "none"
   },
   "jest": {
     "preset": "ts-jest",
