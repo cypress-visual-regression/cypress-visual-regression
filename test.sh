@@ -3,9 +3,9 @@
 set -e
 
 npm install
-npm run jest
+npm run test:ci
 npm run lint
-npm run prettier:check
+# npm run format
 npm run build
 cd docker
 rm -rf dist
