@@ -1,4 +1,6 @@
-import fs from "fs";
+import { mkdir } from "fs/promises";
+import { createReadStream, existsSync } from "fs";
+
 import { PNG } from "pngjs";
 import Debug from "./debug";
 
@@ -24,45 +26,33 @@ export const adjustCanvas = (
   return imageAdjustedCanvas;
 };
 
-export const mkdirp = async (folderPath: string): Promise<unknown> =>
-  await new Promise((resolve, reject) => {
-    fs.mkdir(folderPath, { recursive: true }, (error) => {
-      if (error != null) {
-        debug("mkdirp error:", error);
-        reject(new Error(`Error in creating ${folderPath}`));
-      }
-      resolve(true);
-    });
-  });
-
 export const createFolder = async (
   folderPath: string,
-  failSilently: boolean
+  failSilently?: boolean
 ): Promise<boolean> => {
-  if (!fs.existsSync(folderPath)) {
-    try {
-      await mkdirp(folderPath);
-    } catch (error) {
-      if (failSilently) {
-        debug("failSilently", error);
-        return false;
-      }
-      throw error;
+  try {
+    await mkdir(folderPath, { recursive: true });
+    return true;
+  } catch (error) {
+    if (failSilently ?? false) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      debug(`failing silently with error: ${error} `);
+      return false;
     }
+    throw error;
   }
-  return true;
 };
 
-export const parseImage = async (image: string): Promise<unknown> =>
+export const parseImage = async (image: string): Promise<PNG> =>
   await new Promise((resolve, reject) => {
-    if (!fs.existsSync(image)) {
+    if (!existsSync(image)) {
       reject(new Error(`Snapshot ${image} does not exist.`));
       return;
     }
+    const readStream = createReadStream(image);
 
-    const fd = fs.createReadStream(image);
-
-    fd.pipe(new PNG())
+    readStream
+      .pipe(new PNG())
       .on("parsed", function () {
         resolve(this);
       })
