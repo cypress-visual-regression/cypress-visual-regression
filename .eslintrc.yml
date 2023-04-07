@@ -32,3 +32,5 @@ rules:
   'import/prefer-default-export': 'off'
   'import/no-default-export': 'error'
   'import/no-unresolved': 'error'
+  # disabled since it's already covered by the 'import/no-unresolved'
+  'n/no-missing-import': 'off'
