@@ -1,4 +1,4 @@
-import { deserializeError, getValueOrDefault } from './utils-browser'
+import { deserializeError } from './utils-browser'
 
 type CompareSnapshotOptions = {
   errorThreshold: number
@@ -24,11 +24,11 @@ function getErrorThreshold(defaultScreenshotOptions: any, params: any): number {
     return params.errorThreshold
   }
 
-  return getValueOrDefault(defaultScreenshotOptions?.errorThreshold, 0)
+  return defaultScreenshotOptions?.errorThreshold ?? 0
 }
 
 function getSpecRelativePath(): string {
-  const integrationFolder = getValueOrDefault(Cypress.env('INTEGRATION_FOLDER'), 'cypress/e2e')
+  const integrationFolder = Cypress.env('INTEGRATION_FOLDER') ?? 'cypress/e2e'
 
   return Cypress.spec.relative.replace(integrationFolder, '')
 }

@@ -7,7 +7,6 @@ import pixelmatch from 'pixelmatch'
 import sanitize from 'sanitize-filename'
 
 import { adjustCanvas, createFolder, parseImage, errorSerialize } from './utils'
-import { getValueOrDefault } from './utils-browser'
 
 let CYPRESS_SCREENSHOT_DIR: string
 
@@ -40,8 +39,8 @@ type UpdateSnapshotArgs = {
  * The target path is constructed from parts at runtime in node to be OS independent.  */
 async function updateSnapshot(args: UpdateSnapshotArgs) {
   const { name, screenshotsFolder, snapshotBaseDirectory, specDirectory } = args
-  const toDir = getValueOrDefault(snapshotBaseDirectory, path.join(process.cwd(), 'cypress', 'snapshots', 'base'))
-  const snapshotActualDirectory = getValueOrDefault(screenshotsFolder, 'cypress/screenshots')
+  const toDir = snapshotBaseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
+  const snapshotActualDirectory = screenshotsFolder ?? 'cypress/screenshots'
 
   const destDir = path.join(toDir, specDirectory)
   const fromPath = path.join(snapshotActualDirectory, specDirectory, `${name}.png`)
@@ -69,14 +68,8 @@ type CompareSnapshotsPluginArgs = {
  * Uses the pixelmatch library internally.
  */
 async function compareSnapshotsPlugin(args: CompareSnapshotsPluginArgs) {
-  const snapshotBaseDirectory = getValueOrDefault(
-    args.baseDir,
-    path.join(process.cwd(), 'cypress', 'snapshots', 'base')
-  )
-  const snapshotDiffDirectory = getValueOrDefault(
-    args.diffDir,
-    path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
-  )
+  const snapshotBaseDirectory = args.baseDir ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
+  const snapshotDiffDirectory = args.diffDir ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
   const alwaysGenerateDiff = !(args.keepDiff === false)
   const allowVisualRegressionToFail = args.allowVisualRegressionToFail === true
 
@@ -151,7 +144,7 @@ function getCompareSnapshotsPlugin(on: Cypress.PluginEvents, config: PluginConfi
 
 function setupScreenshotPath(config: PluginConfig) {
   // use cypress default path as fallback
-  CYPRESS_SCREENSHOT_DIR = getValueOrDefault(config?.snapshotActualDirectory, 'cypress/screenshots')
+  CYPRESS_SCREENSHOT_DIR = config?.snapshotActualDirectory ?? 'cypress/screenshots'
 }
 
 export default getCompareSnapshotsPlugin
