@@ -12,6 +12,4 @@ class CompareSnapshotsPluginError extends Error {
 
 const deserializeError = (error: string): Error => new CompareSnapshotsPluginError(JSON.parse(error))
 
-const getValueOrDefault = (value: string | undefined, defaultValue: string): string => value ?? defaultValue
-
-export { deserializeError, getValueOrDefault }
+export { deserializeError }
