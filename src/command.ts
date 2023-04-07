@@ -1,4 +1,4 @@
-import { deserializeError } from './utils-browser'
+import { deserializeError } from 'serialize-error'
 
 type CompareSnapshotOptions = {
   errorThreshold: number
