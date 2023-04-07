@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "outDir": "dist",
-    "types": ["cypress", "vitest/globals"]
+    "types": ["vitest/globals"]
   },
-  "include": ["src"]
+  "include": ["src", "vitest.config.ts"]
 }
