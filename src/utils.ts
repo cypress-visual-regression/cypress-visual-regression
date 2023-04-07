@@ -2,9 +2,9 @@ import { mkdir } from 'fs/promises'
 import { createReadStream, existsSync } from 'fs'
 
 import { PNG } from 'pngjs'
-import Debug from './debug'
+import { Logger } from './logger'
 
-const debug = Debug('utils')
+const log = Logger('utils')
 
 export const adjustCanvas = (image: PNG, width: number, height: number): PNG => {
   if (image.width === width && image.height === height) {
@@ -29,7 +29,7 @@ export const createFolder = async (folderPath: string, failSilently?: boolean): 
   } catch (error) {
     if (failSilently ?? false) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      debug(`failing silently with error: ${error} `)
+      log(`failing silently with error: ${error} `)
       return false
     }
     throw error
