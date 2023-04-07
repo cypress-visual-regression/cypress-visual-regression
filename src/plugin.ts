@@ -5,7 +5,7 @@ import * as path from 'path'
 import { PNG } from 'pngjs'
 import pixelmatch from 'pixelmatch'
 import sanitize from 'sanitize-filename'
-import { serializeError } from 'serialize-error'
+import { type ErrorObject, serializeError } from 'serialize-error'
 
 import { adjustCanvas, createFolder, parseImage } from './utils'
 
@@ -19,7 +19,7 @@ type MoveSnapshotArgs = {
 
 /** Move the generated snapshot .png file to its new path.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
-async function moveSnapshot(args: MoveSnapshotArgs) {
+async function moveSnapshot(args: MoveSnapshotArgs): Promise<null> {
   const { fromPath, specDirectory, fileName } = args
   const destDir = path.join(CYPRESS_SCREENSHOT_DIR, specDirectory)
   const destFile = path.join(destDir, fileName)
@@ -38,7 +38,7 @@ type UpdateSnapshotArgs = {
 
 /** Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
-async function updateSnapshot(args: UpdateSnapshotArgs) {
+async function updateSnapshot(args: UpdateSnapshotArgs): Promise<null> {
   const { name, screenshotsFolder, snapshotBaseDirectory, specDirectory } = args
   const toDir = snapshotBaseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotActualDirectory = screenshotsFolder ?? 'cypress/screenshots'
@@ -64,11 +64,17 @@ type CompareSnapshotsPluginArgs = {
   specDirectory: string
 }
 
+type CompareSnapshotResult = {
+  error?: ErrorObject
+  mismatchedPixels?: number
+  percentage?: number
+}
+
 /** Cypress plugin to compare image snapshots & generate a diff image.
  *
  * Uses the pixelmatch library internally.
  */
-async function compareSnapshotsPlugin(args: CompareSnapshotsPluginArgs) {
+async function compareSnapshotsPlugin(args: CompareSnapshotsPluginArgs): Promise<CompareSnapshotResult> {
   const snapshotBaseDirectory = args.baseDir ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = args.diffDir ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
   const alwaysGenerateDiff = !(args.keepDiff === false)
@@ -143,9 +149,9 @@ function getCompareSnapshotsPlugin(on: Cypress.PluginEvents, config: PluginConfi
   })
 }
 
-function setupScreenshotPath(config: PluginConfig) {
+function setupScreenshotPath(config: PluginConfig): void {
   // use cypress default path as fallback
-  CYPRESS_SCREENSHOT_DIR = config?.snapshotActualDirectory ?? 'cypress/screenshots'
+  CYPRESS_SCREENSHOT_DIR = config.snapshotActualDirectory ?? 'cypress/screenshots'
 }
 
 export default getCompareSnapshotsPlugin
