@@ -23,7 +23,7 @@
     "lint": "eslint src --ext .ts",
     "prepublishOnly": "run-s build",
     "preversion": "run-s lint format:check test build",
-    "test": "vitest",
+    "test": "vitest run",
     "vr:base": "cypress run --env type=base",
     "vr:test": "cypress run --env type=actual"
   },
