@@ -1,5 +1,7 @@
 import { PNG } from 'pngjs'
 import { adjustCanvas, createFolder, parseImage } from './utils'
+// should explicitly import expect to get proper typings and make eslint happy
+import { expect } from 'vitest'
 
 vi.mock('fs/promises')
 
@@ -57,8 +59,8 @@ describe('utils module', () => {
       await expect(promise).rejects.toThrow('Snapshot img does not exist.')
     })
     // TODO mock createReadStream
-    it('should return an error on PNG creation', async () => {})
+    // it('should return an error on PNG creation', async () => {})
     // TODO mock createReadStream
-    it('should return a PNG image from reference', async () => {})
+    // it('should return a PNG image from reference', async () => {})
   })
 })

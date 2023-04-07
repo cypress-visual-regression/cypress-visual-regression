@@ -14,6 +14,7 @@ extends:
   - 'eslint:recommended'
   - 'plugin:@typescript-eslint/recommended'
   - 'plugin:@typescript-eslint/recommended-requiring-type-checking'
+  - 'plugin:@typescript-eslint/strict'
   - 'standard-with-typescript'
   - 'plugin:promise/recommended'
   - 'plugin:import/recommended'
@@ -29,7 +30,6 @@ settings:
 rules:
   '@typescript-eslint/consistent-type-definitions': ['error', 'type']
   '@typescript-eslint/promise-function-async': 'off'
-  'import/prefer-default-export': 'off'
   'import/no-default-export': 'error'
   'import/no-unresolved': 'error'
   # disabled since it's already covered by the 'import/no-unresolved'
