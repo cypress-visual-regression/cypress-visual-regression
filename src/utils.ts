@@ -53,14 +53,3 @@ export const parseImage = async (image: string): Promise<PNG> =>
         reject(error)
       })
   })
-
-export const errorSerialize = (error: Record<string, unknown>): string =>
-  JSON.stringify(
-    Object.getOwnPropertyNames(error).reduce(
-      (obj, prop) =>
-        Object.assign(obj, {
-          [prop]: error[prop]
-        }),
-      {}
-    )
-  )

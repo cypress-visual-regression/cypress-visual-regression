@@ -1,5 +1,5 @@
 import { PNG } from 'pngjs'
-import { adjustCanvas, errorSerialize, createFolder, parseImage } from './utils'
+import { adjustCanvas, createFolder, parseImage } from './utils'
 
 vi.mock('fs/promises')
 
@@ -48,14 +48,6 @@ describe('utils module', () => {
       const result = await createFolder('url-path', true)
       expect(fs.mkdir).toHaveBeenCalled()
       expect(result).toEqual(false)
-    })
-  })
-  describe('errorSerialize', () => {
-    it('should serialize an object into a string', () => {
-      const errorObject = { error: "I'm a teapot", code: 418 }
-      const output = errorSerialize(errorObject)
-
-      expect(output).toBe('{"error":"I\'m a teapot","code":418}')
     })
   })
   describe('parseImage', () => {

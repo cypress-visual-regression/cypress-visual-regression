@@ -5,8 +5,9 @@ import * as path from 'path'
 import { PNG } from 'pngjs'
 import pixelmatch from 'pixelmatch'
 import sanitize from 'sanitize-filename'
+import { serializeError } from 'serialize-error'
 
-import { adjustCanvas, createFolder, parseImage, errorSerialize } from './utils'
+import { adjustCanvas, createFolder, parseImage } from './utils'
 
 let CYPRESS_SCREENSHOT_DIR: string
 
@@ -119,7 +120,7 @@ async function compareSnapshotsPlugin(args: CompareSnapshotsPluginArgs) {
       diff.pack().pipe(fs.createWriteStream(options.diffImage))
     }
   } catch (error) {
-    return { error: errorSerialize(error as Error) }
+    return { error: serializeError(error) }
   }
   return {
     mismatchedPixels,
