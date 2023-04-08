@@ -1,15 +1,13 @@
-import * as fs from 'fs'
-import * as fsp from 'fs/promises'
-import * as path from 'path'
-
-import { PNG } from 'pngjs'
+import { createWriteStream, promises as fs } from 'node:fs'
+import path from 'node:path'
 import pixelmatch from 'pixelmatch'
+import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
-import { type ErrorObject, serializeError } from 'serialize-error'
+import { serializeError, type ErrorObject } from 'serialize-error'
 
 import { adjustCanvas, createFolder, parseImage } from './utils'
 
-let CYPRESS_SCREENSHOT_DIR: string
+let CYPRESS_SCREENSHOT_DIR = 'cypress/screenshots'
 
 type MoveSnapshotArgs = {
   fromPath: string
@@ -19,14 +17,12 @@ type MoveSnapshotArgs = {
 
 /** Move the generated snapshot .png file to its new path.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
-async function moveSnapshot(args: MoveSnapshotArgs): Promise<null> {
-  const { fromPath, specDirectory, fileName } = args
+const moveSnapshot = async ({ fromPath, specDirectory, fileName }: MoveSnapshotArgs): Promise<void> => {
   const destDir = path.join(CYPRESS_SCREENSHOT_DIR, specDirectory)
   const destFile = path.join(destDir, fileName)
 
-  return await createFolder(destDir, false)
-    .then(() => fsp.rename(fromPath, destFile))
-    .then(() => null)
+  await createFolder(destDir, false)
+  await fs.rename(fromPath, destFile)
 }
 
 type UpdateSnapshotArgs = {
@@ -38,19 +34,21 @@ type UpdateSnapshotArgs = {
 
 /** Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
-async function updateSnapshot(args: UpdateSnapshotArgs): Promise<null> {
-  const { name, screenshotsFolder, snapshotBaseDirectory, specDirectory } = args
+const updateSnapshot = async ({
+  name,
+  screenshotsFolder,
+  snapshotBaseDirectory,
+  specDirectory
+}: UpdateSnapshotArgs): Promise<void> => {
   const toDir = snapshotBaseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotActualDirectory = screenshotsFolder ?? 'cypress/screenshots'
-
   const destDir = path.join(toDir, specDirectory)
-  const fromPath = path.join(snapshotActualDirectory, specDirectory, `${name}.png`)
 
+  const fromPath = path.join(snapshotActualDirectory, specDirectory, `${name}.png`)
   const destFile = path.join(destDir, `${name}.png`)
 
-  return await createFolder(destDir, false)
-    .then(() => fsp.copyFile(fromPath, destFile))
-    .then(() => null)
+  await createFolder(destDir, false)
+  await fs.copyFile(fromPath, destFile)
 }
 
 type CompareSnapshotsPluginArgs = {
@@ -74,7 +72,7 @@ type CompareSnapshotResult = {
  *
  * Uses the pixelmatch library internally.
  */
-async function compareSnapshotsPlugin(args: CompareSnapshotsPluginArgs): Promise<CompareSnapshotResult> {
+const compareSnapshotsPlugin = async (args: CompareSnapshotsPluginArgs): Promise<CompareSnapshotResult> => {
   const snapshotBaseDirectory = args.baseDir ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = args.diffDir ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
   const alwaysGenerateDiff = !(args.keepDiff === false)
@@ -92,8 +90,10 @@ async function compareSnapshotsPlugin(args: CompareSnapshotsPluginArgs): Promise
   let percentage = 0
   try {
     await createFolder(snapshotDiffDirectory, args.failSilently)
-    const imgExpected = await parseImage(options.expectedImage)
-    const imgActual = await parseImage(options.actualImage)
+    const [imgExpected, imgActual] = await Promise.all([
+      parseImage(options.expectedImage),
+      parseImage(options.actualImage)
+    ])
     const diff = new PNG({
       width: Math.max(imgActual.width, imgExpected.width),
       height: Math.max(imgActual.height, imgExpected.height)
@@ -115,7 +115,7 @@ async function compareSnapshotsPlugin(args: CompareSnapshotsPluginArgs): Promise
     if (percentage > args.errorThreshold) {
       const specFolder = path.join(snapshotDiffDirectory, args.specDirectory)
       await createFolder(specFolder, args.failSilently)
-      diff.pack().pipe(fs.createWriteStream(options.diffImage))
+      diff.pack().pipe(createWriteStream(options.diffImage))
       if (!allowVisualRegressionToFail)
         throw new Error(
           `The "${fileName}" image is different. Threshold limit exceeded! \nExpected: ${args.errorThreshold} \nActual: ${percentage}`
@@ -123,7 +123,7 @@ async function compareSnapshotsPlugin(args: CompareSnapshotsPluginArgs): Promise
     } else if (alwaysGenerateDiff) {
       const specFolder = path.join(snapshotDiffDirectory, args.specDirectory)
       await createFolder(specFolder, args.failSilently)
-      diff.pack().pipe(fs.createWriteStream(options.diffImage))
+      diff.pack().pipe(createWriteStream(options.diffImage))
     }
   } catch (error) {
     return { error: serializeError(error) }
@@ -140,7 +140,7 @@ type PluginConfig = {
 
 /** Install plugin to compare snapshots.
  * (Also installs an internally used plugin to move snapshot files). */
-function getCompareSnapshotsPlugin(on: Cypress.PluginEvents, config: PluginConfig): void {
+const getCompareSnapshotsPlugin = (on: Cypress.PluginEvents, config: PluginConfig): void => {
   setupScreenshotPath(config)
   on('task', {
     compareSnapshotsPlugin,
@@ -149,7 +149,7 @@ function getCompareSnapshotsPlugin(on: Cypress.PluginEvents, config: PluginConfi
   })
 }
 
-function setupScreenshotPath(config: PluginConfig): void {
+const setupScreenshotPath = (config: PluginConfig): void => {
   // use cypress default path as fallback
   CYPRESS_SCREENSHOT_DIR = config.snapshotActualDirectory ?? 'cypress/screenshots'
 }
