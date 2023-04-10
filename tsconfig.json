@@ -5,5 +5,5 @@
     "outDir": "dist",
     "types": ["vitest/globals", "cypress"]
   },
-  "include": ["src", "vitest.config.ts"]
+  "include": ["src"]
 }
