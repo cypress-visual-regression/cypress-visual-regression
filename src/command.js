@@ -1,3 +1,4 @@
+const path = require('path');
 const { deserializeError, getValueOrDefault } = require('./utils-browser');
 
 /* eslint-disable no-undef */
@@ -18,7 +19,7 @@ function getErrorThreshold(defaultScreenshotOptions, params) {
 function getSpecRelativePath() {
   const integrationFolder = getValueOrDefault(
     Cypress.env('INTEGRATION_FOLDER'),
-    'cypress/e2e'
+    path.join('cypress', 'e2e')
   );
 
   return Cypress.spec.relative.replace(integrationFolder, '');
