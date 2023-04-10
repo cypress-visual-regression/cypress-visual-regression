@@ -1,9 +1,16 @@
-describe('Visual Regression Example', () => {
+const path = require('path');
 
+describe('Visual Regression Example', () => {
   it('should display the home page correctly', () => {
     cy.visit('../../web/01.html');
     cy.get('H1').contains('Hello, World');
     cy.compareSnapshot('home');
+  });
+
+  it('should display the home page correctly (subfolder test)', () => {
+    cy.visit('../../web/01.html');
+    cy.get('H1').contains('Hello, World');
+    cy.compareSnapshot(path.join('subfolder', 'home'));
   });
 
   it('handle missing base snapshot file as a failed spec', () => {

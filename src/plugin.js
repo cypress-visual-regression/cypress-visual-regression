@@ -49,7 +49,7 @@ async function updateSnapshot(args) {
     'cypress/screenshots'
   );
 
-  const destDir = path.join(toDir, specDirectory);
+  let destDir = path.join(toDir, specDirectory);
   const fromPath = path.join(
     snapshotActualDirectory,
     specDirectory,
@@ -57,6 +57,7 @@ async function updateSnapshot(args) {
   );
 
   const destFile = path.join(destDir, `${name}.png`);
+  destDir = path.dirname(destFile);
 
   return createFolder(destDir, false)
     .then(() => fsp.copyFile(fromPath, destFile))

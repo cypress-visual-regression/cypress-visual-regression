@@ -8,6 +8,7 @@ describe('errorSerialize', () => {
     expect(serialize).toMatch('"stack":"Error: MATCHED');
     
   });
+
   it('should be deserialize', () => {
     const deserialize = deserializeError(errorSerialize(new Error('MATCHED')));
     expect(deserialize).toMatchObject({ message: 'MATCHED' });

@@ -9,7 +9,6 @@ global.Cypress = {
 
 const compareSnapshotCommand = require('../src/command');
 
-
 describe('compareSnapshot command', () => {
   it('should be added', () => {
     Cypress.Commands.add.mockReset();
