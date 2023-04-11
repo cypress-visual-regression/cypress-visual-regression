@@ -66,8 +66,7 @@
     "cypress": ">=9.7.0"
   },
   "engines": {
-    "node": ">=18",
-    "npm": ">=8"
+    "node": ">=18"
   },
   "ignore": [
     "src",
