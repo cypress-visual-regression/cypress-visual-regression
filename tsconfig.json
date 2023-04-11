@@ -1,29 +1,9 @@
 {
-  "extends": ["@tsconfig/node18/tsconfig"],
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
   "compilerOptions": {
     "declaration": true,
-    "declarationMap": true,
     "outDir": "dist",
     "types": ["vitest/globals", "cypress"]
   },
-  "include": ["src", "vitest.config.ts"],
-  "strict": true,
-  "noImplicitAny": true,
-  "strictNullChecks": true,
-  "strictFunctionTypes": true,
-  "strictBindCallApply": true,
-  "strictPropertyInitialization": true,
-  "noImplicitThis": true,
-  "useUnknownInCatchVariables": true,
-  "alwaysStrict": true,
-  "noUnusedLocals": true,
-  "noUnusedParameters": true,
-  "exactOptionalPropertyTypes": true,
-  "noImplicitReturns": true,
-  "noFallthroughCasesInSwitch": true,
-  "noUncheckedIndexedAccess": true,
-  "noImplicitOverride": true,
-  "noPropertyAccessFromIndexSignature": true,
-  "allowUnusedLabels": true,
-  "allowUnreachableCode": true
+  "include": ["src", "vitest.config.ts"]
 }
