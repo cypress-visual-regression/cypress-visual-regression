@@ -5,3 +5,4 @@ node_modules/
 dist/
 docker/cypress/snapshots/*
 !docker/cypress/snapshots/.gitkeep
+.vscode
