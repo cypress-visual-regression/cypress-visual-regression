@@ -1,4 +1,5 @@
 import fs from 'fs/promises'
+import path from 'node:path'
 import { serializeError } from 'serialize-error'
 import { Logger } from '../logger'
 
@@ -21,5 +22,39 @@ export const createFolder = async (folderPath: string, failSilently = false): Pr
       return false
     }
     throw error
+  }
+}
+
+/**
+ * Moves a file from a source folder to a destination folder.
+ *
+ * @param {string} fileName - The name of the file to move.
+ * @param {string} sourceFolder - The path to the source folder containing the file.
+ * @param {string} destinationFolder - The path to the destination folder where the file will be moved to.
+ * @returns {Promise<void>} A Promise that resolves when the file has been successfully moved or rejects with an error on failure.
+ */
+export const moveFile = async (fileName: string, sourceFolder: string, destinationFolder: string): Promise<void> => {
+  try {
+    const filePath = path.join(sourceFolder, fileName)
+    await fs.access(filePath)
+
+    // Check if destination folder exists
+    try {
+      await fs.access(destinationFolder)
+    } catch (error) {
+      // Create destination folder if it doesn't exist
+      await createFolder(destinationFolder)
+      log(`Created folder ${destinationFolder}`)
+    }
+
+    const destinationFilePath = path.join(destinationFolder, fileName)
+
+    await fs.rename(filePath, destinationFilePath)
+    log(`Moved ${filePath} to ${destinationFilePath}`)
+  } catch (error) {
+    log(
+      `Unable to move ${path.join(sourceFolder, fileName)} to ${path.join(destinationFolder, fileName)}`,
+      serializeError(error)
+    )
   }
 }
