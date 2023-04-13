@@ -3,7 +3,8 @@ parserOptions:
   project: './tsconfig.json'
 
 ignorePatterns:
-  - 'build'
+  - 'dist'
+  - 'vitest.config.ts'
 
 plugins:
   - '@typescript-eslint'
