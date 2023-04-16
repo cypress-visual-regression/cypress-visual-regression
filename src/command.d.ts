@@ -12,4 +12,6 @@ declare global {
   }
 }
 
-export default function compareSnapshotCommand(options?: Partial<Cypress.ScreenshotOptions | CompareSnapshotOptions>): void;
+declare function compareSnapshotCommand(options?: Partial<Cypress.ScreenshotOptions | CompareSnapshotOptions>): void;
+
+export = compareSnapshotCommand;
