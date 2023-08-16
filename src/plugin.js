@@ -78,6 +78,7 @@ async function compareSnapshotsPlugin(args) {
     path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
   );
   const alwaysGenerateDiff = !(args.keepDiff === false);
+  const neverGenerateDiff = args.skipDiff === true;
   const allowVisualRegressionToFail = args.allowVisualRegressionToFail === true;
 
   const fileName = sanitize(args.fileName);
@@ -131,20 +132,18 @@ async function compareSnapshotsPlugin(args) {
       { threshold: 0.1 }
     );
     percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5;
+    const mismatch = percentage > args.errorThreshold;
 
-    if (percentage > args.errorThreshold) {
-      const specFolder = path.join(snapshotDiffDirectory, args.specDirectory);
-      await createFolder(specFolder, args.failSilently);
-      diff.pack().pipe(fs.createWriteStream(options.diffImage));
-      if (!allowVisualRegressionToFail)
-        throw new Error(
-          `The "${fileName}" image is different. Threshold limit exceeded! \nExpected: ${args.errorThreshold} \nActual: ${percentage}`
-        );
-    } else if (alwaysGenerateDiff) {
+    if ((mismatch && !neverGenerateDiff) || alwaysGenerateDiff) {
       const specFolder = path.join(snapshotDiffDirectory, args.specDirectory);
       await createFolder(specFolder, args.failSilently);
       diff.pack().pipe(fs.createWriteStream(options.diffImage));
     }
+
+    if (mismatch && !allowVisualRegressionToFail)
+      throw new Error(
+        `The "${fileName}" image is different. Threshold limit exceeded! \nExpected: ${args.errorThreshold} \nActual: ${percentage}`
+      );
   } catch (error) {
     return { error: errorSerialize(error) };
   }

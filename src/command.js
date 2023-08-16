@@ -59,14 +59,20 @@ function updateScreenshot(name) {
 }
 
 /** Call the plugin to compare snapshot images and generate a diff */
-function compareScreenshots(name, errorThreshold) {
+function compareScreenshots(
+  name,
+  { errorThreshold, keepDiff, skipDiff, allowVisualRegressionToFail }
+) {
   const options = {
     fileName: name,
     specDirectory: getSpecRelativePath(),
     baseDir: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
     diffDir: Cypress.env('SNAPSHOT_DIFF_DIRECTORY'),
-    keepDiff: Cypress.env('ALWAYS_GENERATE_DIFF'),
-    allowVisualRegressionToFail: Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL'),
+    keepDiff: keepDiff || Cypress.env('ALWAYS_GENERATE_DIFF'),
+    skipDiff: skipDiff || Cypress.env('NEVER_GENERATE_DIFF'),
+    allowVisualRegressionToFail:
+      allowVisualRegressionToFail ||
+      Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL'),
     errorThreshold,
   };
 
@@ -93,10 +99,10 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
 
       switch (type) {
         case 'actual':
-          compareScreenshots(
-            name,
-            getErrorThreshold(defaultScreenshotOptions, params)
-          );
+          compareScreenshots(name, {
+            ...screenshotOptions,
+            errorThreshold: getErrorThreshold(defaultScreenshotOptions, params),
+          });
 
           break;
 
