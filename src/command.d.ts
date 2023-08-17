@@ -1,5 +1,8 @@
 interface CompareSnapshotOptions {
   errorThreshold: number;
+  keepDiff: boolean;
+  skipDiff: boolean;
+  allowVisualRegressionToFail: boolean;
 }
 
 declare global {
