@@ -33,6 +33,7 @@ function takeScreenshot(subject, name, screenshotOptions) {
   // save the path to forward between screenshot and move tasks
   function onAfterScreenshot(_doc, props) {
     screenshotPath = props.path;
+    screenshotOptions?.onAfterScreenshot?.(_doc, props)
   }
 
   objToOperateOn
