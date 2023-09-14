@@ -15,7 +15,7 @@ Install:
 $ npm install cypress-visual-regression
 ```
 
-Add the following config to your *cypress.config.js* file:
+Add the following config to your *cypress.config.ts* file:
 
 ```javascript
 const { defineConfig } = require("cypress");
@@ -33,19 +33,13 @@ module.exports = defineConfig({
 });
 ```
 
-Add the command to *cypress/support/commands.js*:
+Add the command to *cypress/support/e2e.ts*:
 
 ```javascript
 const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
 
 compareSnapshotCommand();
 ```
-
-> Make sure you import *commands.js* in *cypress/support/e2e.js*:
->
-> ```javascript
-> import './commands'
-> ```
 
 ### TypeScript
 
@@ -71,7 +65,7 @@ export default defineConfig({
 });
 ```
 
-*cypress/support/commands.ts*
+*cypress/support/e2e.ts*
 
 ```ts
 import compareSnapshotCommand from 'cypress-visual-regression/dist/command';
@@ -97,7 +91,7 @@ For more info on how to use TypeScript with Cypress, please refer to [this docum
 
 ### Options
 
-`failSilently` is enabled by default. Add the following config to your *cypress.config.js* file to see the errors:
+`failSilently` is enabled by default. Add the following config to your *cypress.config.ts* file to see the errors:
 
 ```javascript
 {
@@ -199,7 +193,7 @@ it('should display the login page correctly', () => {
   });
 });
 ```
-> Looking for more examples? Review [docker/cypress/e2e/main.cy.js](https://github.com/mjhea0/cypress-visual-regression/blob/master/docker/cypress/e2e/main.cy.js).
+> Looking for more examples? Review [docker/cypress/e2e/main.cy.ts](https://github.com/mjhea0/cypress-visual-regression/blob/master/docker/cypress/e2e/main.cy.js).
 
 
 Take the base images:

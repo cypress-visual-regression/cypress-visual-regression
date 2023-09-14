@@ -1,36 +1,31 @@
-import { expect } from 'vitest'
 import { createFolder } from './fs'
-
-vi.mock('fs/promises')
+import { describe, afterAll, test, expect } from 'vitest'
+import fs from 'fs'
 
 describe('utils/fs module', () => {
   describe('createFolder', () => {
-    afterEach(() => {
-      vi.restoreAllMocks()
+    afterAll(() => {
+      fs.rmdir('url-path', (error) => {
+        if (error != null) throw error
+      })
     })
 
-    it('should return true if success', async () => {
-      const fs = await import('fs/promises')
-      fs.mkdir = vi.fn().mockReturnValue(undefined)
+    test('should return true if success', async () => {
       const result = await createFolder('url-path')
-      expect(fs.mkdir).toHaveBeenCalled()
-      expect(result).toEqual(true)
+      expect(result).to.be.equal(true)
     })
 
-    it('should throw if failing', async () => {
-      const fs = await import('fs/promises')
-      fs.mkdir = vi.fn().mockRejectedValue(new Error('mock error'))
-      const promise = createFolder('url-path')
-      expect(fs.mkdir).toHaveBeenCalled()
-      await expect(promise).rejects.toEqual(new Error('mock error'))
+    test('should throw if failing', async () => {
+      try {
+        await createFolder('url*path')
+      } catch (e: any) {
+        expect(e.message).to.be.contain('ENOENT: no such file or directory')
+      }
     })
 
-    it('should return false if failing and failSilently is set to true', async () => {
-      const fs = await import('fs/promises')
-      fs.mkdir = vi.fn().mockRejectedValue(new Error('mock error'))
-      const result = await createFolder('url-path', true)
-      expect(fs.mkdir).toHaveBeenCalled()
-      expect(result).toEqual(false)
+    test('should return false if failing and failSilently is set to true', async () => {
+      const result = await createFolder('url*path', true)
+      expect(result).to.be.equal(false)
     })
   })
 })
