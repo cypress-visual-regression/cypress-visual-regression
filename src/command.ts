@@ -1,30 +1,38 @@
 import { deserializeError } from 'serialize-error'
+import Chainable = Cypress.Chainable;
 
 type CompareSnapshotOptions = {
   errorThreshold: number
+  failSilently: boolean
 }
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     interface Chainable {
-      compareSnapshot(name: string): void
-      compareSnapshot(name: string, errorThreshold?: number): void
-      compareSnapshot(name: string, options?: Partial<Cypress.ScreenshotOptions | CompareSnapshotOptions>): void
+      // eslint-disable-next-line @typescript-eslint/method-signature-style
+      compareSnapshot(
+        name: string,
+        options?: number | Partial<Cypress.ScreenshotOptions | CompareSnapshotOptions>
+      ): Chainable<ComparisonResults>
     }
   }
 }
 
 /** Return the errorThreshold from the options settings */
-function getErrorThreshold(defaultScreenshotOptions: any, params: any): number {
-  if (typeof params === 'number') {
-    return params
-  }
+function getErrorThreshold(screenshotOptions: any): number {
+  // if (typeof params === 'number') {
+  //   return params
+  // }
+  //
+  // if (typeof params === 'object') {
+  //   if (typeof params.errorThreshold === 'number') {
+  //     return params.errorThreshold
+  //   }
+  // }
 
-  if (typeof params === 'object' && params.errorThreshold) {
-    return params.errorThreshold
-  }
-
-  return defaultScreenshotOptions?.errorThreshold ?? 0
+  return screenshotOptions?.errorThreshold ?? 0
 }
 
 function getSpecRelativePath(): string {
@@ -36,52 +44,70 @@ function getSpecRelativePath(): string {
 /** Take a screenshot and move screenshot to base or actual folder */
 function takeScreenshot(subject: any, name: string, screenshotOptions: any): void {
   let screenshotPath: string
-  const objToOperateOn = subject ? cy.get(subject) : cy
+  let objToOperateOn: any
+  const subjectCheck = subject ?? ''
+  if (subjectCheck !== '') {
+    objToOperateOn = cy.get(subject)
+  } else {
+    objToOperateOn = cy
+  }
 
   // save the path to forward between screenshot and move tasks
   function onAfterScreenshot(_doc: any, props: any): void {
     screenshotPath = props.path
   }
 
-  objToOperateOn
-    .screenshot(name, {
-      ...screenshotOptions,
-      onAfterScreenshot
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const options: any = {
+    ...screenshotOptions,
+    onAfterScreenshot
+  }
+
+  // eslint-disable-next-line promise/catch-or-return
+  objToOperateOn.screenshot(name, options).then(() => {
+    return cy.task('moveSnapshot', {
+      fileName: `${name}.png`,
+      fromPath: screenshotPath,
+      specDirectory: getSpecRelativePath()
     })
-    .then(() => {
-      cy.task('moveSnapshot', {
-        fileName: `${name}.png`,
-        fromPath: screenshotPath,
-        specDirectory: getSpecRelativePath()
-      })
-    })
+  })
 }
 
-function updateScreenshot(name: string): void {
-  cy.task('updateSnapshot', {
+function updateScreenshot(name: string): Chainable<ComparisonResults> {
+  return cy.task('updateSnapshot', {
     name,
-    specDirectory: getSpecRelativePath(),
+    specRelativePath: getSpecRelativePath(),
     screenshotsFolder: Cypress.config().screenshotsFolder,
     snapshotBaseDirectory: Cypress.env('SNAPSHOT_BASE_DIRECTORY')
   })
 }
 
+export type ComparisonResults = {
+  error?: Error
+  mismatchedPixels: number
+  percentage: number
+  baseUpdated: boolean
+}
+
 /** Call the plugin to compare snapshot images and generate a diff */
-function compareScreenshots(name: string, errorThreshold: number): void {
+function compareScreenshots(name: string, screenshotOptions: any): Chainable<ComparisonResults> {
+  const errorThreshold = getErrorThreshold(screenshotOptions)
   const options = {
     fileName: name,
     specDirectory: getSpecRelativePath(),
     baseDir: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
     diffDir: Cypress.env('SNAPSHOT_DIFF_DIRECTORY'),
     keepDiff: Cypress.env('ALWAYS_GENERATE_DIFF'),
-    allowVisualRegressionToFail: Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL'),
+    failSilently: screenshotOptions.failSilently || Cypress.env('failSilently'),
     errorThreshold
   }
 
-  cy.task('compareSnapshotsPlugin', options).then((results: any) => {
-    if ('error' in results) {
+  // eslint-disable-next-line promise/catch-or-return
+  return cy.task('compareSnapshotsPlugin', options).then((results: any) => {
+    if (results.error !== undefined && options.failSilently !== true) {
       throw deserializeError(results.error)
     }
+    return results
   })
 }
 
@@ -92,24 +118,26 @@ export function compareSnapshotCommand(
   Cypress.Commands.add(
     'compareSnapshot',
     { prevSubject: 'optional' },
-    (subject: any, name: string, params: any = {}): void => {
-      const type = Cypress.env('type')
-      const screenshotOptions =
-        typeof params === 'object' ? { ...defaultScreenshotOptions, ...params } : { ...defaultScreenshotOptions }
+    (subject: any, name: string, params: any = {}): Chainable<ComparisonResults> => {
+      const type = Cypress.env('type') as string
+      let screenshotOptions: any
+      if (typeof params === 'object') {
+        screenshotOptions = { ...defaultScreenshotOptions, ...params }
+      } else if (typeof params === 'number') {
+        screenshotOptions = { ...defaultScreenshotOptions, errorThreshold: params }
+      } else {
+        screenshotOptions = { ...defaultScreenshotOptions, errorThreshold: 0 }
+      }
+      // const screenshotOptions =
+      //   typeof params === 'object' ? { ...defaultScreenshotOptions, ...params } : { ...defaultScreenshotOptions }
 
       takeScreenshot(subject, name, screenshotOptions)
 
       switch (type) {
         case 'actual':
-          compareScreenshots(name, getErrorThreshold(defaultScreenshotOptions, params))
-
-          break
-
+          return compareScreenshots(name, screenshotOptions)
         case 'base':
-          updateScreenshot(name)
-
-          break
-
+          return updateScreenshot(name)
         default:
           throw new Error(
             `The "type" environment variable is unknown. \nExpected: "actual" or "base" \nActual: ${type}`
@@ -118,7 +146,3 @@ export function compareSnapshotCommand(
     }
   )
 }
-
-// Re-export as module.exports for compatibility with CommonJS.
-// This will allow you to require this module using require()
-module.exports = compareSnapshotCommand

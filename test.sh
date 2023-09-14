@@ -5,7 +5,7 @@ set -e
 npm install
 npm run test
 npm run lint
-npm run prettier:check
+npm run format:check
 npm run build
 cd docker
 rm -rf dist

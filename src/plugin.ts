@@ -1,11 +1,15 @@
-import { createWriteStream, promises as fs } from 'node:fs'
-import path from 'node:path'
+import { createWriteStream, promises as fs } from 'fs'
+import path from 'path'
 import pixelmatch from 'pixelmatch'
 import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
 import { serializeError, type ErrorObject } from 'serialize-error'
 
-import { adjustCanvas, createFolder, parseImage } from './utils'
+import { createFolder } from './utils/fs'
+import { adjustCanvas, parseImage } from './utils/image'
+import { Logger } from './logger'
+
+const log = Logger('plugin')
 
 let CYPRESS_SCREENSHOT_DIR = 'cypress/screenshots'
 
@@ -23,32 +27,31 @@ const moveSnapshot = async ({ fromPath, specDirectory, fileName }: MoveSnapshotA
 
   await createFolder(destDir, false)
   await fs.rename(fromPath, destFile)
+  log(`Moved snapshot from '${fromPath}' to ${destDir}`)
+  return null
 }
 
 type UpdateSnapshotArgs = {
   name: string
-  screenshotsFolder?: string
-  snapshotBaseDirectory?: string
-  specDirectory: string
+  specRelativePath: string
+  screenshotsFolder: string
+  snapshotBaseDirectory: string
 }
 
 /** Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
-const updateSnapshot = async ({
-  name,
-  screenshotsFolder,
-  snapshotBaseDirectory,
-  specDirectory
-}: UpdateSnapshotArgs): Promise<void> => {
-  const toDir = snapshotBaseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
-  const snapshotActualDirectory = screenshotsFolder ?? 'cypress/screenshots'
-  const destDir = path.join(toDir, specDirectory)
+const updateSnapshot = async (args: UpdateSnapshotArgs): Promise<boolean> => {
+  const toDir = args.snapshotBaseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
+  const snapshotActualDirectory = args.screenshotsFolder ?? 'cypress/screenshots'
+  const destDir = path.join(toDir, args.specRelativePath)
 
-  const fromPath = path.join(snapshotActualDirectory, specDirectory, `${name}.png`)
-  const destFile = path.join(destDir, `${name}.png`)
+  const fromPath = path.join(snapshotActualDirectory, args.specRelativePath, `${args.name}.png`)
+  const destFile = path.join(destDir, `${args.name}.png`)
 
   await createFolder(destDir, false)
   await fs.copyFile(fromPath, destFile)
+  log(`Updated base snapshot '${args.name}' from '${fromPath}' to ${destFile}`)
+  return true
 }
 
 type CompareSnapshotsPluginArgs = {
@@ -113,13 +116,23 @@ const compareSnapshotsPlugin = async (args: CompareSnapshotsPluginArgs): Promise
     percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5
 
     if (percentage > args.errorThreshold) {
+      log(`Error in visual regression found: ${percentage.toFixed(2)}`)
       const specFolder = path.join(snapshotDiffDirectory, args.specDirectory)
       await createFolder(specFolder, args.failSilently)
       diff.pack().pipe(createWriteStream(options.diffImage))
-      if (!allowVisualRegressionToFail)
-        throw new Error(
-          `The "${fileName}" image is different. Threshold limit exceeded! \nExpected: ${args.errorThreshold} \nActual: ${percentage}`
-        )
+      if (!allowVisualRegressionToFail) {
+        return {
+          error: serializeError(
+            new Error(
+              `The "${fileName}" image is different. Threshold limit exceeded!
+              Expected: ${args.errorThreshold}
+              Actual: ${percentage}`
+            )
+          ),
+          mismatchedPixels,
+          percentage
+        }
+      }
     } else if (alwaysGenerateDiff) {
       const specFolder = path.join(snapshotDiffDirectory, args.specDirectory)
       await createFolder(specFolder, args.failSilently)

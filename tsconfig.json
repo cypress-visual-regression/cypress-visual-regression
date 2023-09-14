@@ -1,9 +1,18 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
   "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "dom"],
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
     "declaration": true,
     "outDir": "dist",
     "types": ["vitest/globals", "cypress"]
   },
-  "include": ["src", "vitest.config.ts"]
+  "include": ["src"],
+  "exclude": [
+    "node_modules",
+    "src/**/*.spec.ts"
+  ]
 }

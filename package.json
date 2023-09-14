@@ -1,6 +1,6 @@
 {
   "name": "cypress-visual-regression",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Module for adding visual regression testing to Cypress",
   "keywords": [
     "visual regression",
@@ -10,6 +10,7 @@
   "repository": "https://github.com/cypress-visual-regression/cypress-visual-regression",
   "license": "MIT",
   "author": "Michael Herman <michael@mherman.org>",
+  "type": "module",
   "types": "dist/command.d.ts",
   "files": [
     "dist/**/*"
@@ -18,14 +19,16 @@
     "prebuild": "rimraf dist",
     "build": "tsc --project tsconfig.json",
     "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
-    "format:check": "prettier --check src/**/*.ts",
-    "format:fix": "prettier --write src/**/*.ts",
+    "format:check": "prettier --check src/**/*.ts cypress/**/*.ts",
+    "format:fix": "prettier --write src/**/*.ts cypress/**/*.ts",
     "lint": "eslint src --ext .ts",
     "prepublishOnly": "run-s build",
     "preversion": "run-s lint format:check test build",
     "test": "vitest run",
-    "vr:base": "cypress run --env type=base",
-    "vr:test": "cypress run --env type=actual"
+    "cy:open": "cypress open --e2e -b chrome --env type=actual",
+    "cy:base": "cypress run --env type=base",
+    "cy:test": "cypress run --env type=actual",
+    "cy:test1": "cypress run --env type=actual -s cypress/e2e/main.cy.ts"
   },
   "prettier": {
     "printWidth": 120,
@@ -34,6 +37,7 @@
     "trailingComma": "none"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.0.2",
     "debug": "^4.3.4",
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
@@ -44,6 +48,7 @@
     "@tsconfig/node18": "1.0.1",
     "@tsconfig/strictest": "2.0.0",
     "@types/debug": "4.1.7",
+    "@types/node": "^20.6.0",
     "@types/pixelmatch": "5.2.4",
     "@types/pngjs": "6.0.1",
     "@typescript-eslint/eslint-plugin": "5.57.1",
@@ -60,10 +65,10 @@
     "prettier": "2.8.7",
     "rimraf": "^3.0.2",
     "typescript": "5.0.3",
-    "vitest": "0.29.8"
+    "vitest": "^0.34.4"
   },
   "peerDependencies": {
-    "cypress": ">=9.7.0"
+    "cypress": ">=10.0.0"
   },
   "engines": {
     "node": ">=18"
