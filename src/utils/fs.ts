@@ -1,8 +1,6 @@
 import fs from 'fs/promises'
 import { serializeError } from 'serialize-error'
-import { Logger } from '../logger'
-
-const log = Logger('utils:fs')
+import { logger } from '../logger'
 
 /**
  * Creates a new folder at the specified path.
@@ -14,11 +12,11 @@ const log = Logger('utils:fs')
 export const createFolder = async (folderPath: string, failSilently = false): Promise<boolean> => {
   try {
     await fs.mkdir(folderPath, { recursive: true })
-    log(`Created folder at '${folderPath}'`)
+    logger.debug(`Created folder at '${folderPath}'`)
     return true
   } catch (error) {
     if (failSilently) {
-      log(`Failed to create folder '${folderPath}' with error:`, serializeError(error))
+      logger.debug(`Failed to create folder '${folderPath}' with error:`, serializeError(error))
       return false
     }
     throw error
