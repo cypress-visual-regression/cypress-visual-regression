@@ -1,14 +1,14 @@
 import { createReadStream, type ReadStream } from 'fs'
 import { PNG } from 'pngjs'
 import { serializeError } from 'serialize-error'
-import { Logger } from './../logger'
+import { Logger } from '../logger'
 
 const log = Logger('utils:image')
 
 /**
  * Parses an image file and returns a Promise that resolves with a PNG instance.
  *
- * @param {string} image - The path to the image file to parse.
+ * @param {string} imagePath - The path to the image file to parse.
  * @returns {Promise<PNG>} A Promise that resolves with a PNG instance representing the parsed image.
  * @throws {Error} Throws an error if the specified image file does not exist or if there was an error parsing the file.
  */

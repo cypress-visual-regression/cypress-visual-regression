@@ -27,8 +27,7 @@
     "test": "vitest run",
     "cy:open": "cypress open --e2e -b chrome --env type=actual",
     "cy:base": "cypress run --env type=base",
-    "cy:test": "cypress run --env type=actual",
-    "cy:test1": "cypress run --env type=actual -s cypress/e2e/main.cy.ts"
+    "cy:test": "cypress run --env type=actual"
   },
   "prettier": {
     "printWidth": 120,

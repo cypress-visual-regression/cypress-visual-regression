@@ -7,6 +7,8 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
+    "strictNullChecks": true,
+    "strict": true,
     "outDir": "dist",
     "types": ["vitest/globals", "cypress"]
   },

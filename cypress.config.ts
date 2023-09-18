@@ -13,7 +13,7 @@ export default defineConfig({
       getCompareSnapshotsPlugin(on, config);
 
       on("task", {
-        doesExist: (path: any) => fs.existsSync(path)
+        doesExist: (path: string) => fs.existsSync(path)
       })
       
       return config;
