@@ -11,50 +11,39 @@ import { Logger } from './logger'
 
 const log = Logger('plugin')
 
-let CYPRESS_SCREENSHOT_DIR = 'cypress/screenshots'
+let CYPRESS_SCREENSHOT_DIR = 'cypress/screenshots' // TODO wth
 
-type MoveSnapshotArgs = {
-  fromPath: string
-  specDirectory: string
-  fileName: string
-}
-
-/** Move the generated snapshot .png file to its new path.
- * The target path is constructed from parts at runtime in node to be OS independent.  */
-const moveSnapshot = async ({ fromPath, specDirectory, fileName }: MoveSnapshotArgs): Promise<void> => {
-  const destDir = path.join(CYPRESS_SCREENSHOT_DIR, specDirectory)
-  const destFile = path.join(destDir, fileName)
-
-  await createFolder(destDir, false)
-  await fs.rename(fromPath, destFile)
-  log(`Moved snapshot from '${fromPath}' to ${destDir}`)
-  return null
-}
-
-type UpdateSnapshotArgs = {
-  name: string
+export type UpdateSnapshotArgs = {
+  screenshotName: string
   specRelativePath: string
+  integrationFolder: string
   screenshotsFolder: string
   snapshotBaseDirectory: string
+}
+
+function getSpecTrimmedPath(relativePath: string, integrationFolder: string): string {
+  integrationFolder = integrationFolder ?? path.join('cypress', 'e2e')
+  return relativePath.replace(integrationFolder, '')
 }
 
 /** Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
 const updateSnapshot = async (args: UpdateSnapshotArgs): Promise<boolean> => {
+  const specTrimmedPath = getSpecTrimmedPath(args.specRelativePath, args.integrationFolder)
   const toDir = args.snapshotBaseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
-  const snapshotActualDirectory = args.screenshotsFolder ?? 'cypress/screenshots'
-  const destDir = path.join(toDir, args.specRelativePath)
+  const snapshotActualDirectory = args.screenshotsFolder ?? path.join('cypress', 'screenshots')
+  const destDir = path.join(toDir, specTrimmedPath)
 
-  const fromPath = path.join(snapshotActualDirectory, args.specRelativePath, `${args.name}.png`)
-  const destFile = path.join(destDir, `${args.name}.png`)
+  const fromPath = path.join(snapshotActualDirectory, specTrimmedPath, `${args.screenshotName}.png`)
+  const destFile = path.join(destDir, `${args.screenshotName}.png`)
 
   await createFolder(destDir, false)
   await fs.copyFile(fromPath, destFile)
-  log(`Updated base snapshot '${args.name}' from '${fromPath}' to ${destFile}`)
+  log(`Updated base snapshot '${args.screenshotName}' at ${destFile}`)
   return true
 }
 
-type CompareSnapshotsPluginArgs = {
+export type CompareSnapshotsPluginArgs = {
   failSilently?: boolean
   baseDir?: string
   diffDir?: string
@@ -62,7 +51,8 @@ type CompareSnapshotsPluginArgs = {
   allowVisualRegressionToFail?: boolean
   fileName: string
   errorThreshold: number
-  specDirectory: string
+  specRelativePath: string
+  integrationFolder: string
 }
 
 type CompareSnapshotResult = {
@@ -76,17 +66,18 @@ type CompareSnapshotResult = {
  * Uses the pixelmatch library internally.
  */
 const compareSnapshotsPlugin = async (args: CompareSnapshotsPluginArgs): Promise<CompareSnapshotResult> => {
+  const specTrimmedPath = getSpecTrimmedPath(args.specRelativePath, args.integrationFolder)
   const snapshotBaseDirectory = args.baseDir ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = args.diffDir ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
-  const alwaysGenerateDiff = !(args.keepDiff === false)
-  const allowVisualRegressionToFail = args.allowVisualRegressionToFail === true
+  const alwaysGenerateDiff = args.keepDiff
+  const allowVisualRegressionToFail = args.allowVisualRegressionToFail
 
   const fileName = sanitize(args.fileName)
 
   const options = {
-    actualImage: path.join(CYPRESS_SCREENSHOT_DIR, args.specDirectory, `${fileName}.png`),
-    expectedImage: path.join(snapshotBaseDirectory, args.specDirectory, `${fileName}.png`),
-    diffImage: path.join(snapshotDiffDirectory, args.specDirectory, `${fileName}.png`)
+    actualImage: path.join(CYPRESS_SCREENSHOT_DIR, specTrimmedPath, `${fileName}.png`),
+    expectedImage: path.join(snapshotBaseDirectory, specTrimmedPath, `${fileName}.png`),
+    diffImage: path.join(snapshotDiffDirectory, args.specRelativePath, `${fileName}.png`)
   }
 
   let mismatchedPixels = 0
@@ -117,10 +108,10 @@ const compareSnapshotsPlugin = async (args: CompareSnapshotsPluginArgs): Promise
 
     if (percentage > args.errorThreshold) {
       log(`Error in visual regression found: ${percentage.toFixed(2)}`)
-      const specFolder = path.join(snapshotDiffDirectory, args.specDirectory)
+      const specFolder = path.join(snapshotDiffDirectory, args.specRelativePath)
       await createFolder(specFolder, args.failSilently)
       diff.pack().pipe(createWriteStream(options.diffImage))
-      if (!allowVisualRegressionToFail) {
+      if (allowVisualRegressionToFail === false) {
         return {
           error: serializeError(
             new Error(
@@ -133,8 +124,8 @@ const compareSnapshotsPlugin = async (args: CompareSnapshotsPluginArgs): Promise
           percentage
         }
       }
-    } else if (alwaysGenerateDiff) {
-      const specFolder = path.join(snapshotDiffDirectory, args.specDirectory)
+    } else if (alwaysGenerateDiff === true) {
+      const specFolder = path.join(snapshotDiffDirectory, args.specRelativePath)
       await createFolder(specFolder, args.failSilently)
       diff.pack().pipe(createWriteStream(options.diffImage))
     }
@@ -157,7 +148,6 @@ const getCompareSnapshotsPlugin = (on: Cypress.PluginEvents, config: PluginConfi
   setupScreenshotPath(config)
   on('task', {
     compareSnapshotsPlugin,
-    moveSnapshot,
     updateSnapshot
   })
 }

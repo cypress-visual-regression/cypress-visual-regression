@@ -1,5 +1,6 @@
 import { deserializeError } from 'serialize-error'
-import Chainable = Cypress.Chainable;
+import Chainable = Cypress.Chainable
+import { type CompareSnapshotsPluginArgs, type UpdateSnapshotArgs } from './plugin'
 
 type CompareSnapshotOptions = {
   errorThreshold: number
@@ -22,28 +23,12 @@ declare global {
 
 /** Return the errorThreshold from the options settings */
 function getErrorThreshold(screenshotOptions: any): number {
-  // if (typeof params === 'number') {
-  //   return params
-  // }
-  //
-  // if (typeof params === 'object') {
-  //   if (typeof params.errorThreshold === 'number') {
-  //     return params.errorThreshold
-  //   }
-  // }
-
   return screenshotOptions?.errorThreshold ?? 0
-}
-
-function getSpecRelativePath(): string {
-  const integrationFolder = Cypress.env('INTEGRATION_FOLDER') ?? 'cypress/e2e'
-
-  return Cypress.spec.relative.replace(integrationFolder, '')
 }
 
 /** Take a screenshot and move screenshot to base or actual folder */
 function takeScreenshot(subject: any, name: string, screenshotOptions: any): void {
-  let screenshotPath: string
+  // let screenshotPath: string
   let objToOperateOn: any
   const subjectCheck = subject ?? ''
   if (subjectCheck !== '') {
@@ -53,33 +38,31 @@ function takeScreenshot(subject: any, name: string, screenshotOptions: any): voi
   }
 
   // save the path to forward between screenshot and move tasks
-  function onAfterScreenshot(_doc: any, props: any): void {
-    screenshotPath = props.path
-  }
+  // function onAfterScreenshot(_doc: any, props: any): void {
+  //   screenshotPath = props.path
+  // }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const options: any = {
-    ...screenshotOptions,
-    onAfterScreenshot
-  }
+  // const options: any = {
+  //   ...screenshotOptions
+  //   // onAfterScreenshot
+  // }
 
   // eslint-disable-next-line promise/catch-or-return
-  objToOperateOn.screenshot(name, options).then(() => {
-    return cy.task('moveSnapshot', {
-      fileName: `${name}.png`,
-      fromPath: screenshotPath,
-      specDirectory: getSpecRelativePath()
-    })
+  objToOperateOn.screenshot(name, screenshotOptions).then(() => {
+    return null
   })
 }
 
-function updateScreenshot(name: string): Chainable<ComparisonResults> {
-  return cy.task('updateSnapshot', {
-    name,
-    specRelativePath: getSpecRelativePath(),
-    screenshotsFolder: Cypress.config().screenshotsFolder,
+function updateScreenshot(screenshotName: string): Chainable<ComparisonResults> {
+  const args: UpdateSnapshotArgs = {
+    screenshotName,
+    specRelativePath: Cypress.spec.relative,
+    integrationFolder: Cypress.env('INTEGRATION_FOLDER'),
+    screenshotsFolder: Cypress.config().screenshotsFolder as string,
     snapshotBaseDirectory: Cypress.env('SNAPSHOT_BASE_DIRECTORY')
-  })
+  }
+  return cy.task('updateSnapshot', args)
 }
 
 export type ComparisonResults = {
@@ -92,19 +75,27 @@ export type ComparisonResults = {
 /** Call the plugin to compare snapshot images and generate a diff */
 function compareScreenshots(name: string, screenshotOptions: any): Chainable<ComparisonResults> {
   const errorThreshold = getErrorThreshold(screenshotOptions)
-  const options = {
+  const options: CompareSnapshotsPluginArgs = {
     fileName: name,
-    specDirectory: getSpecRelativePath(),
+    // @ts-expect-error TODO fix potential null error
+    specRelativePath: Cypress.config().spec.relative,
+    integrationFolder: Cypress.env('INTEGRATION_FOLDER'),
     baseDir: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
     diffDir: Cypress.env('SNAPSHOT_DIFF_DIRECTORY'),
     keepDiff: Cypress.env('ALWAYS_GENERATE_DIFF'),
-    failSilently: screenshotOptions.failSilently || Cypress.env('failSilently'),
+    failSilently: false,
     errorThreshold
+  }
+
+  if (screenshotOptions.failSilently !== null) {
+    options.failSilently = screenshotOptions.failSilently
+  } else if (Cypress.env('failSilently') !== null) {
+    options.failSilently = Cypress.env('failSilently')
   }
 
   // eslint-disable-next-line promise/catch-or-return
   return cy.task('compareSnapshotsPlugin', options).then((results: any) => {
-    if (results.error !== undefined && options.failSilently !== true) {
+    if (results.error !== undefined && options.failSilently === false) {
       throw deserializeError(results.error)
     }
     return results
