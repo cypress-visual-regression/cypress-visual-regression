@@ -7,6 +7,7 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
+    "esModuleInterop": true,
     "strictNullChecks": true,
     "strict": true,
     "outDir": "dist",

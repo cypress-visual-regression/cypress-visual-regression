@@ -10,3 +10,6 @@ cypress/snapshots/*
 
 .vscode/*
 !.vscode/extensions.json
+
+combined.log
+error.log

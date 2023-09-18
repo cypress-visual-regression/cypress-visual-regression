@@ -7,9 +7,7 @@ import { serializeError, type ErrorObject } from 'serialize-error'
 
 import { createFolder } from './utils/fs'
 import { adjustCanvas, parseImage } from './utils/image'
-import { Logger } from './logger'
-
-const log = Logger('plugin')
+import { logger } from './logger'
 
 let CYPRESS_SCREENSHOT_DIR = 'cypress/screenshots' // TODO wth
 
@@ -39,7 +37,7 @@ const updateSnapshot = async (args: UpdateSnapshotArgs): Promise<boolean> => {
 
   await createFolder(destDir, false)
   await fs.copyFile(fromPath, destFile)
-  log(`Updated base snapshot '${args.screenshotName}' at ${destFile}`)
+  logger.info(`Updated base snapshot '${args.screenshotName}' at ${destFile}`)
   return true
 }
 
@@ -107,7 +105,7 @@ const compareSnapshotsPlugin = async (args: CompareSnapshotsPluginArgs): Promise
     percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5
 
     if (percentage > args.errorThreshold) {
-      log(`Error in visual regression found: ${percentage.toFixed(2)}`)
+      logger.info(`Error in visual regression found: ${percentage.toFixed(2)}`)
       const specFolder = path.join(snapshotDiffDirectory, args.specRelativePath)
       await createFolder(specFolder, args.failSilently)
       diff.pack().pipe(createWriteStream(options.diffImage))
