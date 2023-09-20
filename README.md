@@ -15,7 +15,7 @@ Install:
 $ npm install cypress-visual-regression
 ```
 
-Add the following config to your *cypress.config.ts* file:
+Add the following config to your *cypress.base.config.ts* file:
 
 ```javascript
 const { defineConfig } = require("cypress");
@@ -45,7 +45,7 @@ compareSnapshotCommand();
 
 If you're using TypeScript, use files with a `.ts` extension, as follows:
 
-*cypress/cypress.config.ts*
+*cypress/cypress.base.config.ts*
 
 ```ts
 import { defineConfig } from 'cypress';
@@ -91,7 +91,7 @@ For more info on how to use TypeScript with Cypress, please refer to [this docum
 
 ### Options
 
-`failSilently` is enabled by default. Add the following config to your *cypress.config.ts* file to see the errors:
+`failSilently` is enabled by default. Add the following config to your *cypress.base.config.ts* file to see the errors:
 
 ```javascript
 {

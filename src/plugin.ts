@@ -1,6 +1,6 @@
 import { createWriteStream, promises as fs } from 'fs'
 import path from 'path'
-import pixelmatch from 'pixelmatch'
+import pixelMatch from 'pixelmatch'
 import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
 import { serializeError, type ErrorObject } from 'serialize-error'
@@ -9,12 +9,12 @@ import { createFolder } from './utils/fs'
 import { adjustCanvas, parseImage } from './utils/image'
 import { logger } from './logger'
 
-let CYPRESS_SCREENSHOT_DIR = 'cypress/screenshots' // TODO wth
+let CYPRESS_SCREENSHOT_DIR = 'cypress/screenshots' // TODO why ?!
 
 export type UpdateSnapshotArgs = {
   screenshotName: string
   specRelativePath: string
-  integrationFolder: string
+  specFolder: string
   screenshotsFolder: string
   snapshotBaseDirectory: string
 }
@@ -27,7 +27,7 @@ function getSpecTrimmedPath(relativePath: string, integrationFolder: string): st
 /** Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
 const updateSnapshot = async (args: UpdateSnapshotArgs): Promise<boolean> => {
-  const specTrimmedPath = getSpecTrimmedPath(args.specRelativePath, args.integrationFolder)
+  const specTrimmedPath = getSpecTrimmedPath(args.specRelativePath, args.specFolder)
   const toDir = args.snapshotBaseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotActualDirectory = args.screenshotsFolder ?? path.join('cypress', 'screenshots')
   const destDir = path.join(toDir, specTrimmedPath)
@@ -35,22 +35,21 @@ const updateSnapshot = async (args: UpdateSnapshotArgs): Promise<boolean> => {
   const fromPath = path.join(snapshotActualDirectory, specTrimmedPath, `${args.screenshotName}.png`)
   const destFile = path.join(destDir, `${args.screenshotName}.png`)
 
-  await createFolder(destDir, false)
+  await createFolder(destDir)
   await fs.copyFile(fromPath, destFile)
-  logger.info(`Updated base snapshot '${args.screenshotName}' at ${destFile}`)
+  logger.debug(`Updated base snapshot '${args.screenshotName}' at ${destFile}`)
   return true
 }
 
 export type CompareSnapshotsPluginArgs = {
-  failSilently?: boolean
-  baseDir?: string
-  diffDir?: string
-  keepDiff?: boolean
-  allowVisualRegressionToFail?: boolean
   fileName: string
   errorThreshold: number
   specRelativePath: string
-  integrationFolder: string
+  specFolder: string
+  baseDirectory?: string
+  diffDirectory?: string
+  generateDiff?: 'always' | 'fail' | 'never'
+  failSilently?: boolean
 }
 
 type CompareSnapshotResult = {
@@ -64,11 +63,9 @@ type CompareSnapshotResult = {
  * Uses the pixelmatch library internally.
  */
 const compareSnapshotsPlugin = async (args: CompareSnapshotsPluginArgs): Promise<CompareSnapshotResult> => {
-  const specTrimmedPath = getSpecTrimmedPath(args.specRelativePath, args.integrationFolder)
-  const snapshotBaseDirectory = args.baseDir ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
-  const snapshotDiffDirectory = args.diffDir ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
-  const alwaysGenerateDiff = args.keepDiff
-  const allowVisualRegressionToFail = args.allowVisualRegressionToFail
+  const specTrimmedPath = getSpecTrimmedPath(args.specRelativePath, args.specFolder)
+  const snapshotBaseDirectory = args.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
+  const snapshotDiffDirectory = args.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
 
   const fileName = sanitize(args.fileName)
 
@@ -81,7 +78,7 @@ const compareSnapshotsPlugin = async (args: CompareSnapshotsPluginArgs): Promise
   let mismatchedPixels = 0
   let percentage = 0
   try {
-    await createFolder(snapshotDiffDirectory, args.failSilently)
+    await createFolder(snapshotDiffDirectory)
     const [imgExpected, imgActual] = await Promise.all([
       parseImage(options.expectedImage),
       parseImage(options.actualImage)
@@ -94,7 +91,7 @@ const compareSnapshotsPlugin = async (args: CompareSnapshotsPluginArgs): Promise
     const imgActualFullCanvas = adjustCanvas(imgActual, diff.width, diff.height)
     const imgExpectedFullCanvas = adjustCanvas(imgExpected, diff.width, diff.height)
 
-    mismatchedPixels = pixelmatch(
+    mismatchedPixels = pixelMatch(
       imgActualFullCanvas.data,
       imgExpectedFullCanvas.data,
       diff.data,
@@ -105,11 +102,11 @@ const compareSnapshotsPlugin = async (args: CompareSnapshotsPluginArgs): Promise
     percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5
 
     if (percentage > args.errorThreshold) {
-      logger.info(`Error in visual regression found: ${percentage.toFixed(2)}`)
+      logger.error(`Error in visual regression found: ${percentage.toFixed(2)}`)
       const specFolder = path.join(snapshotDiffDirectory, args.specRelativePath)
-      await createFolder(specFolder, args.failSilently)
+      await createFolder(specFolder)
       diff.pack().pipe(createWriteStream(options.diffImage))
-      if (allowVisualRegressionToFail === false) {
+      if (args.failSilently === false) {
         return {
           error: serializeError(
             new Error(
@@ -122,10 +119,12 @@ const compareSnapshotsPlugin = async (args: CompareSnapshotsPluginArgs): Promise
           percentage
         }
       }
-    } else if (alwaysGenerateDiff === true) {
+    } else if (args.generateDiff === 'always') {
+      // TODO rework always/fail/never
       const specFolder = path.join(snapshotDiffDirectory, args.specRelativePath)
-      await createFolder(specFolder, args.failSilently)
+      await createFolder(specFolder)
       diff.pack().pipe(createWriteStream(options.diffImage))
+      logger.debug(`Image with pixel difference generated: ${options.diffImage}`)
     }
   } catch (error) {
     return { error: serializeError(error) }
@@ -151,8 +150,8 @@ const getCompareSnapshotsPlugin = (on: Cypress.PluginEvents, config: PluginConfi
 }
 
 const setupScreenshotPath = (config: PluginConfig): void => {
-  // use cypress default path as fallback
-  CYPRESS_SCREENSHOT_DIR = config.snapshotActualDirectory ?? 'cypress/screenshots'
+  // use cypress default path as fallback // TODO why actual dir is needed?
+  CYPRESS_SCREENSHOT_DIR = config.snapshotActualDirectory ?? path.join('cypress', 'screenshots')
 }
 
 export default getCompareSnapshotsPlugin

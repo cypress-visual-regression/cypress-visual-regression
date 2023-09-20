@@ -17,7 +17,8 @@ RUN npm install
 
 # copy cypress files and folders
 COPY cypress /usr/src/app/cypress
-COPY cypress.config.ts /usr/src/app/cypress.config.ts
+COPY cypress.base.config.ts /usr/src/app
+COPY cypress.regression.config.ts /usr/src/app
 COPY cypress/web /usr/src/app/web
 
 # copy dist

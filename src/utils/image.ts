@@ -14,7 +14,7 @@ export const parseImage = (imagePath: string): Promise<PNG> => {
   return new Promise((resolve, reject) => {
     const stream: ReadStream = createReadStream(imagePath)
     stream.on('error', (error) => {
-      logger.log(`Failed to open '${imagePath}' with error:`, serializeError(error))
+      logger.error(`Failed to open '${imagePath}' with error:`, serializeError(error))
       reject(new Error(`File '${imagePath}' does not exist.`))
     })
     stream
@@ -23,7 +23,7 @@ export const parseImage = (imagePath: string): Promise<PNG> => {
         resolve(this)
       })
       .on('error', (error) => {
-        logger.log(`Failed to parse image '${imagePath}' with error:`, serializeError(error))
+        logger.error(`Failed to parse image '${imagePath}' with error:`, serializeError(error))
         reject(error)
       })
   })
