@@ -16,7 +16,7 @@ declare global {
       compareSnapshot(
         name: string,
         options?: number | Partial<Cypress.ScreenshotOptions | CompareSnapshotOptions>
-      ): Chainable<ComparisonResults>
+      ): Chainable<ComparisonResult> | Chainable<UpdateBaseResult>
     }
   }
 }
@@ -28,7 +28,6 @@ function getErrorThreshold(screenshotOptions: any): number {
 
 /** Take a screenshot and move screenshot to base or actual folder */
 function takeScreenshot(subject: any, name: string, screenshotOptions: any): void {
-  // let screenshotPath: string
   let objToOperateOn: any
   const subjectCheck = subject ?? ''
   if (subjectCheck !== '') {
@@ -37,54 +36,46 @@ function takeScreenshot(subject: any, name: string, screenshotOptions: any): voi
     objToOperateOn = cy
   }
 
-  // save the path to forward between screenshot and move tasks
-  // function onAfterScreenshot(_doc: any, props: any): void {
-  //   screenshotPath = props.path
-  // }
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  // const options: any = {
-  //   ...screenshotOptions
-  //   // onAfterScreenshot
-  // }
-
   // eslint-disable-next-line promise/catch-or-return
   objToOperateOn.screenshot(name, screenshotOptions).then(() => {
     return null
   })
 }
 
-function updateScreenshot(screenshotName: string): Chainable<ComparisonResults> {
+function updateBaseScreenshot(screenshotName: string): Chainable<UpdateBaseResult> {
   const args: UpdateSnapshotArgs = {
     screenshotName,
     specRelativePath: Cypress.spec.relative,
-    integrationFolder: Cypress.env('INTEGRATION_FOLDER'),
+    specFolder: Cypress.env('visualRegression').specFolder,
     screenshotsFolder: Cypress.config().screenshotsFolder as string,
-    snapshotBaseDirectory: Cypress.env('SNAPSHOT_BASE_DIRECTORY')
+    snapshotBaseDirectory: Cypress.env('visualRegression').baseDirectory
   }
   return cy.task('updateSnapshot', args)
 }
 
-export type ComparisonResults = {
+export type ComparisonResult = {
   error?: Error
   mismatchedPixels: number
   percentage: number
+}
+
+export type UpdateBaseResult = {
   baseUpdated: boolean
 }
 
 /** Call the plugin to compare snapshot images and generate a diff */
-function compareScreenshots(name: string, screenshotOptions: any): Chainable<ComparisonResults> {
+function compareScreenshots(name: string, screenshotOptions: any): Chainable<ComparisonResult> {
   const errorThreshold = getErrorThreshold(screenshotOptions)
   const options: CompareSnapshotsPluginArgs = {
     fileName: name,
+    errorThreshold,
     // @ts-expect-error TODO fix potential null error
     specRelativePath: Cypress.config().spec.relative,
-    integrationFolder: Cypress.env('INTEGRATION_FOLDER'),
-    baseDir: Cypress.env('SNAPSHOT_BASE_DIRECTORY'),
-    diffDir: Cypress.env('SNAPSHOT_DIFF_DIRECTORY'),
-    keepDiff: Cypress.env('ALWAYS_GENERATE_DIFF'),
-    failSilently: false,
-    errorThreshold
+    specFolder: Cypress.env('visualRegression').specFolder,
+    baseDirectory: Cypress.env('visualRegression').baseDirectory,
+    diffDirectory: Cypress.env('visualRegression').diffDirectory,
+    generateDiff: Cypress.env('visualRegression').generateDiff,
+    failSilently: false
   }
 
   if (screenshotOptions.failSilently !== null) {
@@ -106,11 +97,12 @@ function compareScreenshots(name: string, screenshotOptions: any): Chainable<Com
 export function compareSnapshotCommand(
   defaultScreenshotOptions?: Partial<Cypress.ScreenshotOptions | CompareSnapshotOptions>
 ): void {
+  console.log(Cypress.env())
   Cypress.Commands.add(
     'compareSnapshot',
     { prevSubject: 'optional' },
-    (subject: any, name: string, params: any = {}): Chainable<ComparisonResults> => {
-      const type = Cypress.env('type') as string
+    (subject: any, name: string, params: any = {}): Chainable<ComparisonResult> | Chainable<UpdateBaseResult> => {
+      const type = Cypress.env('visualRegression').type as string
       let screenshotOptions: any
       if (typeof params === 'object') {
         screenshotOptions = { ...defaultScreenshotOptions, ...params }
@@ -119,19 +111,17 @@ export function compareSnapshotCommand(
       } else {
         screenshotOptions = { ...defaultScreenshotOptions, errorThreshold: 0 }
       }
-      // const screenshotOptions =
-      //   typeof params === 'object' ? { ...defaultScreenshotOptions, ...params } : { ...defaultScreenshotOptions }
 
       takeScreenshot(subject, name, screenshotOptions)
 
       switch (type) {
-        case 'actual':
+        case 'regression':
           return compareScreenshots(name, screenshotOptions)
         case 'base':
-          return updateScreenshot(name)
+          return updateBaseScreenshot(name)
         default:
           throw new Error(
-            `The "type" environment variable is unknown. \nExpected: "actual" or "base" \nActual: ${type}`
+            `The "type" environment variable is unknown. \nExpected: "regression" or "base" \nActual: ${type}`
           )
       }
     }
