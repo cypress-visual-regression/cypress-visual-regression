@@ -3,7 +3,7 @@ import fs from 'fs'
 import getCompareSnapshotsPlugin from './src/plugin'
 
 export default defineConfig({
-  // screenshotsFolder: './cypress/snapshots/actual', TODO this doesn't work ?!
+  // screenshotsFolder: './cypress/snapshots/actual', TODO this doesn't work ?!  boogie: I think it does, but we need to set it inside "e2e" or "component"
   trashAssetsBeforeRuns: true,
   viewportHeight: 720,
   viewportWidth: 1280,

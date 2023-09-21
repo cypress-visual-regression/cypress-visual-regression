@@ -6,7 +6,7 @@ type CompareSnapshotOptions = {
   errorThreshold: number
   failSilently: boolean
 }
-
+// todo: IMHO, all the declarations should be in a separate file
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
@@ -69,8 +69,7 @@ function compareScreenshots(name: string, screenshotOptions: any): Chainable<Com
   const options: CompareSnapshotsPluginArgs = {
     fileName: name,
     errorThreshold,
-    // @ts-expect-error TODO fix potential null error
-    specRelativePath: Cypress.config().spec.relative,
+    specRelativePath: Cypress.config().spec?.relative ?? '',
     specFolder: Cypress.env('visualRegression').specFolder,
     baseDirectory: Cypress.env('visualRegression').baseDirectory,
     diffDirectory: Cypress.env('visualRegression').diffDirectory,
