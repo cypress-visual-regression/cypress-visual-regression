@@ -7,9 +7,6 @@ npm run test
 npm run lint
 npm run format:check
 npm run build
-cd docker
-rm -rf dist
-mv ../dist dist
 
 if [ -z "${1}" ]
 then
@@ -19,6 +16,6 @@ else
 fi
 
 docker run -d --name cypress-test cypress-visual-regression sleep infinity
-docker exec cypress-test bash -c './node_modules/.bin/cypress run --env type=base'
-docker exec cypress-test bash -c './node_modules/.bin/cypress run --env type=actual'
+docker exec cypress-test bash -c './node_modules/.bin/cypress run -C cypress.base.config.ts'
+docker exec cypress-test bash -c './node_modules/.bin/cypress run -C cypress.regression.config.ts'
 docker rm -f cypress-test

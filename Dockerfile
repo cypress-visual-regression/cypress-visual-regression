@@ -1,28 +1,27 @@
-ARG CYPRESS_VERSION=13.1.0
+ARG CYPRESS_VERSION=13.2.0
 
 # base image
 FROM cypress/included:${CYPRESS_VERSION}
 
-ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
+#ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
 ENV CI true
 RUN echo ${CYPRESS_VERSION}
 
 # set working directory
-WORKDIR /usr/src/app
+WORKDIR /e2e
 
 # install cypress, and cypress-visual-regression
-COPY docker/package.json /usr/src/app/package.json
+COPY package.json .
 #RUN npm install cypress@${CYPRESS_VERSION}
 RUN npm install
 
 # copy cypress files and folders
-COPY cypress /usr/src/app/cypress
-COPY cypress.base.config.ts /usr/src/app
-COPY cypress.regression.config.ts /usr/src/app
-COPY cypress/web /usr/src/app/web
+COPY cypress .
+COPY cypress.base.config.ts .
+COPY cypress.regression.config.ts .
 
 # copy dist
-COPY dist /usr/src/app/dist
+COPY dist .
 
 # confirm the cypress install
 RUN ./node_modules/.bin/cypress verify
