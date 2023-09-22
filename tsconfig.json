@@ -2,6 +2,6 @@
   "extends": ["@tsconfig/node-lts/tsconfig.json","@tsconfig/cypress/tsconfig.json"],
   "compilerOptions": {
     "outDir": "dist",
-    "types": ["vitest/globals", "cypress"]
+    "types": ["vitest/globals", "cypress", "node"]
   }
 }
