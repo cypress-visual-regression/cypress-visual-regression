@@ -1,12 +1,14 @@
 import { deserializeError } from 'serialize-error'
 import Chainable = Cypress.Chainable
-import { type CompareSnapshotsPluginArgs, type UpdateSnapshotArgs } from './plugin'
+import { type CompareSnapshotsPluginArgs, type UpdateSnapshotArgs } from './plugin.js'
 
 type CompareSnapshotOptions = {
   errorThreshold: number
   failSilently: boolean
 }
+// todo: are we using this declaration? compareSnapshot is already chainable
 // todo: IMHO, all the declarations should be in a separate file
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {

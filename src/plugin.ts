@@ -5,9 +5,9 @@ import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
 import { serializeError, type ErrorObject } from 'serialize-error'
 
-import { createFolder } from './utils/fs'
-import { adjustCanvas, parseImage } from './utils/image'
-import { logger } from './logger'
+import { createFolder } from './utils/fs.js'
+import { adjustCanvas, parseImage } from './utils/image.js'
+import { logger } from './logger.js'
 
 let CYPRESS_SCREENSHOT_DIR = 'cypress/screenshots' // TODO why ?!
 

@@ -1,6 +1,6 @@
 import { defineConfig } from 'cypress'
 import fs from 'fs'
-import getCompareSnapshotsPlugin from './src/plugin'
+import getCompareSnapshotsPlugin from './src/plugin.js'
 
 export default defineConfig({
   // screenshotsFolder: './cypress/snapshots/actual', TODO this doesn't work ?!  boogie: I think it does, but we need to set it inside "e2e" or "component"

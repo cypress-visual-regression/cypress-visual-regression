@@ -1,21 +1,7 @@
 {
+  "extends": ["@tsconfig/node-lts/tsconfig.json","@tsconfig/cypress/tsconfig.json"],
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022", "dom"],
-    "module": "ES2022",
-    "moduleResolution": "node",
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "esModuleInterop": true,
-    "strictNullChecks": true,
-    "strict": true,
     "outDir": "dist",
     "types": ["vitest/globals", "cypress"]
-  },
-  "include": ["src"],
-  "exclude": [
-    "node_modules",
-    "src/**/*.spec.ts"
-  ]
+  }
 }

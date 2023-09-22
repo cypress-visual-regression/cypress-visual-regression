@@ -1,6 +1,6 @@
 import { PNG } from 'pngjs'
 import { describe, expect, test } from 'vitest'
-import { adjustCanvas, parseImage } from './image'
+import { adjustCanvas, parseImage } from './image.js'
 
 describe('utils/image module', () => {
   describe('parseImage', () => {

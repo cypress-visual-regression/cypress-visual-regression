@@ -8,7 +8,7 @@ describe('Inner file within context', () => {
     cy.visit('./cypress/web/01.html')
     cy.compareSnapshot('inside-context')
   })
-  
+
   describe('Inner file within inner context', () => {
     it('test inside inner context', () => {
       cy.visit('./cypress/web/01.html')

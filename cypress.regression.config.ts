@@ -1,9 +1,9 @@
 import { defineConfig } from 'cypress'
 import fs from 'fs'
-import getCompareSnapshotsPlugin from './src/plugin'
+import getCompareSnapshotsPlugin from './src/plugin.js'
 
 export default defineConfig({
-  // screenshotsFolder: './cypress/snapshots/actual', TODO this doesn't work boogie: same as may prev comment
+  // screenshotsFolder: './cypress/snapshots/actual', TODO this doesn't work | boogie: same as may prev comment
   trashAssetsBeforeRuns: true,
   viewportHeight: 720,
   viewportWidth: 1280,
