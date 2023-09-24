@@ -11,6 +11,7 @@
   "license": "MIT",
   "author": "Michael Herman <michael@mherman.org>",
   "type": "module",
+  "main": "dist/plugin.js",
   "types": "dist/command.d.ts",
   "files": [
     "dist/**/*"

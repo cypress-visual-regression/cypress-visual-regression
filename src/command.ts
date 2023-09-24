@@ -23,11 +23,6 @@ declare global {
   }
 }
 
-/** Return the errorThreshold from the options settings */
-function getErrorThreshold(screenshotOptions: any): number {
-  return screenshotOptions?.errorThreshold ?? 0
-}
-
 /** Take a screenshot and move screenshot to base or actual folder */
 function takeScreenshot(subject: any, name: string, screenshotOptions: any): void {
   let objToOperateOn: any
@@ -57,7 +52,7 @@ function updateBaseScreenshot(screenshotName: string): Chainable<boolean> {
     if (typeof screenshotAbsolutePath !== 'string') {
       throw new Error('Could not resolve screenshot path')
     }
-    const args: UpdateSnapshotArgs = {
+    const args: UpdateSnapshotOptions = {
       screenshotName,
       specName: Cypress.spec.name,
       screenshotAbsolutePath,
@@ -79,12 +74,11 @@ function compareScreenshots(name: string, screenshotOptions: any): Chainable<Com
     if (typeof screenshotAbsolutePath !== 'string') {
       throw new Error('Could not resolve screenshot path')
     }
-    const errorThreshold = getErrorThreshold(screenshotOptions)
-    const options: CompareSnapshotsPluginArgs = {
+    const errorThreshold = screenshotOptions?.errorThreshold ?? 0
+    const options: CompareSnapshotsOptions = {
       screenshotName: name,
       errorThreshold,
-      // @ts-expect-error TODO fix potential null error
-      specName: Cypress.config().spec.name,
+      specName: Cypress.config().spec?.name ?? '',
       screenshotAbsolutePath,
       baseDirectory: Cypress.env('visualRegression').baseDirectory,
       diffDirectory: Cypress.env('visualRegression').diffDirectory,
@@ -98,7 +92,7 @@ function compareScreenshots(name: string, screenshotOptions: any): Chainable<Com
       failSilently = Cypress.env('visualRegression').failSilently
     }
 
-    return cy.task('compareSnapshotsPlugin', options).then((results: any) => {
+    return cy.task('compareSnapshots', options).then((results: any) => {
       if (results.error !== undefined && !failSilently) {
         throw deserializeError(results.error)
       }
@@ -108,13 +102,16 @@ function compareScreenshots(name: string, screenshotOptions: any): Chainable<Com
 }
 
 /** Add custom cypress command to compare image snapshots of an element or the window. */
-export function compareSnapshotCommand(
+function addCompareSnapshotCommand(
   defaultScreenshotOptions?: Partial<Cypress.ScreenshotOptions | CompareSnapshotOptions>
 ): void {
   Cypress.Commands.add(
     'compareSnapshot',
     { prevSubject: 'optional' },
     function (subject: any, name: string, params: any = {}): Chainable<ComparisonResult> | Chainable<boolean> {
+      if (name === undefined || name === '') {
+        throw new Error('name of the snapshot must be specified')
+      }
       const type = Cypress.env('visualRegression').type as string
       let screenshotOptions: any
       if (typeof params === 'object') {
@@ -140,3 +137,5 @@ export function compareSnapshotCommand(
     }
   )
 }
+
+export default addCompareSnapshotCommand

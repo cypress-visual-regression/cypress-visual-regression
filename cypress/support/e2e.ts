@@ -1,2 +1,2 @@
-import { compareSnapshotCommand } from '../../src/command.js'
-compareSnapshotCommand()
+import addCompareSnapshotCommand from '../../src/command.js'
+addCompareSnapshotCommand()
