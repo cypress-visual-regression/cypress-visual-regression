@@ -24,10 +24,5 @@ describe('utils/fs module', () => {
         expect(e.message).to.be.contain('ENOENT: no such file or directory')
       }
     })
-    // todo: it looks to me that the shape of createFolder has been changed , because right now it only includes one parameter, so failSilently parámeteris missing
-    test('should return false if failing and failSilently is set to true', async () => {
-      const result = await createFolder('url*path')
-      expect(result).to.be.equal(false)
-    })
   })
 })

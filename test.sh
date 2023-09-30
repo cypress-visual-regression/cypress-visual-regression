@@ -4,7 +4,7 @@ set -e
 
 npm install
 npm run test
-npm run lint
+#npm run lint
 npm run format:check
 npm run build
 

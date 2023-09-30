@@ -1,6 +1,6 @@
 import { defineConfig } from 'cypress'
 import fs from 'fs'
-import getCompareSnapshotsPlugin from './src/plugin.js'
+import configureVisualRegression from './src/plugin.js'
 
 export default defineConfig({
   trashAssetsBeforeRuns: true,
