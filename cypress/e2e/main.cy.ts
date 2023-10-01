@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { ComparisonResult } from '../../src/command.js'
+import { ComparisonResult } from '../../dist/src/command.js'
 
 describe('Visual Regression Example', () => {
   it('should display the home page correctly', () => {

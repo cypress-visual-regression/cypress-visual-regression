@@ -1,18 +1,16 @@
 ARG CYPRESS_VERSION=13.2.0
 
-# base image
 FROM cypress/included:${CYPRESS_VERSION}
 
-#ENV SNAPSHOT_DIRECTORY /usr/src/app/cypress/snapshots
 ENV CI true
 RUN echo ${CYPRESS_VERSION}
 
-# set working directory
 WORKDIR /e2e
 
-# install cypress, and cypress-visual-regression
 COPY package.json .
-#RUN npm install cypress@${CYPRESS_VERSION}
+COPY package-lock.json .
+COPY tsconfig.json .
+
 RUN npm install
 
 # copy cypress files and folders
