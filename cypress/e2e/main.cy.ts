@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+// @ts-ignore TODO
 import { ComparisonResult } from '../../dist/src/command.js'
 
 describe('Visual Regression Example', () => {
