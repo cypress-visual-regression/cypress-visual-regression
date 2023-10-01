@@ -1,4 +1,5 @@
 ARG CYPRESS_VERSION=13.2.0
+ARG CYPRESS_TYPE=base
 
 # base image
 FROM cypress/included:${CYPRESS_VERSION}
@@ -24,4 +25,4 @@ COPY cypress.regression.config.ts .
 COPY dist .
 
 # confirm the cypress install
-RUN ./node_modules/.bin/cypress verify
+RUN ["npm", "run", "ci"]

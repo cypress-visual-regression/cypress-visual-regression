@@ -19,7 +19,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc --project tsconfig.json",
-    "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
+    "ci": "npm run build && npm run cy:base && npm run cy:test",
     "format:check": "prettier --check src/**/*.ts cypress/**/*.ts",
     "format:fix": "prettier --write src/**/*.ts cypress/**/*.ts",
     "lint": "eslint src --ext .ts --fix",

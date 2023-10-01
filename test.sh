@@ -15,7 +15,5 @@ else
   docker build --build-arg CYPRESS_VERSION=$1 -t cypress-visual-regression .
 fi
 
-docker run -d --name cypress-test cypress-visual-regression sleep infinity
-docker exec cypress-test bash -c './node_modules/.bin/cypress run -C cypress.base.config.ts'
-docker exec cypress-test bash -c './node_modules/.bin/cypress run -C cypress.regression.config.ts'
+docker run --name cypress-test cypress-visual-regression
 docker rm -f cypress-test
