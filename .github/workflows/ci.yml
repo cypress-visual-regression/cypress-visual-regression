@@ -20,4 +20,4 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           # - run: bash test.sh ${{ matrix.cypress-version }}
-      - run: npm ci
+      - run: npm run ci
