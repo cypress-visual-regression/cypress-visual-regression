@@ -1,6 +1,7 @@
 import { defineConfig } from 'cypress'
+
 import fs from 'fs'
-import configureVisualRegression from './src/plugin.js'
+import configureVisualRegression from './src/plugin'
 
 export default defineConfig({
   trashAssetsBeforeRuns: true,
@@ -16,7 +17,6 @@ export default defineConfig({
     },
     setupNodeEvents(on: any, config: any) {
       configureVisualRegression(on)
-
       on('task', {
         doesExist: (path: string) => fs.existsSync(path)
       })

@@ -1,7 +1,17 @@
 {
   "extends": "@tsconfig/node-lts/tsconfig.json",
   "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution":"Bundler",
+    "lib": [
+      "es2023", "DOM"
+  ],
+    "noImplicitThis": true,
     "outDir": "dist",
+    "baseUrl": ".",
+    // "paths": {
+      // "@/*": ["./src/*"]
+    // },
     "types": ["vitest/globals", "cypress", "node"]
   }
 }

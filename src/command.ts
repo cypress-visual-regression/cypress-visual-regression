@@ -1,21 +1,11 @@
 import { deserializeError } from 'serialize-error'
-import Chainable = Cypress.Chainable
-import { type CompareSnapshotsOptions, type UpdateSnapshotOptions } from './plugin.js'
-
-// TODO need help with this types
-declare namespace Cypress {
-  type Chainable = {
-    compareSnapshot(subject: any, name: string, params: any): Chainable
-  }
-}
+import type { CompareSnapshotsOptions, UpdateSnapshotOptions } from './plugin'
 
 type SnapshotOptions = {
   errorThreshold: number
   failSilently: boolean
 }
-// todo: are we using this declaration? compareSnapshot is already chainable
-// todo: IMHO, all the declarations should be in a separate file
-
+// TODO: improve types and move to a *.d.ts file
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
@@ -25,7 +15,7 @@ declare global {
       compareSnapshot(
         name: string,
         options?: number | Partial<Cypress.ScreenshotOptions | SnapshotOptions>
-      ): Chainable<ComparisonResult> | Chainable<boolean>
+      ): Cypress.Chainable<ComparisonResult> | Cypress.Chainable<boolean>
     }
   }
 }
@@ -54,8 +44,7 @@ function takeScreenshot(subject: any, name: string, screenshotOptions: any): voi
     })
 }
 
-function updateBaseScreenshot(screenshotName: string): Chainable {
-  // @ts-expect-error TODO
+function updateBaseScreenshot(screenshotName: string): Cypress.Chainable {
   return cy.get('@screenshotAbsolutePath').then((screenshotAbsolutePath: unknown) => {
     if (typeof screenshotAbsolutePath !== 'string') {
       throw new Error('Could not resolve screenshot path')
@@ -77,8 +66,7 @@ export type ComparisonResult = {
 }
 
 /** Call the plugin to compare snapshot images and generate a diff */
-function compareScreenshots(name: string, screenshotOptions: any): Chainable {
-  // @ts-expect-error TODO
+function compareScreenshots(name: string, screenshotOptions: any): Cypress.Chainable {
   return cy.get('@screenshotAbsolutePath').then((screenshotAbsolutePath: unknown) => {
     if (typeof screenshotAbsolutePath !== 'string') {
       throw new Error('Could not resolve screenshot path')
@@ -112,14 +100,12 @@ function compareScreenshots(name: string, screenshotOptions: any): Chainable {
 
 /** Add custom cypress command to compare image snapshots of an element or the window. */
 function addCompareSnapshotCommand(
-  // @ts-expect-error TODO
   defaultScreenshotOptions?: Partial<Cypress.ScreenshotOptions | SnapshotOptions>
 ): void {
   Cypress.Commands.add(
     'compareSnapshot',
-    // @ts-expect-error TODO
     { prevSubject: 'optional' },
-    function (subject: any, name: string, params: any = {}): Chainable {
+    function (subject: any, name: string, params: any = {}): Cypress.Chainable {
       if (name === undefined || name === '') {
         throw new Error('name of the snapshot must be specified')
       }

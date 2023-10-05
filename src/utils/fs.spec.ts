@@ -1,4 +1,4 @@
-import { createFolder } from './fs.js'
+import { createFolder } from './fs'
 import { describe, afterAll, test, expect } from 'vitest'
 import fs from 'fs'
 

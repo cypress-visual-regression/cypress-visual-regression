@@ -1,3 +1,2 @@
-// @ts-ignore TODO
-import addCompareSnapshotCommand from '../../dist/src/command.js'
+import addCompareSnapshotCommand from '../../src/command'
 addCompareSnapshotCommand()

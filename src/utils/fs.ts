@@ -1,6 +1,6 @@
 // TODO: I think this file is useless since we already have a native fs.mkdir and the only thing that we are doing here is adding a logger.debug
 import fs from 'fs/promises'
-import { logger } from '../logger.js'
+import { logger } from '../logger'
 
 /**
  * Creates a new folder at the specified path.
