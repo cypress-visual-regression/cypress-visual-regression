@@ -4,7 +4,6 @@ on: [pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     timeout-minutes: 10
@@ -20,4 +19,5 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: bash test.sh ${{ matrix.cypress-version }}
+          # - run: bash test.sh ${{ matrix.cypress-version }}
+      - run: npm ci

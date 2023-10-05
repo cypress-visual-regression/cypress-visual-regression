@@ -17,7 +17,7 @@
     "dist/**/*"
   ],
   "scripts": {
-    "prebuild": "rimraf dist && ls -la && tsc --showConfig",
+    "prebuild": "rimraf dist",
     "build": "tsc --project tsconfig.json",
     "ci": "npm run build && npm run cy:base && npm run cy:test",
     "format:check": "prettier --check src/**/*.ts cypress/**/*.ts",
