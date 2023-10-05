@@ -9,9 +9,6 @@
     "noImplicitThis": true,
     "outDir": "dist",
     "baseUrl": ".",
-    // "paths": {
-      // "@/*": ["./src/*"]
-    // },
     "types": ["vitest/globals", "cypress", "node"]
   }
 }
