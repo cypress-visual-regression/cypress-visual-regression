@@ -1,6 +1,22 @@
 import { deserializeError } from 'serialize-error'
 import type { CompareSnapshotsOptions, UpdateSnapshotOptions } from './plugin'
 
+type OnAfterScreenshotProps = {
+  path: string
+  size: number
+  dimensions: {
+    width: number
+    height: number
+  }
+  multipart: boolean
+  pixelRatio: number
+  takenAt: string
+  name: string
+  blackout: string[]
+  duration: number
+  testAttemptIndex: number
+}
+
 type SnapshotOptions = {
   errorThreshold: number
   failSilently: boolean
@@ -21,24 +37,23 @@ declare global {
 }
 
 /** Take a screenshot and move screenshot to base or actual folder */
-function takeScreenshot(subject: any, name: string, screenshotOptions: any): void {
-  let objToOperateOn: any
-  const subjectCheck = subject ?? ''
-  if (subjectCheck !== '') {
-    objToOperateOn = cy.get(subject)
-  } else {
-    objToOperateOn = cy
-  }
+function takeScreenshot(
+  subject: keyof HTMLElementTagNameMap | undefined,
+  name: string,
+  screenshotOptions: Partial<Cypress.ScreenshotOptions | SnapshotOptions>
+): void {
+  const objToOperateOn = subject !== undefined ? cy.get(subject) : cy
 
   let screenshotPath: string
   // eslint-disable-next-line promise/catch-or-return
   objToOperateOn
     .screenshot(name, {
       ...screenshotOptions,
-      onAfterScreenshot(_el: any, props: any) {
+      onAfterScreenshot(_el: JQuery, props: OnAfterScreenshotProps) {
         screenshotPath = props.path
       }
     })
+    // @ts-expect-error - TODO
     .then(() => {
       return cy.wrap(screenshotPath).as('screenshotAbsolutePath')
     })
@@ -66,12 +81,15 @@ export type ComparisonResult = {
 }
 
 /** Call the plugin to compare snapshot images and generate a diff */
-function compareScreenshots(name: string, screenshotOptions: any): Cypress.Chainable {
+function compareScreenshots(
+  name: string,
+  screenshotOptions: Partial<Cypress.ScreenshotOptions & SnapshotOptions>
+): Cypress.Chainable {
   return cy.get('@screenshotAbsolutePath').then((screenshotAbsolutePath: unknown) => {
     if (typeof screenshotAbsolutePath !== 'string') {
       throw new Error('Could not resolve screenshot path')
     }
-    const errorThreshold = screenshotOptions?.errorThreshold ?? 0
+    const errorThreshold = screenshotOptions.errorThreshold ?? 0
     const options: CompareSnapshotsOptions = {
       screenshotName: name,
       errorThreshold,
@@ -88,9 +106,11 @@ function compareScreenshots(name: string, screenshotOptions: any): Cypress.Chain
     } else if (Cypress.env('visualRegression').failSilently !== undefined) {
       failSilently = Cypress.env('visualRegression').failSilently
     }
-
-    return cy.task('compareSnapshots', options).then((results: any) => {
+    // TODO: results should be of type CompareSnapshotResult /plugin.ts
+    return cy.task('compareSnapshots', options).then((results: unknown) => {
+      // @ts-expect-error - TODO
       if (results.error !== undefined && !failSilently) {
+        // @ts-expect-error - TODO
         throw deserializeError(results.error)
       }
       return results
@@ -104,13 +124,18 @@ function addCompareSnapshotCommand(
 ): void {
   Cypress.Commands.add(
     'compareSnapshot',
+    // @ts-expect-error - TODO: it doesn't look that prevSubject can be 'optional
     { prevSubject: 'optional' },
-    function (subject: any, name: string, params: any = {}): Cypress.Chainable {
+    function (
+      subject: keyof HTMLElementTagNameMap | undefined,
+      name: string | undefined,
+      params = {}
+    ): Cypress.Chainable {
       if (name === undefined || name === '') {
         throw new Error('name of the snapshot must be specified')
       }
       const type = Cypress.env('visualRegression').type as string
-      let screenshotOptions: any
+      let screenshotOptions: Partial<Cypress.ScreenshotOptions | SnapshotOptions>
       if (typeof params === 'object') {
         screenshotOptions = { ...defaultScreenshotOptions, ...params }
       } else if (typeof params === 'number') {

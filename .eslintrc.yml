@@ -19,7 +19,7 @@ extends:
   - 'eslint:recommended'
   - 'plugin:@typescript-eslint/recommended'
   - 'plugin:@typescript-eslint/recommended-requiring-type-checking'
-#  - 'plugin:@typescript-eslint/strict'
+  - 'plugin:@typescript-eslint/strict'
   - 'standard-with-typescript'
   - 'plugin:promise/recommended'
   - 'plugin:import/recommended'
@@ -35,7 +35,7 @@ settings:
 rules:
   '@typescript-eslint/consistent-type-definitions': ['error', 'type']
   '@typescript-eslint/promise-function-async': 'off'
-  '@typescript-eslint/no-explicit-any': 'off'
+  '@typescript-eslint/no-explicit-any': 'error'
   '@typescript-eslint/no-unsafe-member-access': 'off'
   '@typescript-eslint/no-unsafe-assignment': 'off'
   '@typescript-eslint/no-unsafe-argument': 'off'
