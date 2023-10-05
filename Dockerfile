@@ -17,7 +17,6 @@ RUN npm install
 COPY cypress .
 COPY cypress.base.config.ts .
 COPY cypress.regression.config.ts .
-COPY tsconfig.json .
 
 # copy dist
 COPY dist .
