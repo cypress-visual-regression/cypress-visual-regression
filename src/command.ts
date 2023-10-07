@@ -1,5 +1,5 @@
 import { deserializeError } from 'serialize-error'
-import type { CompareSnapshotsOptions, UpdateSnapshotOptions } from './plugin'
+import type { CompareSnapshotsOptions, UpdateSnapshotOptions, CompareSnapshotResult } from './plugin'
 
 type OnAfterScreenshotProps = {
   path: string
@@ -41,37 +41,33 @@ function takeScreenshot(
   subject: keyof HTMLElementTagNameMap | undefined,
   name: string,
   screenshotOptions: Partial<Cypress.ScreenshotOptions | SnapshotOptions>
-): void {
+): Cypress.Chainable<string> {
   const objToOperateOn = subject !== undefined ? cy.get(subject) : cy
 
   let screenshotPath: string
-  // eslint-disable-next-line promise/catch-or-return
-  objToOperateOn
-    .screenshot(name, {
-      ...screenshotOptions,
-      onAfterScreenshot(_el: JQuery, props: OnAfterScreenshotProps) {
-        screenshotPath = props.path
-      }
-    })
-    // @ts-expect-error - TODO
-    .then(() => {
-      return cy.wrap(screenshotPath).as('screenshotAbsolutePath')
-    })
+  return (
+    objToOperateOn
+      .screenshot(name, {
+        ...screenshotOptions,
+        onAfterScreenshot(_el: JQuery, props: OnAfterScreenshotProps) {
+          screenshotPath = props.path
+        }
+      })
+      // @ts-expect-error - TODO
+      .then(() => {
+        return screenshotPath
+      })
+  )
 }
 
-function updateBaseScreenshot(screenshotName: string): Cypress.Chainable {
-  return cy.get('@screenshotAbsolutePath').then((screenshotAbsolutePath: unknown) => {
-    if (typeof screenshotAbsolutePath !== 'string') {
-      throw new Error('Could not resolve screenshot path')
-    }
-    const args: UpdateSnapshotOptions = {
-      screenshotName,
-      specName: Cypress.spec.name,
-      screenshotAbsolutePath,
-      baseDirectory: Cypress.env('visualRegression').baseDirectory
-    }
-    return cy.task('updateSnapshot', args)
-  })
+function updateBaseScreenshot(screenshotAbsolutePath: string, screenshotName: string): Cypress.Chainable {
+  const args: UpdateSnapshotOptions = {
+    screenshotName,
+    specName: Cypress.spec.name,
+    screenshotAbsolutePath,
+    baseDirectory: Cypress.env('visualRegression').baseDirectory
+  }
+  return cy.task('updateSnapshot', args)
 }
 
 export type ComparisonResult = {
@@ -82,39 +78,34 @@ export type ComparisonResult = {
 
 /** Call the plugin to compare snapshot images and generate a diff */
 function compareScreenshots(
+  screenshotAbsolutePath: string,
   name: string,
   screenshotOptions: Partial<Cypress.ScreenshotOptions & SnapshotOptions>
 ): Cypress.Chainable {
-  return cy.get('@screenshotAbsolutePath').then((screenshotAbsolutePath: unknown) => {
-    if (typeof screenshotAbsolutePath !== 'string') {
-      throw new Error('Could not resolve screenshot path')
-    }
-    const errorThreshold = screenshotOptions.errorThreshold ?? 0
-    const options: CompareSnapshotsOptions = {
-      screenshotName: name,
-      errorThreshold,
-      specName: Cypress.config().spec?.name ?? '',
-      screenshotAbsolutePath,
-      baseDirectory: Cypress.env('visualRegression').baseDirectory,
-      diffDirectory: Cypress.env('visualRegression').diffDirectory,
-      generateDiff: Cypress.env('visualRegression').generateDiff
-    }
+  const errorThreshold = screenshotOptions.errorThreshold ?? 0
+  const options: CompareSnapshotsOptions = {
+    screenshotName: name,
+    errorThreshold,
+    specName: Cypress.config().spec?.name ?? '',
+    screenshotAbsolutePath,
+    baseDirectory: Cypress.env('visualRegression').baseDirectory,
+    diffDirectory: Cypress.env('visualRegression').diffDirectory,
+    generateDiff: Cypress.env('visualRegression').generateDiff
+  }
 
-    let failSilently = false
-    if (screenshotOptions.failSilently !== undefined) {
-      failSilently = screenshotOptions.failSilently
-    } else if (Cypress.env('visualRegression').failSilently !== undefined) {
-      failSilently = Cypress.env('visualRegression').failSilently
+  let failSilently = false
+  if (screenshotOptions.failSilently !== undefined) {
+    failSilently = screenshotOptions.failSilently
+  } else if (Cypress.env('visualRegression').failSilently !== undefined) {
+    failSilently = Cypress.env('visualRegression').failSilently
+  }
+
+  // @ts-expect-error TODO
+  return cy.task('compareSnapshots', options).then((results: CompareSnapshotResult) => {
+    if (results.error !== undefined && !failSilently) {
+      throw deserializeError(results.error)
     }
-    // TODO: results should be of type CompareSnapshotResult /plugin.ts
-    return cy.task('compareSnapshots', options).then((results: unknown) => {
-      // @ts-expect-error - TODO
-      if (results.error !== undefined && !failSilently) {
-        // @ts-expect-error - TODO
-        throw deserializeError(results.error)
-      }
-      return results
-    })
+    return results
   })
 }
 
@@ -129,7 +120,7 @@ function addCompareSnapshotCommand(
     function (
       subject: keyof HTMLElementTagNameMap | undefined,
       name: string | undefined,
-      params = {}
+      params: number | Partial<Cypress.ScreenshotOptions | SnapshotOptions> | undefined = {}
     ): Cypress.Chainable {
       if (name === undefined || name === '') {
         throw new Error('name of the snapshot must be specified')
@@ -144,18 +135,18 @@ function addCompareSnapshotCommand(
         screenshotOptions = { ...defaultScreenshotOptions, errorThreshold: 0 }
       }
 
-      takeScreenshot(subject, name, screenshotOptions)
-
-      switch (type) {
-        case 'regression':
-          return compareScreenshots(name, screenshotOptions)
-        case 'base':
-          return updateBaseScreenshot(name)
-        default:
-          throw new Error(
-            `The "type" environment variable is unknown. \nExpected: "regression" or "base" \nActual: ${type}`
-          )
-      }
+      return takeScreenshot(subject, name, screenshotOptions).then((screenshotAbsolutePath: string) => {
+        switch (type) {
+          case 'regression':
+            return compareScreenshots(screenshotAbsolutePath, name, screenshotOptions)
+          case 'base':
+            return updateBaseScreenshot(screenshotAbsolutePath, name)
+          default:
+            throw new Error(
+              `The "type" environment variable is unknown. \nExpected: "regression" or "base" \nActual: ${type}`
+            )
+        }
+      })
     }
   )
 }
