@@ -134,7 +134,6 @@ function addCompareSnapshotCommand(
       } else {
         screenshotOptions = { ...defaultScreenshotOptions, errorThreshold: 0 }
       }
-
       return takeScreenshot(subject, name, screenshotOptions).then((screenshotAbsolutePath: string) => {
         switch (type) {
           case 'regression':
