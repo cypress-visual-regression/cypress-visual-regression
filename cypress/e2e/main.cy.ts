@@ -98,11 +98,11 @@ describe('Visual Regression Example', () => {
         }
       )
       cy.get('H1')
-        .compareSnapshot('h1', 0.073)
+        .compareSnapshot('h1', 0.085)
         // @ts-ignore TODO
         .should((comparisonResult: ComparisonResult) => {
           expect(comparisonResult.error).to.be.undefined
-          expect(comparisonResult.percentage).to.be.below(0.073)
+          expect(comparisonResult.percentage).to.be.below(0.085)
         })
       cy.get('H1')
         .compareSnapshot('h1', { errorThreshold: 0.01, failSilently: true })

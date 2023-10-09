@@ -9,6 +9,7 @@ export default defineConfig({
   viewportWidth: 1280,
   video: false,
   e2e: {
+    // specPattern: 'cypress/e2e/main.cy.ts',
     screenshotsFolder: './cypress/snapshots/actual',
     env: {
       visualRegression: {
