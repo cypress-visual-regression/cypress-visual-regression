@@ -1,6 +1,6 @@
 const visualRegressionConfig = Cypress.env('visualRegression')
 visualRegressionConfig.baseDirectory = './cypress/snapshots/alternative-base'
-visualRegressionConfig.diffDirectory = './cypress/snapshots/alternative-diff'
+const screenshotsFolder = Cypress.config('screenshotsFolder')
 
 describe(
   'Visual Regression Example with setting paths by environment variables',
@@ -18,7 +18,7 @@ describe(
         cy.visit('./cypress/web/01.html')
         cy.get('H1').contains('Hello, World')
         cy.compareSnapshot('home')
-        cy.task('doesExist', `${visualRegressionConfig.diffDirectory}/main.env.cy.ts/home.png`).should('be.true')
+        cy.task('doesExist', `${screenshotsFolder}/main.env.cy.ts/home.png`).should('be.true')
       }
     })
 
@@ -30,7 +30,7 @@ describe(
       } else {
         cy.visit('./cypress/web/01.html')
         cy.get('H1').contains('Hello, World').compareSnapshot('home-child')
-        cy.task('doesExist', `${visualRegressionConfig.diffDirectory}/main.env.cy.ts/home-child.png`).should('be.true')
+        cy.task('doesExist', `${screenshotsFolder}/main.env.cy.ts/home-child.png`).should('be.true')
       }
     })
   }
