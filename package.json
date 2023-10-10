@@ -1,54 +1,85 @@
 {
   "name": "cypress-visual-regression",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Module for adding visual regression testing to Cypress",
-  "repository": "https://github.com/cypress-visual-regression/cypress-visual-regression",
-  "author": "Michael Herman <michael@mherman.org>",
-  "license": "MIT",
   "keywords": [
     "visual regression",
     "image diff",
     "cypress"
   ],
-  "scripts": {
-    "test": "./node_modules/.bin/cypress run --env type=actual",
-    "base": "./node_modules/.bin/cypress run --env type=base",
-    "prepublish": "npm run jest && npm run lint && npm run prettier:check && npm run build",
-    "lint": "eslint src",
-    "prebuild": "rimraf dist",
-    "build": "babel src --out-dir dist --extensions \".js\" --copy-files --plugins @babel/plugin-proposal-optional-chaining",
-    "prepare": "npm run build",
-    "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
-    "prettier:check": "prettier --check --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
-    "prettier:fix": "prettier --write --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
-    "jest": "jest tests"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.17.10",
-    "@babel/plugin-proposal-optional-chaining": "^7.18.9",
-    "eslint": "^8.18.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.26.0",
-    "jest": "^28.1.1",
-    "prettier": "2.7.1",
-    "rimraf": "^3.0.2"
-  },
-  "peerDependencies": {
-    "cypress": ">=9.7.0"
-  },
+  "repository": "https://github.com/cypress-visual-regression/cypress-visual-regression",
+  "license": "MIT",
+  "author": "Michael Herman <michael@mherman.org>",
+  "type": "module",
+  "main": "dist/plugin.js",
+  "types": "dist/command.d.ts",
   "files": [
     "dist/**/*"
   ],
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc --project tsconfig.json",
+    "ci": "npm run build && npm run cy:base && npm run cy:test",
+    "format:check": "prettier --check src/**/*.ts cypress/**/*.ts",
+    "format:fix": "prettier --write src/**/*.ts cypress/**/*.ts",
+    "lint": "eslint src --ext .ts --fix",
+    "prepublishOnly": "run-s build",
+    "preversion": "run-s lint format:check test build",
+    "test": "vitest run",
+    "cy:open": "cypress open --e2e -b chrome -C cypress.regression.config.ts",
+    "cy:base": "cypress run -C cypress.base.config.ts",
+    "cy:test": "cypress run -C cypress.regression.config.ts"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "none"
+  },
+  "dependencies": {
+    "pixelmatch": "^5.2.1",
+    "pngjs": "^6.0.0",
+    "sanitize-filename": "^1.6.3",
+    "serialize-error": "^11.0.0",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "8.0.2",
+    "@tsconfig/cypress": "1.0.1",
+    "@tsconfig/node-lts": "18.12.5",
+    "@tsconfig/strictest": "2.0.2",
+    "@types/debug": "4.1.7",
+    "@types/node": "20.6.0",
+    "@types/pixelmatch": "5.2.4",
+    "@types/pngjs": "6.0.1",
+    "@typescript-eslint/eslint-plugin": "5.57.1",
+    "@typescript-eslint/parser": "5.57.1",
+    "eslint": "8.37.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-config-standard-with-typescript": "34.0.1",
+    "eslint-import-resolver-typescript": "3.5.5",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-n": "15.7.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-promise": "6.1.1",
+    "npm-run-all": "4.1.5",
+    "prettier": "2.8.7",
+    "rimraf": "3.0.2",
+    "typescript": "5.2.2",
+    "vitest": "0.34.4"
+  },
+  "peerDependencies": {
+    "cypress": ">=10.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "ignore": [
     "src",
     "docker",
     "tests"
   ],
-  "dependencies": {
-    "pixelmatch": "^5.2.1",
-    "pngjs": "^6.0.0",
-    "sanitize-filename": "^1.6.3"
-  },
-  "types": "dist/command.d.ts"
+  "overrides": {
+    "tsconfig-paths": "^4.0.0"
+  }
 }

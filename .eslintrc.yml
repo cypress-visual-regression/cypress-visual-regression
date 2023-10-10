@@ -1,0 +1,46 @@
+parser: '@typescript-eslint/parser'
+parserOptions:
+  project: './tsconfig.json'
+
+ignorePatterns:
+  - 'dist'
+  - 'vitest.config.ts'
+  - 'cypress.base.config.ts'
+  - 'cypress.regression.config.ts'
+  - 'cypress'
+  - 'src/utils/*.spec.ts'
+
+plugins:
+  - '@typescript-eslint'
+  - 'prettier'
+  - 'import'
+
+extends:
+  - 'eslint:recommended'
+  - 'plugin:@typescript-eslint/recommended'
+  - 'plugin:@typescript-eslint/recommended-requiring-type-checking'
+  - 'plugin:@typescript-eslint/strict'
+  - 'standard-with-typescript'
+  - 'plugin:promise/recommended'
+  - 'plugin:import/recommended'
+  - 'plugin:import/typescript'
+  - 'plugin:n/recommended'
+  - 'plugin:prettier/recommended'
+
+settings:
+  import/resolver:
+    typescript: true
+    node: true
+
+rules:
+  '@typescript-eslint/consistent-type-definitions': ['error', 'type']
+  '@typescript-eslint/promise-function-async': 'off'
+  '@typescript-eslint/no-explicit-any': 'error'
+  '@typescript-eslint/no-unsafe-member-access': 'off'
+  '@typescript-eslint/no-unsafe-assignment': 'off'
+  '@typescript-eslint/no-unsafe-argument': 'off'
+  '@typescript-eslint/no-unsafe-return': 'off'
+  '@typescript-eslint/no-unsafe-call': 'off'
+  'import/no-default-export': 'off'
+  'import/no-unresolved': 'off'
+  'n/no-missing-import': 'off'
