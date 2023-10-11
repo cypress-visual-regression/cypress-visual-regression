@@ -21,7 +21,4 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install cypress@${{ matrix.cypress-version }}
       - run: npm install
-      - run: npm lint
-      - run: npm format:check
-      - run: npm build
       - run: npm run ci
