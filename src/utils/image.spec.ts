@@ -4,15 +4,24 @@ import { adjustCanvas, parseImage } from './image'
 
 describe('utils/image module', () => {
   describe('parseImage', () => {
-    test('should throw error when image does not exist', async () => {
+    // TODO mock createReadStream
+    test('should throw error if image does not exist', async () => {
       const filename = 'img'
       const promise = parseImage(filename)
       await expect(promise).rejects.toThrow(`File '${filename}' does not exist.`)
     })
     // TODO mock createReadStream
-    // it('should return an error on PNG creation', async () => {})
+    test('should throw error on invalid file type', async () => {
+      const filename = './cypress-visual-regression.gif'
+      const promise = parseImage(filename)
+      await expect(promise).rejects.toThrow('Invalid file signature')
+    })
     // TODO mock createReadStream
-    // it('should return a PNG image from reference', async () => {})
+    test('should return a PNG image from reference', async () => {
+      const filename = './cypress-visual-regression.png'
+      const image = await parseImage(filename)
+      expect(typeof image).to.equal('object')
+    })
   })
   describe('adjustCanvas', () => {
     test('should return the same image if given same width and height than the given image ', () => {
