@@ -5,7 +5,6 @@ import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
 import { serializeError, type ErrorObject } from 'serialize-error'
 
-import { createFolder } from './utils/fs'
 import { adjustCanvas, parseImage } from './utils/image'
 import { logger } from './logger'
 
@@ -39,7 +38,7 @@ const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> 
   const destDir = path.join(toDir, options.specName)
   const destFile = path.join(destDir, `${options.screenshotName}.png`)
 
-  await createFolder(destDir)
+  await fs.mkdir(destDir, { recursive: true })
   await fs.copyFile(options.screenshotAbsolutePath, destFile)
   logger.debug(`Updated base snapshot '${options.screenshotName}' at ${destFile}`)
   return true
@@ -54,38 +53,35 @@ const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<Compa
   const snapshotDiffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
 
   const fileName = sanitize(options.screenshotName)
+  const specFolder = path.join(snapshotDiffDirectory, options.specName)
 
   const actualImage = options.screenshotAbsolutePath
   const expectedImage = path.join(snapshotBaseDirectory, options.specName, `${fileName}.png`)
   const diffImage = path.join(snapshotDiffDirectory, options.specName, `${fileName}.png`)
 
-  await createFolder(snapshotDiffDirectory)
   const [imgExpected, imgActual] = await Promise.all([parseImage(expectedImage), parseImage(actualImage)])
-  const diff = new PNG({
+  const diffPNG = new PNG({
     width: Math.max(imgActual.width, imgExpected.width),
     height: Math.max(imgActual.height, imgExpected.height)
   })
 
-  const imgActualFullCanvas = adjustCanvas(imgActual, diff.width, diff.height)
-  const imgExpectedFullCanvas = adjustCanvas(imgExpected, diff.width, diff.height)
+  const imgActualFullCanvas = adjustCanvas(imgActual, diffPNG.width, diffPNG.height)
+  const imgExpectedFullCanvas = adjustCanvas(imgExpected, diffPNG.width, diffPNG.height)
 
   const mismatchedPixels = pixelMatch(
     imgActualFullCanvas.data,
     imgExpectedFullCanvas.data,
-    diff.data,
-    diff.width,
-    diff.height,
+    diffPNG.data,
+    diffPNG.width,
+    diffPNG.height,
     { threshold: 0.1 }
   )
-  const percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5
+  const percentage = (mismatchedPixels / diffPNG.width / diffPNG.height) ** 0.5
 
   if (percentage > options.errorThreshold) {
     logger.error(`Error in visual regression found: ${percentage.toFixed(2)}`)
     if (options.generateDiff !== 'never') {
-      const specFolder = path.join(snapshotDiffDirectory, options.specName)
-      await createFolder(specFolder)
-      diff.pack().pipe(createWriteStream(diffImage))
-      logger.debug(`Image with pixel difference generated: ${diffImage}`)
+      await generateImage(diffPNG, diffImage, specFolder)
     }
     return {
       error: serializeError(
@@ -99,10 +95,7 @@ const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<Compa
       percentage
     }
   } else if (options.generateDiff === 'always') {
-    const specFolder = path.join(snapshotDiffDirectory, options.specName)
-    await createFolder(specFolder)
-    diff.pack().pipe(createWriteStream(diffImage))
-    logger.debug(`Image with pixel difference generated: ${diffImage}`)
+    await generateImage(diffPNG, diffImage, specFolder)
   }
   return {
     mismatchedPixels,
@@ -116,6 +109,12 @@ const configureVisualRegression = (on: Cypress.PluginEvents): void => {
     compareSnapshots,
     updateSnapshot
   })
+}
+
+async function generateImage(diffPNG: PNG, image: string, path: string): Promise<void> {
+  await fs.mkdir(path, { recursive: true })
+  diffPNG.pack().pipe(createWriteStream(image))
+  logger.debug(`Image with pixel difference generated: ${image}`)
 }
 
 export default configureVisualRegression
