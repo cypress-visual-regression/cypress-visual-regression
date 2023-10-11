@@ -42,10 +42,7 @@ export const adjustCanvas = (image: PNG, width: number, height: number): PNG => 
   if (image.width === width && image.height === height) {
     return image
   }
-
   const imageAdjustedCanvas = new PNG({ width, height, inputHasAlpha: true })
-
   PNG.bitblt(image, imageAdjustedCanvas, 0, 0, image.width, image.height, 0, 0)
-
   return imageAdjustedCanvas
 }
