@@ -14,9 +14,9 @@ jobs:
         cypress-version: [10.11.0, 11.2.0, 12.17.4, 13.2.0]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install cypress@${{ matrix.cypress-version }}
