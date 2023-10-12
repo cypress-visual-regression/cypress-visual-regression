@@ -54,7 +54,7 @@ function takeScreenshot(
           screenshotPath = props.path
         }
       })
-      // @ts-expect-error TODO
+      // @ts-ignore
       .then(() => {
         return screenshotPath
       })
