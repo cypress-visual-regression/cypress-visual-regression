@@ -19,6 +19,7 @@
   "scripts": {
     "prebuild": "rimraf dist && npm run lint && npm run format:check",
     "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
     "ci": "npm run build && npm run cy:base && npm run cy:test",
     "format:check": "prettier --check src/**/*.ts cypress/**/*.ts",
     "format:fix": "prettier --write src/**/*.ts cypress/**/*.ts",
