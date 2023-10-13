@@ -17,8 +17,9 @@
     "dist/**/*"
   ],
   "scripts": {
-    "prebuild": "rimraf dist",
+    "prebuild": "rimraf dist && npm run lint && npm run format:check",
     "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
     "ci": "npm run build && npm run cy:base && npm run cy:test",
     "format:check": "prettier --check src/**/*.ts cypress/**/*.ts",
     "format:fix": "prettier --write src/**/*.ts cypress/**/*.ts",
@@ -26,6 +27,7 @@
     "prepublishOnly": "run-s build",
     "preversion": "run-s lint format:check test build",
     "test": "vitest run",
+    "cy:base:test": "npm run cy:base && npm run cy:test",
     "cy:open": "cypress open --e2e -b chrome -C cypress.regression.config.ts",
     "cy:base": "cypress run -C cypress.base.config.ts",
     "cy:test": "cypress run -C cypress.regression.config.ts"

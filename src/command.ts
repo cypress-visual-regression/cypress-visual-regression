@@ -21,6 +21,7 @@ type SnapshotOptions = {
   errorThreshold: number
   failSilently: boolean
 }
+
 // TODO: improve types and move to a *.d.ts file
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -38,7 +39,7 @@ declare global {
 
 /** Take a screenshot and move screenshot to base or actual folder */
 function takeScreenshot(
-  subject: keyof HTMLElementTagNameMap | undefined,
+  subject: string | undefined,
   name: string,
   screenshotOptions: Partial<Cypress.ScreenshotOptions | SnapshotOptions>
 ): Cypress.Chainable<string> {
@@ -53,7 +54,7 @@ function takeScreenshot(
           screenshotPath = props.path
         }
       })
-      // @ts-expect-error - TODO
+      // @ts-ignore
       .then(() => {
         return screenshotPath
       })
