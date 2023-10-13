@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        cypress-version: [11.2.0, 12.17.4, 13.2.0]
+        cypress-version: [12.17.4, 13.2.0]
         # cypress-version: [10.11.0, 11.2.0, 12.17.4, 13.2.0]
 
     steps:
