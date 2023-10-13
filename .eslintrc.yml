@@ -33,6 +33,8 @@ settings:
     node: true
 
 rules:
+  "@typescript-eslint/ban-ts-comment": 'warn'
+  "@typescript-eslint/prefer-ts-expect-error": 'off'
   '@typescript-eslint/consistent-type-definitions': ['error', 'type']
   '@typescript-eslint/promise-function-async': 'off'
   '@typescript-eslint/no-explicit-any': 'error'
