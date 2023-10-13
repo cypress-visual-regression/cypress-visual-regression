@@ -21,8 +21,8 @@ type SnapshotOptions = {
   errorThreshold: number
   failSilently: boolean
 }
-// TODO: improve types and move to a *.d.ts file
 
+// TODO: improve types and move to a *.d.ts file
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
