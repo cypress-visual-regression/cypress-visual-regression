@@ -67,7 +67,7 @@
     "vitest": "0.34.4"
   },
   "peerDependencies": {
-    "cypress": ">=10.0.0"
+    "cypress": ">=12"
   },
   "engines": {
     "node": ">=18"
