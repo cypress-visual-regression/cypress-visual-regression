@@ -1,14 +1,12 @@
 {
-  "extends": "@tsconfig/node-lts/tsconfig.json",
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution":"Bundler",
-    "lib": [
-      "es2023", "DOM"
-  ],
-    "noImplicitThis": true,
-    "outDir": "dist",
-    "baseUrl": ".",
-    "types": ["vitest/globals", "cypress", "node"]
-  }
+    "target": "es5",
+    "lib": ["es5", "dom"],
+    "types": ["cypress", "node"],
+    "strictNullChecks":true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules","cypress.base.config.ts","cypress.regression.config.ts", "cypress"]
 }

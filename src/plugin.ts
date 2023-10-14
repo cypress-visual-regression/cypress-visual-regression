@@ -1,5 +1,5 @@
 import { createWriteStream, promises as fs } from 'fs'
-import path from 'path'
+import * as path from 'path'
 import pixelMatch from 'pixelmatch'
 import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
@@ -31,8 +31,10 @@ export type CompareSnapshotResult = {
   percentage?: number
 }
 
-/** Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
- * The target path is constructed from parts at runtime in node to be OS independent.  */
+/**
+ * Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
+ * The target path is constructed from parts at runtime in node to be OS independent.
+ * */
 const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> => {
   const toDir = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const destDir = path.join(toDir, options.specName)
@@ -44,15 +46,15 @@ const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> 
   return true
 }
 
-/** Cypress plugin to compare image snapshots & generate a diff image.
- *
+/**
+ * Cypress plugin to compare image snapshots & generate a diff image.
  * Uses the pixelmatch library internally.
- */
+ * */
 const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<CompareSnapshotResult> => {
   const snapshotBaseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
 
-  const fileName = sanitize(options.screenshotName)
+  const fileName: string = sanitize(options.screenshotName)
   const specFolder = path.join(snapshotDiffDirectory, options.specName)
 
   const actualImage = options.screenshotAbsolutePath

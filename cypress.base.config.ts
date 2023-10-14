@@ -1,5 +1,5 @@
 import { defineConfig } from 'cypress'
-import fs from 'fs'
+import * as fs from 'node:fs'
 import configureVisualRegression from './src/plugin'
 
 
