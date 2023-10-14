@@ -10,8 +10,8 @@ import { logger } from '../logger'
  * @returns {Promise<PNG>} A Promise that resolves with a PNG instance representing the parsed image.
  * @throws {Error} Throws an error if the specified image file does not exist or if there was an error parsing the file.
  */
-export const parseImage = (imagePath: string): Promise<PNG> => {
-  return new Promise((resolve, reject) => {
+export const parseImage = async (imagePath: string): Promise<PNG> => {
+  return await new Promise((resolve, reject) => {
     const stream: ReadStream = createReadStream(imagePath)
     stream.on('error', (error) => {
       logger.error(`Failed to open '${imagePath}' with error:`, serializeError(error))
