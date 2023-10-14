@@ -5,8 +5,8 @@
     "types": ["cypress", "node"],
     "strictNullChecks":true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "outDir": "dist",
   },
   "include": ["**/*.ts"],
-  "exclude": ["node_modules","cypress.base.config.ts","cypress.regression.config.ts", "cypress"]
 }
