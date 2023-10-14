@@ -22,20 +22,6 @@ type SnapshotOptions = {
   failSilently: boolean
 }
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Cypress {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-    interface Chainable {
-      // eslint-disable-next-line @typescript-eslint/method-signature-style
-      compareSnapshot(
-        name: string,
-        options?: number | Partial<Cypress.ScreenshotOptions | SnapshotOptions>
-      ): Cypress.Chainable<ComparisonResult | boolean>
-    }
-  }
-}
-
 /** Take a screenshot and move screenshot to base or actual folder */
 function takeScreenshot(
   subject: string | undefined,
