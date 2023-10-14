@@ -18,13 +18,10 @@ plugins:
 extends:
   - 'eslint:recommended'
   - 'plugin:@typescript-eslint/recommended'
-  - 'plugin:@typescript-eslint/recommended-requiring-type-checking'
-  - 'plugin:@typescript-eslint/strict'
   - 'standard-with-typescript'
   - 'plugin:promise/recommended'
   - 'plugin:import/recommended'
   - 'plugin:import/typescript'
-  - 'plugin:n/recommended'
   - 'plugin:prettier/recommended'
 
 settings:
@@ -33,10 +30,9 @@ settings:
     node: true
 
 rules:
-  "@typescript-eslint/ban-ts-comment": 'warn'
-  "@typescript-eslint/prefer-ts-expect-error": 'off'
+  '@typescript-eslint/ban-ts-comment': 'warn'
+  '@typescript-eslint/prefer-ts-expect-error': 'off'
   '@typescript-eslint/consistent-type-definitions': ['error', 'type']
-  '@typescript-eslint/promise-function-async': 'off'
   '@typescript-eslint/no-explicit-any': 'error'
   '@typescript-eslint/no-unsafe-member-access': 'off'
   '@typescript-eslint/no-unsafe-assignment': 'off'
@@ -45,4 +41,3 @@ rules:
   '@typescript-eslint/no-unsafe-call': 'off'
   'import/no-default-export': 'off'
   'import/no-unresolved': 'off'
-  'n/no-missing-import': 'off'
