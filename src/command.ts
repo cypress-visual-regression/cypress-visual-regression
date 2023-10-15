@@ -22,21 +22,6 @@ type SnapshotOptions = {
   failSilently: boolean
 }
 
-// TODO: improve types and move to a *.d.ts file
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Cypress {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-    interface Chainable {
-      // eslint-disable-next-line @typescript-eslint/method-signature-style
-      compareSnapshot(
-        name: string,
-        options?: number | Partial<Cypress.ScreenshotOptions | SnapshotOptions>
-      ): Cypress.Chainable<ComparisonResult> | Cypress.Chainable<boolean>
-    }
-  }
-}
-
 /** Take a screenshot and move screenshot to base or actual folder */
 function takeScreenshot(
   subject: string | undefined,
@@ -89,9 +74,9 @@ function compareScreenshots(
     errorThreshold,
     specName: Cypress.config().spec?.name ?? '',
     screenshotAbsolutePath,
-    baseDirectory: Cypress.env('visualRegression').baseDirectory,
-    diffDirectory: Cypress.env('visualRegression').diffDirectory,
-    generateDiff: Cypress.env('visualRegression').generateDiff
+    baseDirectory: Cypress.env('visualRegression')?.baseDirectory,
+    diffDirectory: Cypress.env('visualRegression')?.diffDirectory,
+    generateDiff: Cypress.env('visualRegression')?.generateDiff
   }
 
   let failSilently = false
@@ -101,7 +86,6 @@ function compareScreenshots(
     failSilently = Cypress.env('visualRegression').failSilently
   }
 
-  // @ts-expect-error TODO
   return cy.task('compareSnapshots', options).then((results: CompareSnapshotResult) => {
     if (results.error !== undefined && !failSilently) {
       throw deserializeError(results.error)
@@ -116,7 +100,6 @@ function addCompareSnapshotCommand(
 ): void {
   Cypress.Commands.add(
     'compareSnapshot',
-    // @ts-expect-error - TODO: it doesn't look that prevSubject can be 'optional
     { prevSubject: 'optional' },
     function (
       subject: keyof HTMLElementTagNameMap | undefined,

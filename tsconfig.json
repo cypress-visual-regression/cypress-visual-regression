@@ -1,14 +1,15 @@
 {
-  "extends": "@tsconfig/node-lts/tsconfig.json",
+
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution":"Bundler",
-    "lib": [
-      "es2023", "DOM"
-  ],
-    "noImplicitThis": true,
+    "moduleResolution": "Bundler",
+    "module": "ES6",
+    "target": "es5",
+    "lib": ["es5", "dom"],
+    "types": ["node"],
+    "strictNullChecks":true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
     "outDir": "dist",
-    "baseUrl": ".",
-    "types": ["vitest/globals", "cypress", "node"]
-  }
+  },
+  "include": ["**/*.ts"],
 }

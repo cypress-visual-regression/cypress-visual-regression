@@ -20,17 +20,16 @@
     "prebuild": "rimraf dist && npm run lint && npm run format:check",
     "build": "tsc --project tsconfig.json",
     "typecheck": "tsc --noEmit --project tsconfig.json",
-    "ci": "npm run build && npm run cy:base && npm run cy:test",
     "format:check": "prettier --check src/**/*.ts cypress/**/*.ts",
     "format:fix": "prettier --write src/**/*.ts cypress/**/*.ts",
     "lint": "eslint src --ext .ts --fix",
     "prepublishOnly": "run-s build",
     "preversion": "run-s lint format:check test build",
     "test": "vitest run",
-    "cy:base:test": "npm run cy:base && npm run cy:test",
+    "cy:base-and-regression": "npm run cy:base && npm run cy:regression",
     "cy:open": "cypress open --e2e -b chrome -C cypress.regression.config.ts",
     "cy:base": "cypress run -C cypress.base.config.ts",
-    "cy:test": "cypress run -C cypress.regression.config.ts"
+    "cy:regression": "cypress run -C cypress.regression.config.ts"
   },
   "prettier": {
     "printWidth": 120,
@@ -47,10 +46,6 @@
   },
   "devDependencies": {
     "@faker-js/faker": "8.0.2",
-    "@tsconfig/cypress": "1.0.1",
-    "@tsconfig/node-lts": "18.12.5",
-    "@tsconfig/strictest": "2.0.2",
-    "@types/debug": "4.1.7",
     "@types/node": "20.6.0",
     "@types/pixelmatch": "5.2.4",
     "@types/pngjs": "6.0.1",
@@ -61,7 +56,6 @@
     "eslint-config-standard-with-typescript": "34.0.1",
     "eslint-import-resolver-typescript": "3.5.5",
     "eslint-plugin-import": "2.27.5",
-    "eslint-plugin-n": "15.7.0",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-promise": "6.1.1",
     "npm-run-all": "4.1.5",
@@ -71,7 +65,7 @@
     "vitest": "0.34.4"
   },
   "peerDependencies": {
-    "cypress": ">=10.0.0"
+    "cypress": ">=12"
   },
   "engines": {
     "node": ">=18"

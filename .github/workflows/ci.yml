@@ -23,4 +23,4 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm install cypress@${{ matrix.cypress-version }}
-      - run: npm run cy:base:test
+      - run: npm run cy:base-and-regression
