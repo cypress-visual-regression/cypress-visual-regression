@@ -9,7 +9,6 @@ export default defineConfig({
   viewportWidth: 1280,
   video: false,
   e2e: {
-    // specPattern: 'cypress/e2e/main.cy.ts',
     screenshotsFolder: './cypress/snapshots/actual',
     env: {
       visualRegression: {
@@ -17,6 +16,10 @@ export default defineConfig({
       }
     },
     setupNodeEvents(on: any, config: any) {
+      on('before:browser:launch', (_browser, launchOptions) => {
+        launchOptions.args.push('--force-device-scale-factor=1')
+        return launchOptions
+      })
       configureVisualRegression(on)
       on('task', {
         doesExist: (path: string) => fs.existsSync(path)
