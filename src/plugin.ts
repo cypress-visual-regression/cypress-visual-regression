@@ -6,7 +6,8 @@ import sanitize from 'sanitize-filename'
 import { serializeError, type ErrorObject } from 'serialize-error'
 
 import { adjustCanvas, parseImage } from './utils/image'
-import { logger } from './logger'
+import { logger } from './utils/logger'
+import { type DiffOption } from './command'
 
 export type UpdateSnapshotOptions = {
   screenshotName: string
@@ -22,7 +23,7 @@ export type CompareSnapshotsOptions = {
   screenshotAbsolutePath: string
   baseDirectory?: string
   diffDirectory?: string
-  generateDiff?: 'always' | 'fail' | 'never'
+  generateDiff?: DiffOption
 }
 
 export type CompareSnapshotResult = {

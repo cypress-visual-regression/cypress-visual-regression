@@ -1,31 +1,11 @@
 import { defineConfig } from 'cypress'
+import { CypressConfigEnv } from './src/command'
+import { cypressConfigWithEnv } from './cypress.common.config'
 
-import * as fs from 'fs'
-import configureVisualRegression from './src/plugin'
-
-export default defineConfig({
-  trashAssetsBeforeRuns: true,
-  viewportHeight: 720,
-  viewportWidth: 1280,
-  video: false,
-  e2e: {
-    screenshotsFolder: './cypress/snapshots/actual',
-    env: {
-      visualRegression: {
-        type: 'regression'
-      }
-    },
-    setupNodeEvents(on: any, config: any) {
-      on('before:browser:launch', (_browser, launchOptions) => {
-        launchOptions.args.push('--force-device-scale-factor=1')
-        return launchOptions
-      })
-      configureVisualRegression(on)
-      on('task', {
-        doesExist: (path: string) => fs.existsSync(path)
-      })
-
-      return config
-    }
+const config: CypressConfigEnv = {
+  visualRegression: {
+    type: 'regression'
   }
-})
+}
+
+export default defineConfig(cypressConfigWithEnv(config))

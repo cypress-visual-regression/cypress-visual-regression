@@ -1,7 +1,7 @@
 import { deserializeError } from 'serialize-error'
 import type { CompareSnapshotsOptions, UpdateSnapshotOptions, CompareSnapshotResult } from './plugin'
 
-type OnAfterScreenshotProps = {
+export type OnAfterScreenshotProps = {
   path: string
   size: number
   dimensions: {
@@ -17,9 +17,27 @@ type OnAfterScreenshotProps = {
   testAttemptIndex: number
 }
 
-type SnapshotOptions = {
+export type SnapshotOptions = {
   errorThreshold: number
   failSilently: boolean
+}
+
+export type ComparisonResult = {
+  error?: Error
+  mismatchedPixels: number
+  percentage: number
+}
+
+export type DiffOption = 'always' | 'fail' | 'never'
+
+export type CypressConfigEnv = {
+  visualRegression: {
+    type: 'regression' | 'base'
+    baseDirectory?: string
+    diffDirectory?: string
+    generateDiff?: DiffOption
+    failSilently?: boolean
+  }
 }
 
 /** Take a screenshot and move screenshot to base or actual folder */
@@ -54,12 +72,6 @@ function updateBaseScreenshot(screenshotAbsolutePath: string, screenshotName: st
     baseDirectory: Cypress.env('visualRegression').baseDirectory
   }
   return cy.task('updateSnapshot', args)
-}
-
-export type ComparisonResult = {
-  error?: Error
-  mismatchedPixels: number
-  percentage: number
 }
 
 /** Call the plugin to compare snapshot images and generate a diff */
