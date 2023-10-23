@@ -9,24 +9,19 @@ import { adjustCanvas, parseImage } from './utils/image'
 import { logger } from './utils/logger'
 import { type DiffOption } from './command'
 
-export type UpdateSnapshotOptions = {
-  screenshotName: string
-  specName: string
-  screenshotAbsolutePath: string
-  baseDirectory?: string
-}
-
-export type CompareSnapshotsOptions = {
+export type VisualRegressionOptions = {
+  type: string
   screenshotName: string
   errorThreshold: number
   specName: string
   screenshotAbsolutePath: string
   baseDirectory?: string
   diffDirectory?: string
-  generateDiff?: DiffOption
+  generateDiff?: DiffOption,
+  failSilently: boolean
 }
 
-export type CompareSnapshotResult = {
+export type VisualRegressionResult = {
   error?: ErrorObject
   mismatchedPixels?: number
   percentage?: number
@@ -36,7 +31,7 @@ export type CompareSnapshotResult = {
  * Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.
  * */
-const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> => {
+const updateSnapshot = async (options: VisualRegressionOptions): Promise<boolean> => {
   const toDir = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const destDir = path.join(toDir, options.specName)
   const destFile = path.join(destDir, `${options.screenshotName}.png`)
@@ -51,7 +46,7 @@ const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> 
  * Cypress plugin to compare image snapshots & generate a diff image.
  * Uses the pixelmatch library internally.
  * */
-const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<CompareSnapshotResult> => {
+const compareSnapshots = async (options: VisualRegressionOptions): Promise<VisualRegressionResult> => {
   const snapshotBaseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
 

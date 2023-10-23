@@ -37,7 +37,7 @@ module.exports = defineConfig({
 })
 ```
 
-Pay attention to the `type` option. Use 'base' to capture baseline images, and 'regression' to compare current
+Pay attention to the `type` option. Use 'base' to generate baseline images, and 'regression' to compare current
 screenshot to the base screenshot
 
 In your support file *cypress/support/e2e.js* add the following:
@@ -96,7 +96,22 @@ For more info on how to use TypeScript with Cypress, please refer to [this docum
 
 ## Plugin options
 
-All options can be configured within `visualRegression` under `env` variable inside `cypress.config.js` file.
+All options can be configured within `visualRegression` under `env` variable inside `cypress.config.js` file, like this:
+
+```javacript
+e2e: {
+  screenshotsFolder: './cypress/snapshots/actual',
+  env: {
+    visualRegression: {
+      type: 'regression',
+      baseDirectory: 'cypress/snapshot/base',
+      diffDirectory: 'cypress/snapshot/diff',
+      generateDiff: 'always',
+      failSilently: true
+    }
+  }
+}
+```
 
 | Variable      | Default                 | Description                                                                                                                                                  |
 |---------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -104,7 +119,7 @@ All options can be configured within `visualRegression` under `env` variable ins
 | baseDirectory | 'cypress/snapshot/base' | Path to the directory where the base snapshots will be stored.                                                                                               |
 | diffDirectory | 'cypress/snapshot/diff' | Path to the directory where the generated image difference will be stored.                                                                                   |
 | generateDiff  | 'fail'                  | Either 'fail', 'never' or 'always'. Determines if and when image difference is generated.                                                                    |
-| failSilently  | false                   | Used to decide if any error found in regression should be thrown or returned.                                                                                |
+| failSilently  | false                   | Used to decide if any error found in regression should be thrown or returned as part of the result.                                                          |
 
 You can also pass default cypress screenshot [arguments](https://docs.cypress.io/api/cypress-api/screenshot-api.html#Arguments) to `addCompareSnapshotCommand()`:
 

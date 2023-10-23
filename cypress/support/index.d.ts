@@ -2,7 +2,7 @@ declare namespace Cypress {
   interface Chainable {
     compareSnapshot(
       name: string,
-      options?: number | Partial<ScreenshotOptions | SnapshotOptions>
+      options?: number | ScreenshotOptions
     ): Chainable<ComparisonResult | boolean>
   }
 }

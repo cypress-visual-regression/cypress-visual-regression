@@ -27,7 +27,7 @@
     "preversion": "run-s lint format:check test build",
     "test": "vitest",
     "cy:base-and-regression": "npm run cy:base && npm run cy:regression",
-    "cy:open": "cypress open --e2e -b chrome -C cypress.regression.config.ts",
+    "cy:open": "cypress open --e2e -b chrome -C cypress.base.config.ts",
     "cy:base": "cypress run -C cypress.base.config.ts",
     "cy:regression": "cypress run -C cypress.regression.config.ts"
   },
