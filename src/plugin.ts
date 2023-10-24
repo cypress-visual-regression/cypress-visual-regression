@@ -1,5 +1,5 @@
-import { createWriteStream, promises as fs } from 'fs'
-import * as path from 'path'
+import { createWriteStream, promises as fs } from 'node:fs'
+import path from 'node:path'
 import pixelMatch from 'pixelmatch'
 import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
@@ -113,10 +113,31 @@ const configureVisualRegression = (on: Cypress.PluginEvents): void => {
   })
 }
 
-async function generateImage(diffPNG: PNG, image: string, path: string): Promise<void> {
-  await fs.mkdir(path, { recursive: true })
-  diffPNG.pack().pipe(createWriteStream(image))
-  logger.debug(`Image with pixel difference generated: ${image}`)
+export async function generateImage(diffPNG: PNG, image: string, desirePath: string): Promise<boolean> {
+  try {
+    await fs.mkdir(desirePath, { recursive: true })
+  } catch (error) {
+    logger.error(`Failed to create directory '${desirePath}' with error:`, serializeError(error))
+    return await Promise.reject(new Error(`cannot create directory '${desirePath}'.`))
+  }
+  return await new Promise((resolve, reject) => {
+    const filePath = path.join(desirePath, image)
+    const file = createWriteStream(filePath)
+    file.on('error', (error) => {
+      logger.error(`Failed to write stream '${filePath}' with error:`, serializeError(error))
+      reject(new Error(`cannot create file '${filePath}'.`))
+    })
+    diffPNG
+      .pack()
+      .pipe(file)
+      .on('finish', () => {
+        resolve(true)
+      })
+      .on('error', (error) => {
+        logger.error(`Failed to parse image '${filePath}' with error:`, serializeError(error))
+        reject(error)
+      })
+  })
 }
 
 export default configureVisualRegression
