@@ -53,13 +53,10 @@ const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> 
 const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<CompareSnapshotResult> => {
   const snapshotBaseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
-
   const fileName: string = sanitize(options.screenshotName)
-  const specFolder = path.join(snapshotDiffDirectory, options.specName)
-
   const actualImage = options.screenshotAbsolutePath
   const expectedImage = path.join(snapshotBaseDirectory, options.specName, `${fileName}.png`)
-  const diffImage = path.join(snapshotDiffDirectory, options.specName, `${fileName}.png`)
+  const diffImagePath = path.join(snapshotDiffDirectory, options.specName, `${fileName}.png`)
 
   const [imgExpected, imgActual] = await Promise.all([parseImage(expectedImage), parseImage(actualImage)])
   const diffPNG = new PNG({
@@ -83,7 +80,7 @@ const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<Compa
   if (percentage > options.errorThreshold) {
     logger.error(`Error in visual regression found: ${percentage.toFixed(2)}`)
     if (options.generateDiff !== 'never') {
-      await generateImage(diffPNG, diffImage, specFolder)
+      await generateImage(diffPNG, diffImagePath)
     }
     return {
       error: serializeError(
@@ -97,7 +94,7 @@ const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<Compa
       percentage
     }
   } else if (options.generateDiff === 'always') {
-    await generateImage(diffPNG, diffImage, specFolder)
+    await generateImage(diffPNG, diffImagePath)
   }
   return {
     mismatchedPixels,
@@ -113,19 +110,19 @@ const configureVisualRegression = (on: Cypress.PluginEvents): void => {
   })
 }
 
-export async function generateImage(diffPNG: PNG, image: string, desirePath: string): Promise<boolean> {
+export async function generateImage(diffPNG: PNG, imagePath: string): Promise<boolean> {
+  const dirName = path.dirname(imagePath)
   try {
-    await fs.mkdir(desirePath, { recursive: true })
+    await fs.mkdir(dirName, { recursive: true })
   } catch (error) {
-    logger.error(`Failed to create directory '${desirePath}' with error:`, serializeError(error))
-    return await Promise.reject(new Error(`cannot create directory '${desirePath}'.`))
+    logger.error(`Failed to create directory '${dirName}' with error:`, serializeError(error))
+    return await Promise.reject(new Error(`cannot create directory '${dirName}'.`))
   }
   return await new Promise((resolve, reject) => {
-    const filePath = path.join(desirePath, image)
-    const file = createWriteStream(filePath)
+    const file = createWriteStream(imagePath)
     file.on('error', (error) => {
-      logger.error(`Failed to write stream '${filePath}' with error:`, serializeError(error))
-      reject(new Error(`cannot create file '${filePath}'.`))
+      logger.error(`Failed to write stream '${imagePath}' with error:`, serializeError(error))
+      reject(new Error(`cannot create file '${imagePath}'.`))
     })
     diffPNG
       .pack()
@@ -134,7 +131,7 @@ export async function generateImage(diffPNG: PNG, image: string, desirePath: str
         resolve(true)
       })
       .on('error', (error) => {
-        logger.error(`Failed to parse image '${filePath}' with error:`, serializeError(error))
+        logger.error(`Failed to parse image '${imagePath}' with error:`, serializeError(error))
         reject(error)
       })
   })
