@@ -35,15 +35,19 @@ export type CompareSnapshotResult = {
  * Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.
  * */
-const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> => {
+export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> => {
   const toDir = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const destDir = path.join(toDir, options.specName)
   const destFile = path.join(destDir, `${options.screenshotName}.png`)
-
-  await fs.mkdir(destDir, { recursive: true })
-  await fs.copyFile(options.screenshotAbsolutePath, destFile)
-  logger.debug(`Updated base snapshot '${options.screenshotName}' at ${destFile}`)
-  return true
+  try {
+    await fs.mkdir(destDir, { recursive: true })
+    await fs.copyFile(options.screenshotAbsolutePath, destFile)
+    logger.debug(`Updated base snapshot '${options.screenshotName}' at ${destFile}`)
+    return true
+  } catch (error) {
+    logger.error(`Failed to create directory '${destDir}' with error:`, serializeError(error))
+    return await Promise.reject(new Error(`cannot create directory '${destDir}'.`))
+  }
 }
 
 /**
@@ -102,14 +106,6 @@ const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<Compa
   }
 }
 
-/** Configure the plugin to compare snapshots. */
-const configureVisualRegression = (on: Cypress.PluginEvents): void => {
-  on('task', {
-    compareSnapshots,
-    updateSnapshot
-  })
-}
-
 export async function generateImage(diffPNG: PNG, imagePath: string): Promise<boolean> {
   const dirName = path.dirname(imagePath)
   try {
@@ -134,6 +130,14 @@ export async function generateImage(diffPNG: PNG, imagePath: string): Promise<bo
         logger.error(`Failed to parse image '${imagePath}' with error:`, serializeError(error))
         reject(error)
       })
+  })
+}
+
+/** Configure the plugin to compare snapshots. */
+const configureVisualRegression = (on: Cypress.PluginEvents): void => {
+  on('task', {
+    compareSnapshots,
+    updateSnapshot
   })
 }
 
