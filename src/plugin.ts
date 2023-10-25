@@ -41,12 +41,19 @@ export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<bo
   const destFile = path.join(destDir, `${options.screenshotName}.png`)
   try {
     await fs.mkdir(destDir, { recursive: true })
+  } catch (error) {
+    logger.error(`Failed to create directory '${destDir}' with error:`, serializeError(error))
+    return await Promise.reject(new Error(`cannot create directory '${destDir}'.`))
+  }
+  try {
     await fs.copyFile(options.screenshotAbsolutePath, destFile)
     logger.debug(`Updated base snapshot '${options.screenshotName}' at ${destFile}`)
     return true
   } catch (error) {
-    logger.error(`Failed to create directory '${destDir}' with error:`, serializeError(error))
-    return await Promise.reject(new Error(`cannot create directory '${destDir}'.`))
+    logger.error(`Failed to copy file '${destDir}' with error:`, serializeError(error))
+    return await Promise.reject(
+      new Error(`Failed to copy file from '${options.screenshotAbsolutePath}' to '${destFile}'.`)
+    )
   }
 }
 

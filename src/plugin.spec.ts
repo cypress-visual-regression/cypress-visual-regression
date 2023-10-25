@@ -52,5 +52,29 @@ describe('plugin', () => {
         unlinkSync(path.join(baseDirectory, specName, `${screenshotName}.png`))
       })
     })
+    describe('when there is an error in updating the snapshot', () => {
+      const wrongAbsolutePath = path.join('fixtures', 'assets', 'wadus.png')
+      it('should throw an error if cannot copy file', async () => {
+        const result = updateSnapshot({ screenshotName, specName, screenshotAbsolutePath: wrongAbsolutePath })
+        await expect(result).rejects.toThrow(
+          `Failed to copy file from '${wrongAbsolutePath}' to '${path.join(
+            process.cwd(),
+            defaultBaseDirectory,
+            specName,
+            `${screenshotName}.png`
+          )}'.`
+        )
+      })
+      it('should throw an error if cannot create a directory', async () => {
+        const privateBaseDirectory = '/System'
+        const result = updateSnapshot({
+          screenshotName,
+          specName,
+          screenshotAbsolutePath,
+          baseDirectory: privateBaseDirectory
+        })
+        await expect(result).rejects.toThrow(`cannot create directory '${path.join(privateBaseDirectory, specName)}'.`)
+      })
+    })
   })
 })
