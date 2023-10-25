@@ -9,10 +9,10 @@ import { adjustCanvas, parseImage } from './utils/image'
 import { logger } from './logger'
 
 export type UpdateSnapshotOptions = {
-  screenshotName: string
-  specName: string
-  screenshotAbsolutePath: string
-  baseDirectory?: string
+  screenshotName: string /** new image name without file termination */
+  specName: string /** subdirectory to be added to base directory */
+  screenshotAbsolutePath: string /** absolute path and name of the original image including file termination */
+  baseDirectory?: string /** base directory where to move the image, if omitted default will be 'process.cwd()/cypress/snapshots/base' */
 }
 
 export type CompareSnapshotsOptions = {
