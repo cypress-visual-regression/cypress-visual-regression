@@ -22,6 +22,21 @@ export type VisualRegressionOptions = {
   failSilently: boolean
 }
 
+export type UpdateSnapshotOptions = Pick<
+  VisualRegressionOptions,
+  'screenshotName' | 'specName' | 'screenshotAbsolutePath' | 'baseDirectory'
+>
+export type CompareSnapshotOptions = Pick<
+  VisualRegressionOptions,
+  | 'screenshotName'
+  | 'specName'
+  | 'screenshotAbsolutePath'
+  | 'baseDirectory'
+  | 'diffDirectory'
+  | 'errorThreshold'
+  | 'generateDiff'
+>
+
 export type VisualRegressionResult = {
   error?: ErrorObject
   mismatchedPixels?: number
@@ -33,7 +48,7 @@ export type VisualRegressionResult = {
  * Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.
  * */
-const updateSnapshot = async (options: VisualRegressionOptions): Promise<VisualRegressionResult> => {
+const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<VisualRegressionResult> => {
   const toDir = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const destDir = path.join(toDir, options.specName)
   const destFile = path.join(destDir, `${options.screenshotName}.png`)
@@ -48,7 +63,7 @@ const updateSnapshot = async (options: VisualRegressionOptions): Promise<VisualR
  * Cypress plugin to compare image snapshots & generate a diff image.
  * Uses the pixelmatch library internally.
  * */
-const compareSnapshots = async (options: VisualRegressionOptions): Promise<VisualRegressionResult> => {
+const compareSnapshots = async (options: CompareSnapshotOptions): Promise<VisualRegressionResult> => {
   const snapshotBaseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
 

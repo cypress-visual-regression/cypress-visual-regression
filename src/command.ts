@@ -126,7 +126,6 @@ function prepareOptions(
     options.failSilently = Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL')
   }
 
-  console.log(options)
   return options
 }
 
