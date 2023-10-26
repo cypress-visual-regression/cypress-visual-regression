@@ -18,7 +18,7 @@ describe('utils/image module', () => {
     })
     // TODO mock createReadStream
     test('should return a PNG image from reference', async () => {
-      const filename = './cypress-visual-regression.png'
+      const filename = './src/mocks/cypress-visual-regression.png'
       const image = await parseImage(filename)
       expect(typeof image).to.equal('object')
     })

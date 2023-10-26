@@ -43,7 +43,7 @@ const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> 
 
   await fs.mkdir(destDir, { recursive: true })
   await fs.copyFile(options.screenshotAbsolutePath, destFile)
-  logger.debug(`Updated base snapshot '${options.screenshotName}' at ${destFile}`)
+  logger.debug('Updated base snapshot "%s" at "%s"', options.screenshotName, destFile)
   return true
 }
 
@@ -82,7 +82,7 @@ const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<Compa
   const percentage = (mismatchedPixels / diffPNG.width / diffPNG.height) ** 0.5
 
   if (percentage > options.errorThreshold) {
-    logger.error(`Error in visual regression found: ${percentage.toFixed(2)}`)
+    logger.error('Error in visual regression found: "%s"', percentage.toFixed(2))
     if (options.generateDiff !== 'never') {
       await generateImage(diffPNG, diffImage, specFolder)
     }
@@ -117,7 +117,7 @@ const configureVisualRegression = (on: Cypress.PluginEvents): void => {
 async function generateImage(diffPNG: PNG, image: string, path: string): Promise<void> {
   await fs.mkdir(path, { recursive: true })
   diffPNG.pack().pipe(createWriteStream(image))
-  logger.debug(`Image with pixel difference generated: ${image}`)
+  logger.debug('Image with pixel difference generated: "%d"', image)
 }
 
 export default configureVisualRegression
