@@ -1,7 +1,7 @@
 import { createReadStream, type ReadStream } from 'fs'
 import { PNG } from 'pngjs'
 import { serializeError } from 'serialize-error'
-import { logger } from '../logger'
+import { logger } from './logger'
 
 /**
  * Parses an image file and returns a Promise that resolves with a PNG instance.
