@@ -117,11 +117,11 @@ e2e: {
 |---------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | type          | /                       | Either 'regression' or 'base'. Base will override any existing base images with new screenshots. Regression will compare the base to the current screenshot. |
 | baseDirectory | 'cypress/snapshot/base' | Path to the directory where the base snapshots will be stored.                                                                                               |
-| diffDirectory | 'cypress/snapshot/diff' | Path to the directory where the generated image difference will be stored.                                                                                   |
-| generateDiff  | 'fail'                  | Either 'fail', 'never' or 'always'. Determines if and when image difference is generated.                                                                    |
+| diffDirectory | 'cypress/snapshot/diff' | Path to the directory where the generated image differences will be stored.                                                                                  |
+| generateDiff  | 'fail'                  | Either 'fail', 'never' or 'always'. Determines if and when image differences are generated.                                                                  |
 | failSilently  | false                   | Used to decide if any error found in regression should be thrown or returned as part of the result.                                                          |
 
-You can also pass default cypress screenshot [arguments](https://docs.cypress.io/api/cypress-api/screenshot-api.html#Arguments) to `addCompareSnapshotCommand()`:
+You can also pass default cypress screenshot [arguments](https://docs.cypress.io/api/cypress-api/screenshot-api.html#Arguments) to `addCompareSnapshotCommand()`, like this:
 
 ```javascript
 const addCompareSnapshotCommand = require('cypress-visual-regression/dist/command')
@@ -129,8 +129,6 @@ addCompareSnapshotCommand({
   capture: 'fullPage'
 })
 ```
-
-These will be used by default when no parameters are passed to the `compareSnapshot` command.
 
 ### How To Use
 
@@ -161,7 +159,7 @@ cy.compareSnapshot('homePage', {errorThreshold: 1, failSilently: true}).then(com
 })
 ```
 
-> Looking for more examples? See [cypress/e2e/main.cy.ts](https://github.com/mjhea0/cypress-visual-regression/blob/master/cypress/e2e/main.cy.js).
+> Looking for more examples? See [cypress/e2e/main.cy.ts](https://github.com/cypress-visual-regression/cypress-visual-regression/blob/master/cypress/e2e/main.cy.ts).
 
 ## Example
 

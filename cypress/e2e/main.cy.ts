@@ -152,7 +152,6 @@ describe('Visual Regression Example', () => {
 
   const visualRegressionConfig = Cypress.env('visualRegression')
   visualRegressionConfig.failSilently = true
-  console.log(Cypress.env())
 
   it(
     'should not fail if failSilently is set in env',
@@ -161,7 +160,6 @@ describe('Visual Regression Example', () => {
     },
     () => {
       if (Cypress.env('visualRegression').type === 'base') {
-        console.log(Cypress.env())
         cy.visit('./cypress/web/04.html')
         cy.get('H1').contains('bar').should('exist')
         cy.compareSnapshot('foo')

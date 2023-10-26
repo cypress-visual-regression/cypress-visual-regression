@@ -17,11 +17,11 @@ export type OnAfterScreenshotProps = {
   testAttemptIndex: number
 }
 
-export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginOptions>
+export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginOptions> | undefined
 
-type CommandOptions = number | ScreenshotOptions | undefined
+export type CommandOptions = number | ScreenshotOptions | undefined
 
-type PluginOptions = {
+export type PluginOptions = {
   errorThreshold: number
   failSilently: boolean
 }
@@ -34,6 +34,15 @@ export type ComparisonResult = {
 
 export type DiffOption = 'always' | 'fail' | 'never'
 
+export type CypressConfigEnv = {
+  visualRegression: {
+    type: 'regression' | 'base'
+    baseDirectory?: string
+    diffDirectory?: string
+    generateDiff?: DiffOption
+    failSilently?: boolean
+  }
+}
 
 /** Add custom cypress command to compare image snapshots of an element or the window. */
 function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void {
@@ -50,16 +59,15 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
       }
 
       // prepare screenshot options
-      let screenshotAndPluginOptions: ScreenshotOptions
+      let errorThreshold = 0
       if (typeof commandOptions === 'object') {
-        screenshotAndPluginOptions = { ...screenshotOptions, ...commandOptions }
-      } else if (typeof commandOptions === 'number') {
-        screenshotAndPluginOptions = { ...screenshotOptions, errorThreshold: commandOptions }
-      } else {
-        screenshotAndPluginOptions = { ...screenshotOptions, errorThreshold: 0 }
+        screenshotOptions = { ...screenshotOptions, ...commandOptions }
+      }
+      if (typeof commandOptions === 'number') {
+        errorThreshold = commandOptions
       }
 
-      const visualRegressionOptions: VisualRegressionOptions = prepareOptions(name, screenshotAndPluginOptions)
+      const visualRegressionOptions: VisualRegressionOptions = prepareOptions(name, errorThreshold, screenshotOptions)
 
       return takeScreenshot(subject, name, screenshotOptions).then((screenshotAbsolutePath: string) => {
         visualRegressionOptions.screenshotAbsolutePath = screenshotAbsolutePath
@@ -78,20 +86,24 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
   )
 }
 
-function prepareOptions(name: string, screenshotOptions: ScreenshotOptions): VisualRegressionOptions {
+function prepareOptions(
+  name: string,
+  errorThreshold: number,
+  screenshotOptions: ScreenshotOptions
+): VisualRegressionOptions {
   const options: VisualRegressionOptions = {
     type: Cypress.env('visualRegression').type as string,
     screenshotName: name,
     specName: Cypress.spec.name,
     screenshotAbsolutePath: 'null', // will be set after takeScreenshot
-    errorThreshold: 0,
+    errorThreshold,
     baseDirectory: Cypress.env('visualRegression')?.baseDirectory,
     diffDirectory: Cypress.env('visualRegression')?.diffDirectory,
     generateDiff: Cypress.env('visualRegression')?.generateDiff,
     failSilently: Cypress.env('visualRegression')?.failSilently
   }
 
-  if (screenshotOptions.failSilently !== undefined) {
+  if (screenshotOptions?.failSilently !== undefined) {
     options.failSilently = screenshotOptions.failSilently
   } else if (Cypress.env('visualRegression').failSilently !== undefined) {
     options.failSilently = Cypress.env('visualRegression').failSilently

@@ -17,7 +17,7 @@ export type VisualRegressionOptions = {
   screenshotAbsolutePath: string
   baseDirectory?: string
   diffDirectory?: string
-  generateDiff?: DiffOption,
+  generateDiff?: DiffOption
   failSilently: boolean
 }
 
