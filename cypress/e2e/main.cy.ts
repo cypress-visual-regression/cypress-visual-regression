@@ -36,7 +36,6 @@ describe('Visual Regression Example', () => {
     cy.get('H1').contains('Login').should('exist')
     cy.get('form')
       .compareSnapshot('login-form')
-      // @ts-ignore TODO
       .should((comparisonResult: ComparisonResult) => {
         if (Cypress.env('visualRegression').type === 'base') {
           expect(comparisonResult).to.be.true
@@ -48,7 +47,6 @@ describe('Visual Regression Example', () => {
       })
     cy.get('form')
       .compareSnapshot('login-form', 0.02)
-      // @ts-ignore TODO
       .should((comparisonResult: ComparisonResult) => {
         if (Cypress.env('visualRegression').type === 'base') {
           expect(comparisonResult).to.be.true
@@ -85,28 +83,26 @@ describe('Visual Regression Example', () => {
     } else {
       cy.visit('./cypress/web/05.html')
       cy.get('H1').contains('none').should('exist')
-      // @ts-ignore TODO
       cy.compareSnapshot('foo', 0.02).should((comparisonResult: ComparisonResult) => {
         expect(comparisonResult.error).to.be.undefined
         expect(comparisonResult.percentage).to.be.below(0.02)
       })
+      // @ts-ignore TODO type error
       cy.compareSnapshot('foo', { errorThreshold: 0.01, failSilently: true }).should(
-        // @ts-ignore TODO
-        (comparisonResult: any) => {
+        (comparisonResult: ComparisonResult) => {
           expect(comparisonResult.percentage).to.be.above(0.01)
           expect(comparisonResult.error).to.exist
         }
       )
       cy.get('H1')
         .compareSnapshot('h1', 0.085)
-        // @ts-ignore TODO
         .should((comparisonResult: ComparisonResult) => {
           expect(comparisonResult.error).to.be.undefined
           expect(comparisonResult.percentage).to.be.below(0.085)
         })
       cy.get('H1')
-        .compareSnapshot('h1', { errorThreshold: 0.01, failSilently: true })
         // @ts-ignore TODO
+        .compareSnapshot('h1', { errorThreshold: 0.01, failSilently: true })
         .should((comparisonResult: ComparisonResult) => {
           expect(comparisonResult.percentage).to.be.above(0.01)
           expect(comparisonResult.error).to.exist
@@ -122,7 +118,9 @@ describe('Visual Regression Example', () => {
     }
     cy.get('H1').contains('Color').should('exist')
     cy.compareSnapshot('baz', 0.029)
+    // @ts-ignore TODO type error
     cy.compareSnapshot('baz', { errorThreshold: 0.02, failSilently: true })
+    // @ts-ignore TODO type error
     cy.compareSnapshot('baz', { failSilently: true })
   })
 
@@ -144,24 +142,26 @@ describe('Visual Regression Example', () => {
 
   it('should pass parameters to cy.screenshot', () => {
     cy.visit('./cypress/web/08.html')
+    // @ts-ignore TODO type error
     cy.compareSnapshot('screenshot-params-full', {
       capture: 'fullPage'
-      // @ts-ignore TODO
-    }).then((result: any) => {
+    }).then((result: ComparisonResult) => {
       expect(result.error).is.undefined
     })
   })
 
   const visualRegressionConfig = Cypress.env('visualRegression')
   visualRegressionConfig.failSilently = true
+  console.log(Cypress.env())
 
   it(
     'should not fail if failSilently is set in env',
     {
-      env: visualRegressionConfig
+      env: { visualRegression: visualRegressionConfig }
     },
     () => {
       if (Cypress.env('visualRegression').type === 'base') {
+        console.log(Cypress.env())
         cy.visit('./cypress/web/04.html')
         cy.get('H1').contains('bar').should('exist')
         cy.compareSnapshot('foo')
@@ -169,13 +169,11 @@ describe('Visual Regression Example', () => {
       } else {
         cy.visit('./cypress/web/05.html')
         cy.get('H1').contains('none').should('exist')
-        // @ts-ignore TODO
         cy.compareSnapshot('foo', 0.01).should((comparisonResult: ComparisonResult) => {
           expect(comparisonResult.error).to.exist
         })
         cy.get('H1')
           .compareSnapshot('h1', 0.02)
-          // @ts-ignore TODO
           .should((comparisonResult: ComparisonResult) => {
             expect(comparisonResult.error).to.exist
           })
