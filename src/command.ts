@@ -1,7 +1,7 @@
 import { deserializeError } from 'serialize-error'
 import type { VisualRegressionOptions, VisualRegressionResult } from './plugin'
 
-export type OnAfterScreenshotProps = {
+type OnAfterScreenshotProps = {
   path: string
   size: number
   dimensions: {
@@ -24,12 +24,6 @@ export type CommandOptions = number | ScreenshotOptions | undefined
 export type PluginOptions = {
   errorThreshold: number
   failSilently: boolean
-}
-
-export type ComparisonResult = {
-  error?: Error
-  mismatchedPixels: number
-  percentage: number
 }
 
 export type DiffOption = 'always' | 'fail' | 'never'
@@ -112,6 +106,7 @@ function prepareOptions(
   // deprecation methods
   if (Cypress.env('type') !== undefined) {
     console.error("Environment variable 'type' is deprecated. Please check README.md file for latest configuration.")
+    options.type = Cypress.env('type')
   }
   if (Cypress.env('failSilently') !== undefined) {
     console.error(
@@ -140,14 +135,16 @@ function prepareOptions(
       "Environment variable 'ALWAYS_GENERATE_DIFF' is deprecated. Please check README.md file for latest configuration."
     )
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    options.generateDiff = Cypress.env('SNAPSHOT_DIFF_DIRECTORY') ? 'always' : 'never'
+    options.generateDiff = Cypress.env('ALWAYS_GENERATE_DIFF') ? 'always' : 'never'
   }
   if (Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL') !== undefined) {
     console.error(
       "Environment variable 'ALLOW_VISUAL_REGRESSION_TO_FAIL' is deprecated. Please check README.md file for latest configuration."
     )
+    options.failSilently = Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL')
   }
 
+  console.log(options)
   return options
 }
 

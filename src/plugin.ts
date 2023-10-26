@@ -25,13 +25,14 @@ export type VisualRegressionResult = {
   error?: ErrorObject
   mismatchedPixels?: number
   percentage?: number
+  baseGenerated?: boolean
 }
 
 /**
  * Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.
  * */
-const updateSnapshot = async (options: VisualRegressionOptions): Promise<boolean> => {
+const updateSnapshot = async (options: VisualRegressionOptions): Promise<VisualRegressionResult> => {
   const toDir = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const destDir = path.join(toDir, options.specName)
   const destFile = path.join(destDir, `${options.screenshotName}.png`)
@@ -39,7 +40,7 @@ const updateSnapshot = async (options: VisualRegressionOptions): Promise<boolean
   await fs.mkdir(destDir, { recursive: true })
   await fs.copyFile(options.screenshotAbsolutePath, destFile)
   logger.debug('Updated base snapshot "%s" at "%s"', options.screenshotName, destFile)
-  return true
+  return { baseGenerated: true }
 }
 
 /**
