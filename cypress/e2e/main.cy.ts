@@ -91,7 +91,6 @@ describe('Visual Regression Example', () => {
         expect(result.error).to.be.undefined
         expect(result.percentage).to.be.below(0.02)
       })
-      // @ts-ignore TODO type error
       cy.compareSnapshot('foo', { errorThreshold: 0.01, failSilently: true }).should(
         (result: VisualRegressionResult) => {
           expect(result.percentage).to.be.above(0.01)
@@ -105,7 +104,6 @@ describe('Visual Regression Example', () => {
           expect(result.percentage).to.be.below(0.085)
         })
       cy.get('H1')
-        // @ts-ignore TODO
         .compareSnapshot('h1', { errorThreshold: 0.01, failSilently: true })
         .should((result: VisualRegressionResult) => {
           expect(result.percentage).to.be.above(0.01)
@@ -122,9 +120,7 @@ describe('Visual Regression Example', () => {
     }
     cy.get('H1').contains('Color').should('exist')
     cy.compareSnapshot('baz', 0.029)
-    // @ts-ignore TODO type error
     cy.compareSnapshot('baz', { errorThreshold: 0.02, failSilently: true })
-    // @ts-ignore TODO type error
     cy.compareSnapshot('baz', { failSilently: true })
   })
 
@@ -146,7 +142,6 @@ describe('Visual Regression Example', () => {
 
   it('should pass parameters to cy.screenshot', () => {
     cy.visit('./cypress/web/08.html')
-    // @ts-ignore TODO type error
     cy.compareSnapshot('screenshot-params-full', {
       capture: 'fullPage'
     }).then((result: VisualRegressionResult) => {

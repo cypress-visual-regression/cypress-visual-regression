@@ -7,7 +7,8 @@ import { serializeError, type ErrorObject } from 'serialize-error'
 
 import { adjustCanvas, parseImage } from './utils/image'
 import { logger } from './utils/logger'
-import { type DiffOption } from './command'
+
+export type DiffOption = 'always' | 'fail' | 'never'
 
 export type VisualRegressionOptions = {
   type: string

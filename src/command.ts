@@ -1,32 +1,14 @@
 import { deserializeError } from 'serialize-error'
-import type { VisualRegressionOptions, VisualRegressionResult } from './plugin'
+import type { DiffOption, VisualRegressionOptions, VisualRegressionResult } from './plugin'
 
-type OnAfterScreenshotProps = {
-  path: string
-  size: number
-  dimensions: {
-    width: number
-    height: number
-  }
-  multipart: boolean
-  pixelRatio: number
-  takenAt: string
-  name: string
-  blackout: string[]
-  duration: number
-  testAttemptIndex: number
-}
+export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginSetupOptions>
 
-export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginOptions> | undefined
+export type PluginCommandOptions = number | ScreenshotOptions
 
-export type CommandOptions = number | ScreenshotOptions | undefined
-
-export type PluginOptions = {
+export type PluginSetupOptions = {
   errorThreshold: number
   failSilently: boolean
 }
-
-export type DiffOption = 'always' | 'fail' | 'never'
 
 export type CypressConfigEnv = {
   visualRegression: {
@@ -44,9 +26,9 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
     'compareSnapshot',
     { prevSubject: 'optional' },
     function (
-      subject: keyof HTMLElementTagNameMap | undefined,
-      name: string | undefined,
-      commandOptions: CommandOptions = {}
+      subject: keyof HTMLElementTagNameMap,
+      name: string,
+      commandOptions: PluginCommandOptions
     ): Cypress.Chainable {
       if (name === undefined || name === '') {
         throw new Error('Snapshot name must be specified')
@@ -83,7 +65,7 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
 function prepareOptions(
   name: string,
   errorThreshold: number,
-  screenshotOptions: ScreenshotOptions
+  screenshotOptions?: ScreenshotOptions
 ): VisualRegressionOptions {
   const options: VisualRegressionOptions = {
     type: Cypress.env('visualRegression').type as string,
@@ -161,7 +143,8 @@ function takeScreenshot(
     objToOperateOn
       .screenshot(name, {
         ...screenshotOptions,
-        onAfterScreenshot(_el: JQuery, props: OnAfterScreenshotProps) {
+        // eslint-disable-next-line
+        onAfterScreenshot(_el: JQuery, props: any) {
           screenshotPath = props.path
         }
       })
