@@ -37,7 +37,7 @@ module.exports = defineConfig({
 })
 ```
 
-Pay attention to the `type` option. Use 'base' to capture baseline images, and 'regression' to compare current
+Pay attention to the `type` option. Use 'base' to generate baseline images, and 'regression' to compare current
 screenshot to the base screenshot
 
 In your support file *cypress/support/e2e.js* add the following:
@@ -96,17 +96,32 @@ For more info on how to use TypeScript with Cypress, please refer to [this docum
 
 ## Plugin options
 
-All options can be configured within `visualRegression` under `env` variable inside `cypress.config.js` file.
+All options can be configured within `visualRegression` under `env` variable inside `cypress.config.js` file, like this:
+
+```javacript
+e2e: {
+  screenshotsFolder: './cypress/snapshots/actual',
+  env: {
+    visualRegression: {
+      type: 'regression',
+      baseDirectory: 'cypress/snapshot/base',
+      diffDirectory: 'cypress/snapshot/diff',
+      generateDiff: 'always',
+      failSilently: true
+    }
+  }
+}
+```
 
 | Variable      | Default                 | Description                                                                                                                                                  |
 |---------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | type          | /                       | Either 'regression' or 'base'. Base will override any existing base images with new screenshots. Regression will compare the base to the current screenshot. |
 | baseDirectory | 'cypress/snapshot/base' | Path to the directory where the base snapshots will be stored.                                                                                               |
-| diffDirectory | 'cypress/snapshot/diff' | Path to the directory where the generated image difference will be stored.                                                                                   |
-| generateDiff  | 'fail'                  | Either 'fail', 'never' or 'always'. Determines if and when image difference is generated.                                                                    |
-| failSilently  | false                   | Used to decide if any error found in regression should be thrown or returned.                                                                                |
+| diffDirectory | 'cypress/snapshot/diff' | Path to the directory where the generated image differences will be stored.                                                                                  |
+| generateDiff  | 'fail'                  | Either 'fail', 'never' or 'always'. Determines if and when image differences are generated.                                                                  |
+| failSilently  | false                   | Used to decide if any error found in regression should be thrown or returned as part of the result.                                                          |
 
-You can also pass default cypress screenshot [arguments](https://docs.cypress.io/api/cypress-api/screenshot-api.html#Arguments) to `addCompareSnapshotCommand()`:
+You can also pass default cypress screenshot [arguments](https://docs.cypress.io/api/cypress-api/screenshot-api.html#Arguments) to `addCompareSnapshotCommand()`, like this:
 
 ```javascript
 const addCompareSnapshotCommand = require('cypress-visual-regression/dist/command')
@@ -114,8 +129,6 @@ addCompareSnapshotCommand({
   capture: 'fullPage'
 })
 ```
-
-These will be used by default when no parameters are passed to the `compareSnapshot` command.
 
 ### How To Use
 
@@ -146,7 +159,7 @@ cy.compareSnapshot('homePage', {errorThreshold: 1, failSilently: true}).then(com
 })
 ```
 
-> Looking for more examples? See [cypress/e2e/main.cy.ts](https://github.com/mjhea0/cypress-visual-regression/blob/master/cypress/e2e/main.cy.js).
+> Looking for more examples? See [cypress/e2e/main.cy.ts](https://github.com/cypress-visual-regression/cypress-visual-regression/blob/master/cypress/e2e/main.cy.ts).
 
 ## Example
 

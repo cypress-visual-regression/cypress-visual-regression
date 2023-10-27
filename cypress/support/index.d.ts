@@ -1,8 +1,5 @@
 declare namespace Cypress {
   interface Chainable {
-    compareSnapshot(
-      name: string,
-      options?: number | Partial<ScreenshotOptions | SnapshotOptions>
-    ): Chainable<ComparisonResult | boolean>
+    compareSnapshot(name: string, options?: PluginCommandOptions): Chainable<VisualRegressionResult>
   }
 }

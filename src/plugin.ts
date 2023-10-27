@@ -7,16 +7,11 @@ import { serializeError, type ErrorObject } from 'serialize-error'
 
 import { adjustCanvas, parseImage } from './utils/image'
 import { logger } from './utils/logger'
-import { type DiffOption } from './command'
 
-export type UpdateSnapshotOptions = {
-  screenshotName: string
-  specName: string
-  screenshotAbsolutePath: string
-  baseDirectory?: string
-}
+export type DiffOption = 'always' | 'fail' | 'never'
 
-export type CompareSnapshotsOptions = {
+export type VisualRegressionOptions = {
+  type: string
   screenshotName: string
   errorThreshold: number
   specName: string
@@ -24,19 +19,36 @@ export type CompareSnapshotsOptions = {
   baseDirectory?: string
   diffDirectory?: string
   generateDiff?: DiffOption
+  failSilently: boolean
 }
 
-export type CompareSnapshotResult = {
+export type UpdateSnapshotOptions = Pick<
+  VisualRegressionOptions,
+  'screenshotName' | 'specName' | 'screenshotAbsolutePath' | 'baseDirectory'
+>
+export type CompareSnapshotOptions = Pick<
+  VisualRegressionOptions,
+  | 'screenshotName'
+  | 'specName'
+  | 'screenshotAbsolutePath'
+  | 'baseDirectory'
+  | 'diffDirectory'
+  | 'errorThreshold'
+  | 'generateDiff'
+>
+
+export type VisualRegressionResult = {
   error?: ErrorObject
   mismatchedPixels?: number
   percentage?: number
+  baseGenerated?: boolean
 }
 
 /**
  * Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.
  * */
-const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> => {
+const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<VisualRegressionResult> => {
   const toDir = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const destDir = path.join(toDir, options.specName)
   const destFile = path.join(destDir, `${options.screenshotName}.png`)
@@ -44,14 +56,14 @@ const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> 
   await fs.mkdir(destDir, { recursive: true })
   await fs.copyFile(options.screenshotAbsolutePath, destFile)
   logger.debug('Updated base snapshot "%s" at "%s"', options.screenshotName, destFile)
-  return true
+  return { baseGenerated: true }
 }
 
 /**
  * Cypress plugin to compare image snapshots & generate a diff image.
  * Uses the pixelmatch library internally.
  * */
-const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<CompareSnapshotResult> => {
+const compareSnapshots = async (options: CompareSnapshotOptions): Promise<VisualRegressionResult> => {
   const snapshotBaseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
 
