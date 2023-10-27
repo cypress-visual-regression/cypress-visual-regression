@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import type { ComparisonResult } from '../../src/command'
+import type { VisualRegressionResult } from '../../src/plugin'
 
 describe('Visual Regression Example', () => {
   it('should display the home page correctly', () => {
@@ -36,26 +36,28 @@ describe('Visual Regression Example', () => {
     cy.get('H1').contains('Login').should('exist')
     cy.get('form')
       .compareSnapshot('login-form')
-      // @ts-ignore TODO
-      .should((comparisonResult: ComparisonResult) => {
+      .should((result: VisualRegressionResult) => {
         if (Cypress.env('visualRegression').type === 'base') {
-          expect(comparisonResult).to.be.true
+          expect(result.mismatchedPixels).to.not.exist
+          expect(result.percentage).to.not.exist
+          expect(result.error).to.not.exist
+          expect(result.baseGenerated).to.be.true
         } else {
-          expect(comparisonResult.mismatchedPixels).to.equal(0)
-          expect(comparisonResult.percentage).to.equal(0)
-          expect(comparisonResult.error).to.not.exist
+          expect(result.mismatchedPixels).to.equal(0)
+          expect(result.percentage).to.equal(0)
+          expect(result.error).to.not.exist
+          expect(result.baseGenerated).to.not.exist
         }
       })
     cy.get('form')
       .compareSnapshot('login-form', 0.02)
-      // @ts-ignore TODO
-      .should((comparisonResult: ComparisonResult) => {
+      .should((result: VisualRegressionResult) => {
         if (Cypress.env('visualRegression').type === 'base') {
-          expect(comparisonResult).to.be.true
+          expect(result.baseGenerated).to.be.true
         } else {
-          expect(comparisonResult.mismatchedPixels).to.equal(0)
-          expect(comparisonResult.percentage).to.equal(0)
-          expect(comparisonResult.error).to.not.exist
+          expect(result.mismatchedPixels).to.equal(0)
+          expect(result.percentage).to.equal(0)
+          expect(result.error).to.not.exist
         }
       })
   })
@@ -85,31 +87,27 @@ describe('Visual Regression Example', () => {
     } else {
       cy.visit('./cypress/web/05.html')
       cy.get('H1').contains('none').should('exist')
-      // @ts-ignore TODO
-      cy.compareSnapshot('foo', 0.02).should((comparisonResult: ComparisonResult) => {
-        expect(comparisonResult.error).to.be.undefined
-        expect(comparisonResult.percentage).to.be.below(0.02)
+      cy.compareSnapshot('foo', 0.02).should((result: VisualRegressionResult) => {
+        expect(result.error).to.be.undefined
+        expect(result.percentage).to.be.below(0.02)
       })
       cy.compareSnapshot('foo', { errorThreshold: 0.01, failSilently: true }).should(
-        // @ts-ignore TODO
-        (comparisonResult: any) => {
-          expect(comparisonResult.percentage).to.be.above(0.01)
-          expect(comparisonResult.error).to.exist
+        (result: VisualRegressionResult) => {
+          expect(result.percentage).to.be.above(0.01)
+          expect(result.error).to.exist
         }
       )
       cy.get('H1')
         .compareSnapshot('h1', 0.085)
-        // @ts-ignore TODO
-        .should((comparisonResult: ComparisonResult) => {
-          expect(comparisonResult.error).to.be.undefined
-          expect(comparisonResult.percentage).to.be.below(0.085)
+        .should((result: VisualRegressionResult) => {
+          expect(result.error).to.be.undefined
+          expect(result.percentage).to.be.below(0.085)
         })
       cy.get('H1')
         .compareSnapshot('h1', { errorThreshold: 0.01, failSilently: true })
-        // @ts-ignore TODO
-        .should((comparisonResult: ComparisonResult) => {
-          expect(comparisonResult.percentage).to.be.above(0.01)
-          expect(comparisonResult.error).to.exist
+        .should((result: VisualRegressionResult) => {
+          expect(result.percentage).to.be.above(0.01)
+          expect(result.error).to.exist
         })
     }
   })
@@ -146,8 +144,7 @@ describe('Visual Regression Example', () => {
     cy.visit('./cypress/web/08.html')
     cy.compareSnapshot('screenshot-params-full', {
       capture: 'fullPage'
-      // @ts-ignore TODO
-    }).then((result: any) => {
+    }).then((result: VisualRegressionResult) => {
       expect(result.error).is.undefined
     })
   })
@@ -158,7 +155,7 @@ describe('Visual Regression Example', () => {
   it(
     'should not fail if failSilently is set in env',
     {
-      env: visualRegressionConfig
+      env: { visualRegression: visualRegressionConfig }
     },
     () => {
       if (Cypress.env('visualRegression').type === 'base') {
@@ -169,15 +166,13 @@ describe('Visual Regression Example', () => {
       } else {
         cy.visit('./cypress/web/05.html')
         cy.get('H1').contains('none').should('exist')
-        // @ts-ignore TODO
-        cy.compareSnapshot('foo', 0.01).should((comparisonResult: ComparisonResult) => {
-          expect(comparisonResult.error).to.exist
+        cy.compareSnapshot('foo', 0.01).should((result: VisualRegressionResult) => {
+          expect(result.error).to.exist
         })
         cy.get('H1')
           .compareSnapshot('h1', 0.02)
-          // @ts-ignore TODO
-          .should((comparisonResult: ComparisonResult) => {
-            expect(comparisonResult.error).to.exist
+          .should((result: VisualRegressionResult) => {
+            expect(result.error).to.exist
           })
       }
     }

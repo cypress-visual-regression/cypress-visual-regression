@@ -1,47 +1,54 @@
 import { createWriteStream, promises as fs } from 'node:fs'
-import path from 'node:path'
+import * as path from 'node:path'
 import pixelMatch from 'pixelmatch'
 import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
 import { serializeError, type ErrorObject } from 'serialize-error'
 
 import { adjustCanvas, parseImage } from './utils/image'
-import { logger } from './logger'
+import { logger } from './utils/logger'
 
-export type UpdateSnapshotOptions = {
-  /** new image name **_without_** file termination */
-  screenshotName: string
-  /** subdirectory to be added to base directory */
-  specName: string
-  /** absolute path and name of the original image **_including file termination_** */
-  screenshotAbsolutePath: string
-  /** base directory where to move the image, if omitted default will be **'process.cwd()/cypress/snapshots/base'** */
-  baseDirectory?: string
-}
+export type DiffOption = 'always' | 'fail' | 'never'
 
-export type DiffGeneration = 'always' | 'fail' | 'never'
-
-export type CompareSnapshotsOptions = {
+export type VisualRegressionOptions = {
+  type: string
   screenshotName: string
   errorThreshold: number
   specName: string
   screenshotAbsolutePath: string
   baseDirectory?: string
   diffDirectory?: string
-  generateDiff?: DiffGeneration
+  generateDiff?: DiffOption
+  failSilently: boolean
 }
 
-export type CompareSnapshotResult = {
+export type UpdateSnapshotOptions = Pick<
+  VisualRegressionOptions,
+  'screenshotName' | 'specName' | 'screenshotAbsolutePath' | 'baseDirectory'
+>
+export type CompareSnapshotOptions = Pick<
+  VisualRegressionOptions,
+  | 'screenshotName'
+  | 'specName'
+  | 'screenshotAbsolutePath'
+  | 'baseDirectory'
+  | 'diffDirectory'
+  | 'errorThreshold'
+  | 'generateDiff'
+>
+
+export type VisualRegressionResult = {
   error?: ErrorObject
   mismatchedPixels?: number
   percentage?: number
+  baseGenerated?: boolean
 }
 
 /**
  * Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.
  * */
-export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<boolean> => {
+const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<VisualRegressionResult> => {
   const toDir = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const destDir = path.join(toDir, options.specName)
   const destFile = path.join(destDir, `${options.screenshotName}.png`)
@@ -54,7 +61,7 @@ export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<bo
   try {
     await fs.copyFile(options.screenshotAbsolutePath, destFile)
     logger.debug(`Updated base snapshot '${options.screenshotName}' at ${destFile}`)
-    return true
+    return { baseGenerated: true }
   } catch (error) {
     logger.error(`Failed to copy file '${destDir}' with error:`, serializeError(error))
     return await Promise.reject(
@@ -67,13 +74,16 @@ export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<bo
  * Cypress plugin to compare image snapshots & generate a diff image.
  * Uses the pixelmatch library internally.
  * */
-export const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<CompareSnapshotResult> => {
+const compareSnapshots = async (options: CompareSnapshotOptions): Promise<VisualRegressionResult> => {
   const snapshotBaseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
+
   const fileName: string = sanitize(options.screenshotName)
+  const specFolder = path.join(snapshotDiffDirectory, options.specName)
+
   const actualImage = options.screenshotAbsolutePath
   const expectedImage = path.join(snapshotBaseDirectory, options.specName, `${fileName}.png`)
-  const diffImagePath = path.join(snapshotDiffDirectory, options.specName, `${fileName}.png`)
+  const diffImage = path.join(snapshotDiffDirectory, options.specName, `${fileName}.png`)
 
   const [imgExpected, imgActual] = await Promise.all([parseImage(expectedImage), parseImage(actualImage)])
   const diffPNG = new PNG({
@@ -95,7 +105,7 @@ export const compareSnapshots = async (options: CompareSnapshotsOptions): Promis
   const percentage = (mismatchedPixels / diffPNG.width / diffPNG.height) ** 0.5
 
   if (percentage > options.errorThreshold) {
-    logger.error(`Error in visual regression found: ${percentage.toFixed(2)}`)
+    logger.error('Error in visual regression found: "%s"', percentage.toFixed(2))
     if (options.generateDiff !== 'never') {
       await generateImage(diffPNG, diffImagePath)
     }
