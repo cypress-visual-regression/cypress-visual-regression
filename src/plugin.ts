@@ -19,6 +19,8 @@ export type UpdateSnapshotOptions = {
   baseDirectory?: string
 }
 
+export type DiffGeneration = 'always' | 'fail' | 'never'
+
 export type CompareSnapshotsOptions = {
   screenshotName: string
   errorThreshold: number
@@ -26,7 +28,7 @@ export type CompareSnapshotsOptions = {
   screenshotAbsolutePath: string
   baseDirectory?: string
   diffDirectory?: string
-  generateDiff?: 'always' | 'fail' | 'never'
+  generateDiff?: DiffGeneration
 }
 
 export type CompareSnapshotResult = {
@@ -65,7 +67,7 @@ export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<bo
  * Cypress plugin to compare image snapshots & generate a diff image.
  * Uses the pixelmatch library internally.
  * */
-const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<CompareSnapshotResult> => {
+export const compareSnapshots = async (options: CompareSnapshotsOptions): Promise<CompareSnapshotResult> => {
   const snapshotBaseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
   const fileName: string = sanitize(options.screenshotName)

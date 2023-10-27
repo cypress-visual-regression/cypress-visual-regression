@@ -1,8 +1,20 @@
 import { PNG } from 'pngjs'
-import { generateImage, updateSnapshot } from './plugin'
+import { generateImage, updateSnapshot, compareSnapshots, type CompareSnapshotsOptions } from './plugin'
 import { expect } from 'vitest'
 import { unlinkSync } from 'node:fs'
 import path from 'node:path'
+
+function deleteFileSafely(filePath: string): void {
+  try {
+    unlinkSync(filePath)
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      // If the error is not "File not found" (ENOENT), rethrow it
+      throw err
+    }
+    // If the error is "File not found," do nothing (fail silently)
+  }
+}
 
 describe('plugin', () => {
   // unit tests for generateImage
@@ -37,7 +49,7 @@ describe('plugin', () => {
   describe('updateSnapshot', () => {
     const screenshotName = 'new-image'
     const specName = 'assets'
-    const screenshotAbsolutePath = path.join('fixtures', 'assets', 'enjuto.png')
+    const screenshotAbsolutePath = path.join('fixtures', 'assets', 'base', 'enjuto.png')
     const defaultBaseDirectory = path.join('cypress', 'snapshots', 'base')
     const baseDirectory = path.join('output')
     describe('when the snapshot is updated', () => {
@@ -74,6 +86,41 @@ describe('plugin', () => {
           baseDirectory: privateBaseDirectory
         })
         await expect(result).rejects.toThrow(`cannot create directory '${path.join(privateBaseDirectory, specName)}'.`)
+      })
+    })
+  })
+  describe('compareSnapshot', () => {
+    describe('when doing a comparation', () => {
+      const baseCompareOptions: CompareSnapshotsOptions = {
+        screenshotName: 'enjuto',
+        errorThreshold: 0.1,
+        specName: '',
+        screenshotAbsolutePath: path.join('fixtures', 'assets', 'base', 'enjuto.png'),
+        baseDirectory: path.join('fixtures', 'assets', 'base'),
+        diffDirectory: path.join('cypress', 'snapshots', 'test', 'diff'),
+        generateDiff: 'always'
+      }
+      it('should return a valid result', async () => {
+        const result = await compareSnapshots(baseCompareOptions)
+        expect(result.percentage).toBe(0)
+        expect(result.mismatchedPixels).toBe(0)
+      })
+
+      describe('when image differs', () => {
+        beforeEach(() => {
+          deleteFileSafely(path.join('cypress', 'snapshots', 'test', 'diff', `enjuto.png`))
+        })
+        it('should not generate a a diff image if geberateDiff is set to never', async () => {
+          const options: CompareSnapshotsOptions = {
+            ...baseCompareOptions,
+            screenshotAbsolutePath: path.join('fixtures', 'assets', 'mod', 'enjuto.png'),
+            errorThreshold: 0,
+            generateDiff: 'never'
+          }
+          const result = await compareSnapshots(options)
+          expect(result.percentage).toBeGreaterThan(0)
+          expect(result.mismatchedPixels).toBeGreaterThan(0)
+        })
       })
     })
   })
