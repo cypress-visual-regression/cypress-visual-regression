@@ -1,5 +1,5 @@
 import { PNG } from 'pngjs'
-import { generateImage, updateSnapshot, compareSnapshots, type CompareSnapshotsOptions } from './plugin'
+import { generateImage, updateSnapshot, compareSnapshots, type CompareSnapshotOptions } from './plugin'
 import { expect } from 'vitest'
 import { unlinkSync } from 'node:fs'
 import path from 'node:path'
@@ -21,12 +21,14 @@ describe('plugin', () => {
   describe('generateImage', () => {
     const validImagePath = 'mocks/test.png'
     describe('when the image is generated', () => {
+      afterEach(() => {
+        deleteFileSafely(path.join(validImagePath))
+      })
       it('should generate an image', async () => {
         const png = new PNG({ width: 1, height: 1 })
         png.data = Buffer.from([255, 0, 0, 255])
         const result = await generateImage(png, validImagePath)
         expect(result).toBe(true)
-        unlinkSync(path.join(validImagePath))
       })
     })
     describe('when the image is not generated', () => {
@@ -53,15 +55,21 @@ describe('plugin', () => {
     const defaultBaseDirectory = path.join('cypress', 'snapshots', 'base')
     const baseDirectory = path.join('output')
     describe('when the snapshot is updated', () => {
+      afterEach(() => {
+        deleteFileSafely(path.join(defaultBaseDirectory, specName, `${screenshotName}.png`))
+        deleteFileSafely(path.join(baseDirectory, specName, `${screenshotName}.png`))
+      })
       it('should copy the snapshot to default folder', async () => {
         const result = await updateSnapshot({ screenshotName, specName, screenshotAbsolutePath })
-        expect(result).toBe(true)
-        unlinkSync(path.join(defaultBaseDirectory, specName, `${screenshotName}.png`))
+        expect(result).toEqual({
+          baseGenerated: true
+        })
       })
       it('should copy the snapshot to baseDirectory', async () => {
         const result = await updateSnapshot({ baseDirectory, screenshotName, specName, screenshotAbsolutePath })
-        expect(result).toBe(true)
-        unlinkSync(path.join(baseDirectory, specName, `${screenshotName}.png`))
+        expect(result).toEqual({
+          baseGenerated: true
+        })
       })
     })
     describe('when there is an error in updating the snapshot', () => {
@@ -91,7 +99,7 @@ describe('plugin', () => {
   })
   describe('compareSnapshot', () => {
     describe('when doing a comparation', () => {
-      const baseCompareOptions: CompareSnapshotsOptions = {
+      const baseCompareOptions: CompareSnapshotOptions = {
         screenshotName: 'enjuto',
         errorThreshold: 0.1,
         specName: '',
@@ -107,11 +115,11 @@ describe('plugin', () => {
       })
 
       describe('when image differs', () => {
-        beforeEach(() => {
+        afterEach(() => {
           deleteFileSafely(path.join('cypress', 'snapshots', 'test', 'diff', `enjuto.png`))
         })
         it('should not generate a a diff image if geberateDiff is set to never', async () => {
-          const options: CompareSnapshotsOptions = {
+          const options: CompareSnapshotOptions = {
             ...baseCompareOptions,
             screenshotAbsolutePath: path.join('fixtures', 'assets', 'mod', 'enjuto.png'),
             errorThreshold: 0,
