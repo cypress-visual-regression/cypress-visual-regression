@@ -63,7 +63,7 @@ describe('plugin', () => {
   describe('generateImage', () => {
     describe('when the image is generated', () => {
       afterEach(() => {
-        deleteFileSafely(path.join(validImagePath))
+        deleteFileSafely(validImagePath)
       })
       it('should generate an image', async () => {
         const result = await generateImage(buildPNG(), validImagePath)
