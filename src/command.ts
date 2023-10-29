@@ -12,7 +12,7 @@ export type PluginSetupOptions = {
 
 export type CypressConfigEnv = {
   visualRegression: {
-    type: 'regression' | 'base'
+    type: TypeOption
     baseDirectory?: string
     diffDirectory?: string
     generateDiff?: DiffOption
@@ -118,8 +118,7 @@ function prepareOptions(
     console.error(
       "Environment variable 'ALWAYS_GENERATE_DIFF' is deprecated. Please check README.md file for latest configuration."
     )
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    options.generateDiff = Cypress.env('ALWAYS_GENERATE_DIFF') ? 'always' : 'never'
+    options.generateDiff = Cypress.env('ALWAYS_GENERATE_DIFF') !== '' ? 'always' : 'never'
   }
   if (Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL') !== undefined) {
     console.error(
@@ -138,14 +137,12 @@ function takeScreenshot(
   screenshotOptions?: ScreenshotOptions
 ): Cypress.Chainable<string> {
   const objToOperateOn = subject !== undefined ? cy.get(subject) : cy
-
   let screenshotPath: string
   return (
     objToOperateOn
       .screenshot(name, {
         ...screenshotOptions,
-        // eslint-disable-next-line
-        onAfterScreenshot(_el: JQuery, props: any) {
+        onAfterScreenshot(_el, props) {
           screenshotPath = props.path
         }
       })
