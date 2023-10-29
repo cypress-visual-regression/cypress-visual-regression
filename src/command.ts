@@ -1,5 +1,5 @@
 import { deserializeError } from 'serialize-error'
-import type { DiffOption, VisualRegressionOptions, VisualRegressionResult } from './plugin'
+import type { DiffOption, TypeOption, VisualRegressionOptions, VisualRegressionResult } from './plugin'
 
 export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginSetupOptions>
 
@@ -54,7 +54,9 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
             return cy.task('updateSnapshot', visualRegressionOptions)
           default:
             throw new Error(
-              `The "type" environment variable is unknown. \nExpected: "regression" or "base" \nActual: ${visualRegressionOptions.type}`
+              `The "type" environment variable is unknown.
+              Expected: "regression" or "base"
+              Actual: ${visualRegressionOptions.type as string}`
             )
         }
       })
@@ -68,7 +70,7 @@ function prepareOptions(
   screenshotOptions?: ScreenshotOptions
 ): VisualRegressionOptions {
   const options: VisualRegressionOptions = {
-    type: Cypress.env('visualRegression').type as string,
+    type: Cypress.env('visualRegression').type as TypeOption,
     screenshotName: name,
     specName: Cypress.spec.name,
     screenshotAbsolutePath: 'null', // will be set after takeScreenshot

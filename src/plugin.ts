@@ -12,11 +12,11 @@ export type DiffOption = 'always' | 'fail' | 'never'
 export type TypeOption = 'regression' | 'base'
 
 export type VisualRegressionOptions = {
-  /** kind of comparation that we are going to execute */
+  /** kind of comparison that we are going to execute */
   type: TypeOption
   /** new image name **_without_** file termination */
   screenshotName: string
-  /** threshold value from 0 to 1. 0.01 will ve 1%  */
+  /** threshold value from 0 to 1. 0.01 will be 1%  */
   errorThreshold: number
   /** subdirectory to be added to base directory */
   specName: string
