@@ -1,5 +1,5 @@
 import { deserializeError } from 'serialize-error'
-import type { DiffOption, VisualRegressionOptions, VisualRegressionResult } from './plugin'
+import type { DiffOption, TypeOption, VisualRegressionOptions, VisualRegressionResult } from './plugin'
 
 export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginSetupOptions>
 
@@ -12,7 +12,7 @@ export type PluginSetupOptions = {
 
 export type CypressConfigEnv = {
   visualRegression: {
-    type: 'regression' | 'base'
+    type: TypeOption
     baseDirectory?: string
     diffDirectory?: string
     generateDiff?: DiffOption
@@ -54,7 +54,9 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
             return cy.task('updateSnapshot', visualRegressionOptions)
           default:
             throw new Error(
-              `The "type" environment variable is unknown. \nExpected: "regression" or "base" \nActual: ${visualRegressionOptions.type}`
+              `The "type" environment variable is unknown.
+              Expected: "regression" or "base"
+              Actual: ${visualRegressionOptions.type as string}`
             )
         }
       })
@@ -68,7 +70,7 @@ function prepareOptions(
   screenshotOptions?: ScreenshotOptions
 ): VisualRegressionOptions {
   const options: VisualRegressionOptions = {
-    type: Cypress.env('visualRegression').type as string,
+    type: Cypress.env('visualRegression').type as TypeOption,
     screenshotName: name,
     specName: Cypress.spec.name,
     screenshotAbsolutePath: 'null', // will be set after takeScreenshot
@@ -116,8 +118,7 @@ function prepareOptions(
     console.error(
       "Environment variable 'ALWAYS_GENERATE_DIFF' is deprecated. Please check README.md file for latest configuration."
     )
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    options.generateDiff = Cypress.env('ALWAYS_GENERATE_DIFF') ? 'always' : 'never'
+    options.generateDiff = Cypress.env('ALWAYS_GENERATE_DIFF') !== '' ? 'always' : 'never'
   }
   if (Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL') !== undefined) {
     console.error(
@@ -136,14 +137,12 @@ function takeScreenshot(
   screenshotOptions?: ScreenshotOptions
 ): Cypress.Chainable<string> {
   const objToOperateOn = subject !== undefined ? cy.get(subject) : cy
-
   let screenshotPath: string
   return (
     objToOperateOn
       .screenshot(name, {
         ...screenshotOptions,
-        // eslint-disable-next-line
-        onAfterScreenshot(_el: JQuery, props: any) {
+        onAfterScreenshot(_el, props) {
           screenshotPath = props.path
         }
       })

@@ -1,11 +1,10 @@
 {
-
   "compilerOptions": {
     "moduleResolution": "Bundler",
     "module": "ES6",
     "target": "es5",
     "lib": ["es5", "dom"],
-    "types": ["node"],
+    "types": ["node","vitest/globals"],
     "strictNullChecks":true,
     "esModuleInterop": true,
     "skipLibCheck": true,
