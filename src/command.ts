@@ -5,8 +5,6 @@ export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginSetupO
 
 export type PluginCommandOptions = number | ScreenshotOptions
 
-
-
 export type PluginSetupOptions = {
   errorThreshold: number
   failSilently: boolean

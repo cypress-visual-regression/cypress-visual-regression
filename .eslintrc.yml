@@ -10,6 +10,7 @@ ignorePatterns:
   - 'cypress.common.config.ts'
   - 'cypress'
   - 'src/utils/*.spec.ts'
+  - 'src/index.d.ts'
 
 plugins:
   - '@typescript-eslint'

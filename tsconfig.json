@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "outDir": "dist",
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "**/*.d.ts", "vite.config.ts", "vite.config.ts"],
 }

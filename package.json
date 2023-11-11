@@ -11,14 +11,24 @@
   "license": "MIT",
   "author": "Michael Herman <michael@mherman.org>",
   "type": "module",
-  "main": "dist/plugin.js",
-  "types": "dist/command.d.ts",
+  "main": "./dist/cypress-visual-regression.umd.cjs",
+  "module": "./dist/cypress-visual-regression.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": [
+        "./dist/cypress-visual-regression.js"
+      ],
+      "require": "./dist/cypress-visual-regression.umd.cjs"
+    }
+  },
   "files": [
-    "dist/**/*"
+    "dist"
   ],
   "scripts": {
     "prebuild": "rimraf dist && npm run lint && npm run format:check",
-    "build": "tsc --project tsconfig.build.json",
+    "build": "vite build",
+    "build:old": "tsc --project tsconfig.build.json",
     "typecheck": "tsc --noEmit --project tsconfig.json",
     "format:check": "prettier --check src/**/*.ts cypress/**/*.ts",
     "format:fix": "prettier --write src/**/*.ts cypress/**/*.ts",
@@ -38,6 +48,7 @@
     "trailingComma": "none"
   },
   "dependencies": {
+    "node-stdlib-browser": "^1.2.0",
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
     "sanitize-filename": "^1.6.3",
@@ -62,6 +73,9 @@
     "prettier": "2.8.7",
     "rimraf": "3.0.2",
     "typescript": "5.2.2",
+    "vite": "4.5.0",
+    "vite-plugin-dts": "3.6.3",
+    "vite-plugin-node-stdlib-browser": "^0.2.1",
     "vitest": "0.34.4"
   },
   "peerDependencies": {

@@ -1,16 +1,23 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "moduleResolution": "Bundler",
-    "module": "ES6",
-    "target": "es5",
-    "lib": ["es5", "dom"],
-    "types": ["node", "cypress", ],
-    "strictNullChecks":true,
-    "esModuleInterop": true,
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
-    "outDir": "dist",
+    "types": ["node","vitest/globals", "cypress"],
+
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["src/**/*.spec.ts"]
 }
