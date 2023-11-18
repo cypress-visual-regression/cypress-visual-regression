@@ -1,6 +1,17 @@
 import { deserializeError } from 'serialize-error'
 import type { DiffOption, TypeOption, VisualRegressionOptions, VisualRegressionResult } from './plugin'
 
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
+/* eslint-disable @typescript-eslint/method-signature-style */
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Cypress {
+    interface Chainable {
+      compareSnapshot(name: string, options?: PluginCommandOptions): Chainable<VisualRegressionResult>
+    }
+  }
+}
+
 export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginSetupOptions>
 
 export type PluginCommandOptions = number | ScreenshotOptions
@@ -33,7 +44,6 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
       if (name === undefined || name === '') {
         throw new Error('Snapshot name must be specified')
       }
-
       // prepare screenshot options
       let errorThreshold = 0
       if (typeof commandOptions === 'object') {
@@ -42,9 +52,7 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
       if (typeof commandOptions === 'number') {
         errorThreshold = commandOptions
       }
-
       const visualRegressionOptions: VisualRegressionOptions = prepareOptions(name, errorThreshold, screenshotOptions)
-
       return takeScreenshot(subject, name, screenshotOptions).then((screenshotAbsolutePath: string) => {
         visualRegressionOptions.screenshotAbsolutePath = screenshotAbsolutePath
         switch (visualRegressionOptions.type) {

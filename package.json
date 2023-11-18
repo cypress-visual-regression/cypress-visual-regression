@@ -13,7 +13,7 @@
   "type": "module",
   "main": "./dist/cypress-visual-regression.umd.cjs",
   "module": "./dist/cypress-visual-regression.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/cypress-visual-regression.d.ts",
   "exports": {
     ".": {
       "import": [

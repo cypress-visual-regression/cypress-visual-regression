@@ -6,7 +6,7 @@ import nodePolyfills from 'vite-plugin-node-stdlib-browser'
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(__dirname, 'src/command.ts'),
       name: 'cypress-visual-regression',
       fileName: 'cypress-visual-regression'
     }
@@ -14,7 +14,8 @@ export default defineConfig({
   plugins: [
     nodePolyfills(),
     dts({
-      tsconfigPath: 'tsconfig.build.json'
+      tsconfigPath: 'tsconfig.build.json',
+      insertTypesEntry: true
     })
   ]
 })

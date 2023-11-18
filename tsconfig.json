@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "moduleResolution": "Bundler",
+    "moduleResolution": "Node",
     "module": "ES6",
     "target": "es5",
     "lib": ["es5", "dom"],
-    "types": ["node","vitest/globals"],
+    "types": ["node","vitest/globals", "cypress",],
     "strictNullChecks":true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "dist",
   },
-  "include": ["**/*.ts", "**/*.d.ts", "vite.config.ts", "vite.config.ts"],
+  "include": ["**/*.ts", "**/*.d.ts", "vite.config.ts"],
 }
