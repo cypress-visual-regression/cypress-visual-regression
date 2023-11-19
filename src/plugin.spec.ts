@@ -13,7 +13,8 @@ import path from 'node:path'
 function deleteFileSafely(filePath: string): void {
   try {
     unlinkSync(filePath)
-  } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
     if (err.code !== 'ENOENT') {
       throw err // If the error is not "File not found" (ENOENT), rethrow it
     } // If the error is "File not found," do nothing (fail silently)

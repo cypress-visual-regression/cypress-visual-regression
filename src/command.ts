@@ -1,5 +1,20 @@
+// Load type definitions that come with Cypress module
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference types="cypress" />
 import { deserializeError } from 'serialize-error'
 import type { DiffOption, TypeOption, VisualRegressionOptions, VisualRegressionResult } from './plugin'
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Cypress {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+    interface Chainable {
+      // eslint-disable-next-line @typescript-eslint/method-signature-style
+      compareSnapshot(name: string, options?: PluginCommandOptions): Chainable<VisualRegressionResult>
+    }
+  }
+}
 
 export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginSetupOptions>
 
@@ -21,9 +36,10 @@ export type CypressConfigEnv = {
 }
 
 /** Add custom cypress command to compare image snapshots of an element or the window. */
-function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void {
+export function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void {
   Cypress.Commands.add(
     'compareSnapshot',
+    // @ts-expect-error fixme
     { prevSubject: 'optional' },
     function (
       subject: keyof HTMLElementTagNameMap,
@@ -155,6 +171,7 @@ function takeScreenshot(
 
 /** Call the plugin to compare snapshot images and generate a diff */
 function compareScreenshots(options: VisualRegressionOptions): Cypress.Chainable {
+  // @ts-expect-error fixme
   return cy.task('compareSnapshots', options).then((results: VisualRegressionResult) => {
     if (results.error !== undefined && !options.failSilently) {
       throw deserializeError(results.error)
@@ -163,4 +180,4 @@ function compareScreenshots(options: VisualRegressionOptions): Cypress.Chainable
   })
 }
 
-export default addCompareSnapshotCommand
+// export default addCompareSnapshotCommand

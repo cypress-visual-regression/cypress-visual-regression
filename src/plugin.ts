@@ -157,11 +157,11 @@ export async function generateImage(diffPNG: PNG, imagePath: string): Promise<bo
 }
 
 /** Configure the plugin to compare snapshots. */
-const configureVisualRegression = (on: Cypress.PluginEvents): void => {
+export const configureVisualRegression = (on: Cypress.PluginEvents): void => {
   on('task', {
     compareSnapshots,
     updateSnapshot
   })
 }
 
-export default configureVisualRegression
+// export default configureVisualRegression
