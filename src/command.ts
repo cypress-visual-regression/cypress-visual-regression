@@ -179,5 +179,3 @@ function compareScreenshots(options: VisualRegressionOptions): Cypress.Chainable
     return results
   })
 }
-
-// export default addCompareSnapshotCommand

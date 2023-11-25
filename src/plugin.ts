@@ -163,5 +163,3 @@ export const configureVisualRegression = (on: Cypress.PluginEvents): void => {
     updateSnapshot
   })
 }
-
-// export default configureVisualRegression
