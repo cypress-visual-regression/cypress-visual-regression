@@ -36,10 +36,10 @@ export type CypressConfigEnv = {
 }
 
 /** Add custom cypress command to compare image snapshots of an element or the window. */
-export function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void {
+function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void {
   Cypress.Commands.add(
     'compareSnapshot',
-    // @ts-expect-error fixme
+    // @ts-expect-error todo: fix this
     { prevSubject: 'optional' },
     function (
       subject: keyof HTMLElementTagNameMap,
@@ -171,7 +171,7 @@ function takeScreenshot(
 
 /** Call the plugin to compare snapshot images and generate a diff */
 function compareScreenshots(options: VisualRegressionOptions): Cypress.Chainable {
-  // @ts-expect-error fixme
+  // @ts-expect-error todo: fix this
   return cy.task('compareSnapshots', options).then((results: VisualRegressionResult) => {
     if (results.error !== undefined && !options.failSilently) {
       throw deserializeError(results.error)
@@ -179,3 +179,5 @@ function compareScreenshots(options: VisualRegressionOptions): Cypress.Chainable
     return results
   })
 }
+
+export default addCompareSnapshotCommand

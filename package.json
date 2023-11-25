@@ -18,7 +18,6 @@
   ],
   "scripts": {
     "prebuild": "rimraf dist && npm run lint && npm run format:check",
-    "build:old": "tsc --project tsconfig.build.json",
     "build": "rm -rf dist && node esbuild.cjs && tsc  --project tsconfig.json",
     "typecheck": "tsc --noEmit --project tsconfig.json",
     "format:check": "prettier --check src/**/*.ts cypress/**/*.ts",

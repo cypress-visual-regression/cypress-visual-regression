@@ -5,7 +5,6 @@ esbuild
   .build({
     entryPoints: ['./src/command.ts', './src/plugin.ts'],
     outdir: 'dist',
-    // outfile: 'dist/index.js',
     bundle: true,
     minify: false,
     treeShaking: true,
