@@ -10,7 +10,7 @@ esbuild
     treeShaking: true,
     platform: 'node',
     format: 'esm',
-    target: 'node14',
+    target: 'node16',
     plugins: [nodeExternalsPlugin()]
   })
   .catch(() => process.exit(1))
