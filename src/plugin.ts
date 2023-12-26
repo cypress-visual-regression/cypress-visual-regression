@@ -1,5 +1,5 @@
-import { createWriteStream, promises as fs } from 'node:fs'
-import * as path from 'node:path'
+import { createWriteStream, promises as fs } from 'fs'
+import * as path from 'path'
 import pixelMatch from 'pixelmatch'
 import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'

@@ -1,14 +1,14 @@
+import { existsSync, unlinkSync } from 'fs'
+import path from 'path'
 import { PNG } from 'pngjs'
+import { expect } from 'vitest'
 import {
+  compareSnapshots,
   generateImage,
   updateSnapshot,
-  compareSnapshots,
   type CompareSnapshotOptions,
   type UpdateSnapshotOptions
 } from './plugin'
-import { expect } from 'vitest'
-import { unlinkSync, existsSync } from 'node:fs'
-import path from 'node:path'
 
 function deleteFileSafely(filePath: string): void {
   try {

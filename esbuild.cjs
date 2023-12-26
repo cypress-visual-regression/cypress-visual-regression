@@ -9,8 +9,9 @@ esbuild
     minify: false,
     treeShaking: true,
     platform: 'node',
-    format: 'esm',
-    target: 'node16',
+    format: 'cjs',
+    target: 'node18',
+    external: ['require', 'fs', 'path'],
     plugins: [nodeExternalsPlugin()]
   })
   .catch(() => process.exit(1))
