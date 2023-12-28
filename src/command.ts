@@ -1,7 +1,5 @@
 // Load type definitions that come with Cypress module
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference types="cypress" />
-import { deserializeError } from 'serialize-error'
 import type { DiffOption, TypeOption, VisualRegressionOptions, VisualRegressionResult } from './plugin'
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -174,10 +172,10 @@ function compareScreenshots(options: VisualRegressionOptions): Cypress.Chainable
   // @ts-expect-error todo: fix this
   return cy.task('compareSnapshots', options).then((results: VisualRegressionResult) => {
     if (results.error !== undefined && !options.failSilently) {
-      throw deserializeError(results.error)
+      throw results.error
     }
     return results
   })
 }
 
-export default addCompareSnapshotCommand
+export { addCompareSnapshotCommand }

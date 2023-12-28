@@ -40,9 +40,9 @@ const baseDirectoryDefault = path.join('cypress', 'snapshots', 'base')
 const diffFilePath = path.join(baseCompareOptions.diffDirectory ?? '', 'enjuto.png')
 const absolutePathMod = path.join('fixtures', 'assets', 'mod', 'enjuto.png')
 const validImagePath = path.join('mock', 'test.png')
-const systemFileName = path.join('/', 'System', 'assets', 'test.png')
+const systemFileName = path.join('System', 'assets*', 'test.png')
 const wrongAbsolutePath = path.join('fixtures', 'assets', 'wadus.png')
-const rootFileName = path.join('/', 'test.png')
+const rootFileName = path.join('test.png*')
 const copiedFileName = path.join(
   baseDirectoryDefault,
   baseUpdateOptions.specName,
