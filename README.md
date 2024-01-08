@@ -84,6 +84,7 @@ compareSnapshotCommand();
 ```json:
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "types": [
       "cypress",
       "cypress-visual-regression"
