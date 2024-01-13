@@ -40,9 +40,9 @@ const baseDirectoryDefault = path.join('cypress', 'snapshots', 'base')
 const diffFilePath = path.join(baseCompareOptions.diffDirectory ?? '', 'enjuto.png')
 const absolutePathMod = path.join('fixtures', 'assets', 'mod', 'enjuto.png')
 const validImagePath = path.join('mock', 'test.png')
-const systemFileName = path.join('/', 'System', 'assets', 'test.png')
+const systemFileName = path.join('System', 'ass\0ets*', 'test.png')
 const wrongAbsolutePath = path.join('fixtures', 'assets', 'wadus.png')
-const rootFileName = path.join('/', 'test.png')
+const rootFileName = path.join('te\0st.png*')
 const copiedFileName = path.join(
   baseDirectoryDefault,
   baseUpdateOptions.specName,
@@ -78,7 +78,7 @@ describe('plugin', () => {
       })
       it('should not generate an image and throw an error on file creation', async () => {
         const result = generateImage(buildPNG(), rootFileName)
-        await expect(result).rejects.toThrow(`cannot create file '${rootFileName}'.`)
+        await expect(result).rejects.toThrow('The argument \'path\' must be a str')
       })
     })
   })
