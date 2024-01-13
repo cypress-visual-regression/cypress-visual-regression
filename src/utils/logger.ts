@@ -1,7 +1,7 @@
 import { createLogger, format, transports } from 'winston'
 
 const logger = createLogger({
-  silent: process.env.visualRegressionLogger ? false : true,
+  silent: process.env.visualRegressionLogger !== 'true',
   level: 'info',
   format: format.combine(format.splat(), format.json()),
   transports: [

@@ -126,8 +126,6 @@ export const compareSnapshots = async (options: CompareSnapshotOptions): Promise
 
 export async function generateImage(diffPNG: PNG, imagePath: string): Promise<boolean> {
   const dirName = path.dirname(imagePath)
-  console.log(imagePath)
-  console.log(dirName)
   try {
     await fs.mkdir(dirName, { recursive: true })
   } catch (error) {
