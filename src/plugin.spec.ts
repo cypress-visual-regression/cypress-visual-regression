@@ -78,7 +78,7 @@ describe('plugin', () => {
       })
       it('should not generate an image and throw an error on file creation', async () => {
         const result = generateImage(buildPNG(), rootFileName)
-        await expect(result).rejects.toThrow('must be a string or Uint8Array without null bytes')
+        await expect(result).rejects.toThrow('The argument \'path\' must be a str')
       })
     })
   })
