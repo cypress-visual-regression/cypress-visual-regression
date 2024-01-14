@@ -1,5 +1,5 @@
-import * as fs from 'node:fs'
-import configureVisualRegression from './src/plugin'
+import * as fs from 'fs'
+import { configureVisualRegression } from './src/plugin'
 
 const cypressCommonConfig: Cypress.ConfigOptions = {
   trashAssetsBeforeRuns: true,

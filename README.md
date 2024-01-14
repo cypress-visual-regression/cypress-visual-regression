@@ -75,7 +75,7 @@ export default defineConfig({
 *cypress/support/e2e.ts*
 
 ```typescript
-import addCompareSnapshotCommand from 'cypress-visual-regression/dist/command'
+import { addCompareSnapshotCommand } from 'cypress-visual-regression/dist/command'
 addCompareSnapshotCommand()
 ```
 
@@ -84,6 +84,7 @@ addCompareSnapshotCommand()
 ```json:
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "types": [
       "cypress",
       "cypress-visual-regression"
@@ -216,3 +217,7 @@ beforeCompareSnapshots(
 );
 ```
 In this example, we ignore the elements that are also ignored by 3rd party tool Chromatic.
+
+## Debug
+
+set `visualRegressionLogger` to `true` to enable logging.

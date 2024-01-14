@@ -1,2 +1,2 @@
-import addCompareSnapshotCommand from '../../src/command'
+import { addCompareSnapshotCommand } from '../../src/command'
 addCompareSnapshotCommand()

@@ -1,6 +1,6 @@
 {
   "name": "cypress-visual-regression",
-  "version": "4.0.0",
+  "version": "4.0.0-alpha.4",
   "description": "Module for adding visual regression testing to Cypress",
   "keywords": [
     "visual regression",
@@ -10,22 +10,22 @@
   "repository": "https://github.com/cypress-visual-regression/cypress-visual-regression",
   "license": "MIT",
   "author": "Michael Herman <michael@mherman.org>",
-  "type": "module",
-  "main": "dist/plugin.js",
-  "types": "dist/command.d.ts",
+  "main": "./dist/plugin.js",
+  "types": "./dist/command.d.ts",
   "files": [
-    "dist/**/*"
+    "./dist/**/*"
   ],
   "scripts": {
-    "prebuild": "rimraf dist && npm run lint && npm run format:check",
-    "build": "tsc --project tsconfig.json",
+    "prebuild": "rimraf dist && npm run lint && npm run format:check && npm run test",
+    "build": "node esbuild.cjs && tsc --project tsconfig.json --declaration --emitDeclarationOnly",
     "typecheck": "tsc --noEmit --project tsconfig.json",
     "format:check": "prettier --check src/**/*.ts cypress/**/*.ts",
     "format:fix": "prettier --write src/**/*.ts cypress/**/*.ts",
-    "lint": "eslint src --ext .ts --fix",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
     "prepublishOnly": "run-s build",
     "preversion": "run-s lint format:check test build",
-    "test": "vitest",
+    "test": "vitest run",
     "cy:base-and-regression": "npm run cy:base && npm run cy:regression",
     "cy:open": "cypress open --e2e -b chrome -C cypress.base.config.ts",
     "cy:base": "cypress run -C cypress.base.config.ts",
@@ -41,7 +41,6 @@
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
     "sanitize-filename": "^1.6.3",
-    "serialize-error": "^11.0.0",
     "winston": "^3.10.0"
   },
   "devDependencies": {
@@ -51,6 +50,8 @@
     "@types/pngjs": "6.0.1",
     "@typescript-eslint/eslint-plugin": "5.57.1",
     "@typescript-eslint/parser": "5.57.1",
+    "esbuild": "0.19.5",
+    "esbuild-node-externals": "^1.9.0",
     "eslint": "8.37.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-config-standard-with-typescript": "34.0.1",

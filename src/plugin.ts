@@ -1,9 +1,8 @@
-import { createWriteStream, promises as fs } from 'node:fs'
-import * as path from 'node:path'
+import { createWriteStream, promises as fs } from 'fs'
+import * as path from 'path'
 import pixelMatch from 'pixelmatch'
 import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
-import { serializeError, type ErrorObject } from 'serialize-error'
 
 import { adjustCanvas, parseImage } from './utils/image'
 import { logger } from './utils/logger'
@@ -40,7 +39,7 @@ export type UpdateSnapshotOptions = Pick<
 export type CompareSnapshotOptions = Omit<VisualRegressionOptions, 'failSilently' | 'type'>
 
 export type VisualRegressionResult = {
-  error?: ErrorObject
+  error?: Error
   mismatchedPixels?: number
   percentage?: number
   baseGenerated?: boolean
@@ -57,18 +56,16 @@ export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<Vi
   try {
     await fs.mkdir(destDir, { recursive: true })
   } catch (error) {
-    logger.error(`Failed to create directory '${destDir}' with error:`, serializeError(error))
-    return await Promise.reject(new Error(`cannot create directory '${destDir}'.`))
+    logger.error(`Failed to create directory '${destDir}' with error:`, error)
+    throw new Error(`cannot create directory '${destDir}'.`)
   }
   try {
     await fs.copyFile(options.screenshotAbsolutePath, destFile)
     logger.debug(`Updated base snapshot '${options.screenshotName}' at ${destFile}`)
     return { baseGenerated: true }
   } catch (error) {
-    logger.error(`Failed to copy file '${destDir}' with error:`, serializeError(error))
-    return await Promise.reject(
-      new Error(`Failed to copy file from '${options.screenshotAbsolutePath}' to '${destFile}'.`)
-    )
+    logger.error(`Failed to copy file '${destDir}' with error:`, error)
+    throw new Error(`Failed to copy file from '${options.screenshotAbsolutePath}' to '${destFile}'.`)
   }
 }
 
@@ -110,12 +107,10 @@ export const compareSnapshots = async (options: CompareSnapshotOptions): Promise
       await generateImage(diffPNG, diffImage)
     }
     return {
-      error: serializeError(
-        new Error(
-          `The "${fileName}" image is different. Threshold limit exceeded!
-          Expected: ${options.errorThreshold}
-          Actual: ${percentage}`
-        )
+      error: new Error(
+        `The "${fileName}" image is different. Threshold limit exceeded!
+        Expected: ${options.errorThreshold}
+        Actual: ${percentage}`
       ),
       mismatchedPixels,
       percentage
@@ -134,13 +129,13 @@ export async function generateImage(diffPNG: PNG, imagePath: string): Promise<bo
   try {
     await fs.mkdir(dirName, { recursive: true })
   } catch (error) {
-    logger.error(`Failed to create directory '${dirName}' with error:`, serializeError(error))
+    logger.error(`Failed to create directory '${dirName}' with error:`, error)
     return await Promise.reject(new Error(`cannot create directory '${dirName}'.`))
   }
   return await new Promise((resolve, reject) => {
     const file = createWriteStream(imagePath)
     file.on('error', (error) => {
-      logger.error(`Failed to write stream '${imagePath}' with error:`, serializeError(error))
+      logger.error(`Failed to write stream '${imagePath}' with error:`, error)
       reject(new Error(`cannot create file '${imagePath}'.`))
     })
     diffPNG
@@ -150,18 +145,16 @@ export async function generateImage(diffPNG: PNG, imagePath: string): Promise<bo
         resolve(true)
       })
       .on('error', (error) => {
-        logger.error(`Failed to parse image '${imagePath}' with error:`, serializeError(error))
+        logger.error(`Failed to parse image '${imagePath}' with error:`, error)
         reject(error)
       })
   })
 }
 
 /** Configure the plugin to compare snapshots. */
-const configureVisualRegression = (on: Cypress.PluginEvents): void => {
+export const configureVisualRegression = (on: Cypress.PluginEvents): void => {
   on('task', {
     compareSnapshots,
     updateSnapshot
   })
 }
-
-export default configureVisualRegression
