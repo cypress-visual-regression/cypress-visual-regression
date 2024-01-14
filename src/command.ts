@@ -83,6 +83,11 @@ function prepareOptions(
   errorThreshold: number,
   screenshotOptions?: ScreenshotOptions
 ): VisualRegressionOptions {
+  if (Cypress.env('visualRegression') === undefined) {
+    throw new Error(
+      'Environment variables under "visualRegression" apper to be missing. Please consult the plugin documentation for the proper setup.'
+    )
+  }
   const options: VisualRegressionOptions = {
     type: Cypress.env('visualRegression').type as TypeOption,
     screenshotName: name,
@@ -172,7 +177,7 @@ function compareScreenshots(options: VisualRegressionOptions): Cypress.Chainable
   // @ts-expect-error todo: fix this
   return cy.task('compareSnapshots', options).then((results: VisualRegressionResult) => {
     if (results.error !== undefined && !options.failSilently) {
-      throw results.error
+      throw new Error(results.error)
     }
     return results
   })

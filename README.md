@@ -20,7 +20,7 @@ Configure the visual regression plugin and environment variables in your *cypres
 
 ```javascript
 const { defineConfig } = require("cypress")
-const configureVisualRegression = require('cypress-visual-regression')
+const { configureVisualRegression } = require('cypress-visual-regression')
 
 module.exports = defineConfig({
   e2e: {
@@ -43,7 +43,7 @@ screenshot to the base screenshot
 In your support file *cypress/support/e2e.js* add the following:
 
 ```javascript
-const addCompareSnapshotCommand = require('cypress-visual-regression/dist/command')
+const { addCompareSnapshotCommand } = require('cypress-visual-regression/dist/command')
 addCompareSnapshotCommand()
 ```
 
@@ -55,7 +55,7 @@ If you're using TypeScript, use files with a `.ts` extension, as follows:
 
 ```typescript
 import { defineConfig } from 'cypress'
-import configureVisualRegression from 'cypress-visual-regression'
+import { configureVisualRegression } from 'cypress-visual-regression'
 
 export default defineConfig({
   e2e: {

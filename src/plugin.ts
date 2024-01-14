@@ -39,7 +39,7 @@ export type UpdateSnapshotOptions = Pick<
 export type CompareSnapshotOptions = Omit<VisualRegressionOptions, 'failSilently' | 'type'>
 
 export type VisualRegressionResult = {
-  error?: Error
+  error?: string
   mismatchedPixels?: number
   percentage?: number
   baseGenerated?: boolean
@@ -106,12 +106,11 @@ export const compareSnapshots = async (options: CompareSnapshotOptions): Promise
     if (options.generateDiff !== 'never') {
       await generateImage(diffPNG, diffImage)
     }
+
     return {
-      error: new Error(
-        `The "${fileName}" image is different. Threshold limit exceeded!
-        Expected: ${options.errorThreshold}
-        Actual: ${percentage}`
-      ),
+      error: `The "${fileName}" image is different. Threshold limit exceeded!
+       Expected: ${options.errorThreshold}
+       Actual: ${percentage}`,
       mismatchedPixels,
       percentage
     }
