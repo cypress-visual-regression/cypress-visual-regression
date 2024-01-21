@@ -1,6 +1,6 @@
 {
   "name": "cypress-visual-regression",
-  "version": "4.0.0-alpha.4",
+  "version": "4.0.0",
   "description": "Module for adding visual regression testing to Cypress",
   "keywords": [
     "visual regression",
