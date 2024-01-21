@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "declaration": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "jsx": "react",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "useDefineForClassFields": true,
+    "types": ["node","vitest/globals", "cypress"],
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "strictNullChecks":true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "esbuild.cjs"],
+  // "include": ["**/*.ts"],
+}
