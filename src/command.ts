@@ -52,6 +52,9 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
       let errorThreshold = 0
       if (typeof commandOptions === 'object') {
         screenshotOptions = { ...screenshotOptions, ...commandOptions }
+        if (commandOptions.errorThreshold !== undefined) {
+          errorThreshold = commandOptions.errorThreshold
+        }
       }
       if (typeof commandOptions === 'number') {
         errorThreshold = commandOptions
