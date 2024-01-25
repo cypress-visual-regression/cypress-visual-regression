@@ -55,7 +55,7 @@ If you're using TypeScript, use files with a `.ts` extension, as follows:
 
 ```typescript
 import { defineConfig } from 'cypress'
-import { configureVisualRegression } from 'cypress-visual-regression'
+import { configureVisualRegression } from 'cypress-visual-regression/dist/plugin'
 
 export default defineConfig({
   e2e: {
