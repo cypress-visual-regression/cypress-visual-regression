@@ -24,13 +24,11 @@ export type PluginSetupOptions = {
 }
 
 export type CypressConfigEnv = {
-  visualRegression: {
-    type: TypeOption
-    baseDirectory?: string
-    diffDirectory?: string
-    generateDiff?: DiffOption
-    failSilently?: boolean
-  }
+  VisualRegressionType: TypeOption
+  VisualRegressionBaseDirectory?: string
+  VisualRegressionDiffDirectory?: string
+  VisualRegressionGenerateDiff?: DiffOption
+  VisualRegressionFailSilently?: boolean
 }
 
 /** Add custom cypress command to compare image snapshots of an element or the window. */
