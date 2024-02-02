@@ -4,7 +4,6 @@
 
 [![github actions](https://github.com/mjhea0/cypress-visual-regression/workflows/Continuous%20Integration/badge.svg)](https://github.com/mjhea0/cypress-visual-regression/actions)
 
-
 Module for adding visual regression testing to [Cypress](https://www.cypress.io/).
 
 ## Installation
@@ -14,12 +13,13 @@ npm install cypress-visual-regression
 ```
 
 ## Configuration
+
 ### JavaScript
 
-Configure the visual regression plugin and environment variables in your *cypress.config.js* file like:
+Configure the visual regression plugin and environment variables in your _cypress.config.js_ file like:
 
 ```javascript
-const { defineConfig } = require("cypress")
+const { defineConfig } = require('cypress')
 const { configureVisualRegression } = require('cypress-visual-regression')
 
 module.exports = defineConfig({
@@ -40,7 +40,7 @@ module.exports = defineConfig({
 Pay attention to the `type` option. Use 'base' to generate baseline images, and 'regression' to compare current
 screenshot to the base screenshot
 
-In your support file *cypress/support/e2e.js* add the following:
+In your support file _cypress/support/e2e.js_ add the following:
 
 ```javascript
 const { addCompareSnapshotCommand } = require('cypress-visual-regression/dist/command')
@@ -51,7 +51,7 @@ addCompareSnapshotCommand()
 
 If you're using TypeScript, use files with a `.ts` extension, as follows:
 
-*cypress.config.ts*
+_cypress.config.ts_
 
 ```typescript
 import { defineConfig } from 'cypress'
@@ -67,19 +67,19 @@ export default defineConfig({
     screenshotsFolder: './cypress/snapshots/actual',
     setupNodeEvents(on, config) {
       configureVisualRegression(on)
-    },
-  },
+    }
+  }
 })
 ```
 
-*cypress/support/e2e.ts*
+_cypress/support/e2e.ts_
 
 ```typescript
 import { addCompareSnapshotCommand } from 'cypress-visual-regression/dist/command'
 addCompareSnapshotCommand()
 ```
 
-*cypress/tsconfig.json*
+_cypress/tsconfig.json_
 
 ```json:
 {
@@ -115,7 +115,7 @@ e2e: {
 ```
 
 | Variable      | Default                 | Description                                                                                                                                                  |
-|---------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | type          | /                       | Either 'regression' or 'base'. Base will override any existing base images with new screenshots. Regression will compare the base to the current screenshot. |
 | baseDirectory | 'cypress/snapshot/base' | Path to the directory where the base snapshots will be stored.                                                                                               |
 | diffDirectory | 'cypress/snapshot/diff' | Path to the directory where the generated image differences will be stored.                                                                                  |
@@ -134,20 +134,23 @@ addCompareSnapshotCommand({
 ### How To Use
 
 ### > syntax
+
 ```TypeScript
 cy.compareSnapshot(name)
 cy.compareSnapshot(name, errorThreshold)
 cy.compareSnapshot(name, options)
 ```
+
 ### > arguments
+
 | Arguments      | Default | Description                                                                                                  |
-|----------------|---------|--------------------------------------------------------------------------------------------------------------|
+| -------------- | ------- | ------------------------------------------------------------------------------------------------------------ |
 | name           | /       | Represents the name of the base snapshot file that the actual screenshot will be compared with.              |
 | errorThreshold | 0       | Threshold under which any image difference will be considered as failed test. Represented in percentages.    |
 | options        | {}      | Used to provide additional cypress screenshot options as well as `failSilently` and `errorThreshold` values. |
 
-
 ### > examples
+
 ```TypeScript
 cy.compareSnapshot('homePage') // will compare actual screenshot to current and fail if there's any difference in the images
 
@@ -171,6 +174,7 @@ cy.compareSnapshot('homePage', {errorThreshold: 1, failSilently: true}).then(com
 ### Ignore some elements
 
 Following function creates a command that allows you to hide elements of the page based on their className:
+
 ```ts
 /**
  * To be called after you setup the command, in order to add a
@@ -180,44 +184,50 @@ export function beforeCompareSnapshots(
   /** Element you want to ignore */
   ignoredElementsQuerySelector: string,
   /** Main app element (if you want for the page to be loaded before triggering the command) */
-  appContentQuerySelector: string = "body"
+  appContentQuerySelector: string = 'body'
 ) {
-  Cypress.Commands.overwrite("compareSnapshots", (originalFn, ...args) => {
-    return cy
-      // wait for content to be ready
-      .get(appContentQuerySelector)
-      // hide ignored elements
-      .then($app => {
-        return new Cypress.Promise((resolve, reject) => {
-          setTimeout(() => {
-            $app.find(ignoredElementsQuerySelector).css("visibility", "hidden");
-            resolve();
-            // add a very small delay to wait for the elements to be there, but you should
-            // make sure your test already handles this
-          }, 300);
-        });
-      })
-      .then(() => {
-        return originalFn(...args);
-      });
-  });
+  Cypress.Commands.overwrite('compareSnapshots', (originalFn, ...args) => {
+    return (
+      cy
+        // wait for content to be ready
+        .get(appContentQuerySelector)
+        // hide ignored elements
+        .then(($app) => {
+          return new Cypress.Promise((resolve, reject) => {
+            setTimeout(() => {
+              $app.find(ignoredElementsQuerySelector).css('visibility', 'hidden')
+              resolve()
+              // add a very small delay to wait for the elements to be there, but you should
+              // make sure your test already handles this
+            }, 300)
+          })
+        })
+        .then(() => {
+          return originalFn(...args)
+        })
+    )
+  })
 }
 ```
+
 You may then use this function like:
+
 ```js
-const addCompareSnapshotCommand = require("cypress-visual-regression/dist/command");
-const beforeCompareSnapshots = require("./commands/beforeCompareSnapshots");
+const addCompareSnapshotCommand = require('cypress-visual-regression/dist/command')
+const beforeCompareSnapshots = require('./commands/beforeCompareSnapshots')
 addCompareSnapshotCommand({
   errorThreshold: 0.1
-});
+})
 // add a before hook to compareSnapshot (this must be called AFTER compareSnapshotCommand() so the command can be overriden)
-beforeCompareSnapshots(
-  ".chromatic-ignore,[data-chromatic='ignore']",
-  "._app-content"
-);
+beforeCompareSnapshots(".chromatic-ignore,[data-chromatic='ignore']", '._app-content')
 ```
+
 In this example, we ignore the elements that are also ignored by 3rd party tool Chromatic.
 
 ## Debug
 
-set `visualRegressionLogger` to `true` to enable logging.
+set process env `visualRegressionLogger` to `true` to enable logging. ie:
+
+```bash
+visualRegressionLogger=true cypress open --e2e -b chrome -C cypress.base.config.ts
+```

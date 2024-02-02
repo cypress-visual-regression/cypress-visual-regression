@@ -4,11 +4,11 @@
     "module": "ES6",
     "target": "es5",
     "lib": ["es5", "dom"],
-    "types": ["node","vitest/globals"],
-    "strictNullChecks":true,
+    "types": ["node", "vitest/globals", "cypress"],
+    "strictNullChecks": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "outDir": "dist",
+    "outDir": "dist"
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts"]
 }

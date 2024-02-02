@@ -37,7 +37,7 @@ describe('Visual Regression Example', () => {
     cy.get('form')
       .compareSnapshot('login-form')
       .should((result: VisualRegressionResult) => {
-        if (Cypress.env('visualRegression').type === 'base') {
+        if (Cypress.env('visualRegressionType') === 'base') {
           expect(result.mismatchedPixels).to.not.exist
           expect(result.percentage).to.not.exist
           expect(result.error).to.not.exist
@@ -52,7 +52,7 @@ describe('Visual Regression Example', () => {
     cy.get('form')
       .compareSnapshot('login-form', 0.02)
       .should((result: VisualRegressionResult) => {
-        if (Cypress.env('visualRegression').type === 'base') {
+        if (Cypress.env('visualRegressionType') === 'base') {
           expect(result.baseGenerated).to.be.true
         } else {
           expect(result.mismatchedPixels).to.equal(0)
@@ -69,7 +69,7 @@ describe('Visual Regression Example', () => {
       }
       throw error
     })
-    if (Cypress.env('visualRegression').type === 'base') {
+    if (Cypress.env('visualRegressionType') === 'base') {
       cy.visit('./cypress/web/04.html')
       cy.get('H1').contains('bar').should('exist')
     } else {
@@ -80,7 +80,7 @@ describe('Visual Regression Example', () => {
   })
 
   it('should handle custom error thresholds correctly', () => {
-    if (Cypress.env('visualRegression').type === 'base') {
+    if (Cypress.env('visualRegressionType') === 'base') {
       cy.visit('./cypress/web/04.html')
       cy.compareSnapshot('foo')
       cy.get('H1').compareSnapshot('h1')
@@ -113,7 +113,7 @@ describe('Visual Regression Example', () => {
   })
 
   it('should handle custom error thresholds correctly - take 2', () => {
-    if (Cypress.env('visualRegression').type === 'base') {
+    if (Cypress.env('visualRegressionType') === 'base') {
       cy.visit('./cypress/web/06.html')
     } else {
       cy.visit('./cypress/web/07.html')
@@ -131,7 +131,7 @@ describe('Visual Regression Example', () => {
       }
       throw error
     })
-    if (Cypress.env('visualRegression').type === 'base') {
+    if (Cypress.env('visualRegressionType') === 'base') {
       cy.visit('./cypress/web/07.html')
     } else {
       cy.visit('./cypress/web/08.html')
@@ -149,16 +149,18 @@ describe('Visual Regression Example', () => {
     })
   })
 
-  const visualRegressionConfig = Cypress.env('visualRegression')
-  visualRegressionConfig.failSilently = true
+  const visualRegressionConfig = Cypress.env()
 
   it(
     'should not fail if failSilently is set in env',
     {
-      env: { visualRegression: visualRegressionConfig }
+      env: {
+        ...visualRegressionConfig,
+        visualRegressionFailSilently: true
+      }
     },
     () => {
-      if (Cypress.env('visualRegression').type === 'base') {
+      if (Cypress.env('visualRegressionType') === 'base') {
         cy.visit('./cypress/web/04.html')
         cy.get('H1').contains('bar').should('exist')
         cy.compareSnapshot('foo')

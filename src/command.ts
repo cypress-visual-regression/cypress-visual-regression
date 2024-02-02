@@ -24,11 +24,11 @@ export type PluginSetupOptions = {
 }
 
 export type CypressConfigEnv = {
-  VisualRegressionType: TypeOption
-  VisualRegressionBaseDirectory?: string
-  VisualRegressionDiffDirectory?: string
-  VisualRegressionGenerateDiff?: DiffOption
-  VisualRegressionFailSilently?: boolean
+  visualRegressionType: TypeOption
+  visualRegressionBaseDirectory?: string
+  visualRegressionDiffDirectory?: string
+  visualRegressionGenerateDiff?: DiffOption
+  visualRegressionFailSilently?: boolean
 }
 
 /** Add custom cypress command to compare image snapshots of an element or the window. */
@@ -60,7 +60,7 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
       }
 
       const visualRegressionOptions: VisualRegressionOptions = prepareOptions(name, errorThreshold, screenshotOptions)
-
+      console.info('visualRegressionOptions', visualRegressionOptions)
       return takeScreenshot(subject, name, screenshotOptions).then((screenshotAbsolutePath: string) => {
         visualRegressionOptions.screenshotAbsolutePath = screenshotAbsolutePath
         switch (visualRegressionOptions.type) {
@@ -85,37 +85,39 @@ function prepareOptions(
   errorThreshold: number,
   screenshotOptions?: ScreenshotOptions
 ): VisualRegressionOptions {
-  if (Cypress.env('visualRegression') === undefined) {
+  if (Cypress.env('visualRegression') !== undefined) {
     throw new Error(
-      'Environment variables under "visualRegression" apper to be missing. Please consult the plugin documentation for the proper setup.'
+      'Environment variables under "visualRegression" object (Version 4) si deprecated, please use single keys, ie visualRegressionType, visualRegressionBaseDirectory, etc.'
     )
   }
   const options: VisualRegressionOptions = {
-    type: Cypress.env('visualRegression').type as TypeOption,
+    type: Cypress.env('visualRegressionType'),
     screenshotName: name,
     specName: Cypress.spec.name,
     screenshotAbsolutePath: 'null', // will be set after takeScreenshot
     errorThreshold,
-    baseDirectory: Cypress.env('visualRegression')?.baseDirectory,
-    diffDirectory: Cypress.env('visualRegression')?.diffDirectory,
-    generateDiff: Cypress.env('visualRegression')?.generateDiff,
-    failSilently: Cypress.env('visualRegression')?.failSilently
+    baseDirectory: Cypress.env('visualRegressionBaseDirectory'),
+    diffDirectory: Cypress.env('visualRegressionDiffDirectory'),
+    generateDiff: Cypress.env('visualRegressionGenerateDiff'),
+    failSilently: Cypress.env('visualRegressionFailSilently')
   }
 
   if (screenshotOptions?.failSilently !== undefined) {
     options.failSilently = screenshotOptions.failSilently
-  } else if (Cypress.env('visualRegression').failSilently !== undefined) {
-    options.failSilently = Cypress.env('visualRegression').failSilently
+  } else if (Cypress.env('visualRegressionFailSilently') !== undefined) {
+    options.failSilently = Cypress.env('visualRegressionFailSilently')
   }
 
   // deprecation methods
   if (Cypress.env('type') !== undefined) {
-    console.error("Environment variable 'type' is deprecated. Please check README.md file for latest configuration.")
+    console.error(
+      "Environment variable 'type' is deprecated, please rename it to 'visualRegressionType'. Please check README.md file for latest configuration."
+    )
     options.type = Cypress.env('type')
   }
   if (Cypress.env('failSilently') !== undefined) {
     console.error(
-      "Environment variable 'failSilently' is deprecated. Please check README.md file for latest configuration."
+      "Environment variable 'failSilently' is deprecated, please rename it to 'visualRegressionFailSilently'. Please check README.md file for latest configuration."
     )
   }
   if (Cypress.env('SNAPSHOT_BASE_DIRECTORY') !== undefined) {
