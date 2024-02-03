@@ -10,7 +10,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "outDir": "dist",
-    "rootDir": "./",
+    "rootDir": "./src",
     "useDefineForClassFields": true,
     "types": ["node", "vitest/globals", "cypress"],
     "resolveJsonModule": true,
@@ -20,5 +20,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "./*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }
