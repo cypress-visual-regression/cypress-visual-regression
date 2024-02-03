@@ -25,9 +25,7 @@ const { configureVisualRegression } = require('cypress-visual-regression')
 module.exports = defineConfig({
   e2e: {
     env: {
-      visualRegression: {
-        type: 'regression'
-      }
+      visualRegressionType: 'regression'
     },
     screenshotsFolder: './cypress/snapshots/actual',
     setupNodeEvents(on, config) {
@@ -60,9 +58,7 @@ import { configureVisualRegression } from 'cypress-visual-regression/dist/plugin
 export default defineConfig({
   e2e: {
     env: {
-      visualRegression: {
-        type: 'regression'
-      }
+      visualRegressionType: 'regression'
     },
     screenshotsFolder: './cypress/snapshots/actual',
     setupNodeEvents(on, config) {
@@ -97,30 +93,28 @@ For more info on how to use TypeScript with Cypress, please refer to [this docum
 
 ## Plugin options
 
-All options can be configured within `visualRegression` under `env` variable inside `cypress.config.js` file, like this:
+All options can be configured within `visualRegression` namespace under `env` variable inside `cypress.config.js` file, like this:
 
-```javacript
+```javascript
 e2e: {
   screenshotsFolder: './cypress/snapshots/actual',
   env: {
-    visualRegression: {
-      type: 'regression',
-      baseDirectory: 'cypress/snapshot/base',
-      diffDirectory: 'cypress/snapshot/diff',
-      generateDiff: 'always',
-      failSilently: true
-    }
+    visualRegressionType: 'regression',
+    visualRegressionBaseDirectory: 'cypress/snapshot/base',
+    visualRegressionDiffDirectory: 'cypress/snapshot/diff',
+    visualRegressionGenerateDiff: 'always',
+    visualRegressionFailSilently: true
   }
 }
 ```
 
-| Variable      | Default                 | Description                                                                                                                                                  |
-| ------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| type          | /                       | Either 'regression' or 'base'. Base will override any existing base images with new screenshots. Regression will compare the base to the current screenshot. |
-| baseDirectory | 'cypress/snapshot/base' | Path to the directory where the base snapshots will be stored.                                                                                               |
-| diffDirectory | 'cypress/snapshot/diff' | Path to the directory where the generated image differences will be stored.                                                                                  |
-| generateDiff  | 'fail'                  | Either 'fail', 'never' or 'always'. Determines if and when image differences are generated.                                                                  |
-| failSilently  | false                   | Used to decide if any error found in regression should be thrown or returned as part of the result.                                                          |
+| Variable                      | Default                 | Description                                                                                                                                                  |
+| ----------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| visualRegressionType          | /                       | Either 'regression' or 'base'. Base will override any existing base images with new screenshots. Regression will compare the base to the current screenshot. |
+| visualRegressionBaseDirectory | 'cypress/snapshot/base' | Path to the directory where the base snapshots will be stored.                                                                                               |
+| visualRegressionDiffDirectory | 'cypress/snapshot/diff' | Path to the directory where the generated image differences will be stored.                                                                                  |
+| visualRegressionGenerateDiff  | 'fail'                  | Either 'fail', 'never' or 'always'. Determines if and when image differences are generated.                                                                  |
+| visualRegressionFailSilently  | false                   | Used to decide if any error found in regression should be thrown or returned as part of the result.                                                          |
 
 You can also pass default cypress screenshot [arguments](https://docs.cypress.io/api/cypress-api/screenshot-api.html#Arguments) to `addCompareSnapshotCommand()`, like this:
 
