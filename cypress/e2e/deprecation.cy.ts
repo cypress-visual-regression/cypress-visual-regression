@@ -30,7 +30,7 @@ describe('Deprecation Tests', () => {
       }
     },
     () => {
-      if (Cypress.env('visualRegression').type === 'base') {
+      if (Cypress.env('visualRegressionType') === 'base') {
         cy.visit('./cypress/web/04.html')
         cy.get('H1').contains('bar').should('exist')
         cy.compareSnapshot('foo')

@@ -1,5 +1,49 @@
 # Change Log
 
+## v5.0.0
+
+- Formatting using prettier
+
+- **FIX**: [errorThreshold when used in an object](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/220)
+
+- **BREAKING**: Rollback to use single keys to configure cypress-regression-plugin, instead of using an object.
+  This is do to the fact that we cannot override an object on cypress CLI , please refer to [this issue](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/223) for more info .
+
+  Now any config key will have a **namespace** and will follow **camelCase** notation:
+
+```TypeScript
+env: {
+  visualRegressionType: TypeOption
+  visualRegressionBaseDirectory?: string
+  visualRegressionDiffDirectory?: string
+  visualRegressionGenerateDiff?: DiffOption
+  visualRegressionFailSilently?: boolean
+}
+```
+
+## v4.0.0
+
+- Migrating to TS files
+- Adding esbuild to build plugin
+- Updating dependencies
+- Adding winston for logging
+- Adding formatting and linting
+
+- **BREAKING**: now type can be of type 'base' or 'regression'
+- **BREAKING**: Changed visual regression cypress envs. Now all vars related to visual regression plugin will be set inside an object like:
+
+```TypeScript
+env: {
+  visualRegression: {
+    type: TypeOption
+    baseDirectory?: string
+    diffDirectory?: string
+    generateDiff?: DiffOption
+    failSilently?: boolean
+  }
+}
+```
+
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## v3.0.0
@@ -103,16 +147,16 @@ All notable changes to this project will be documented in this file. This projec
 - Adds functionality to pass default arguments to `compareSnapshotCommand()`
 - Adds functionality to pass an object to `cy.screenshot()` rather than just an error threshold:
 
-    ```javascript
-    cy.compareSnapshot('login', 0.1);
+  ```javascript
+  cy.compareSnapshot('login', 0.1)
 
-    // or
+  // or
 
-    cy.compareSnapshot('login', {
-      capture: 'fullPage',
-      errorThreshold: 0.1
-    });
-    ```
+  cy.compareSnapshot('login', {
+    capture: 'fullPage',
+    errorThreshold: 0.1
+  })
+  ```
 
 ## v1.1.0
 

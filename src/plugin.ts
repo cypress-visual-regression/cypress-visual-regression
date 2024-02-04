@@ -3,7 +3,6 @@ import * as path from 'path'
 import pixelMatch from 'pixelmatch'
 import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
-
 import { adjustCanvas, parseImage } from './utils/image'
 import { logger } from './utils/logger'
 

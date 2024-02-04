@@ -1,0 +1,9 @@
+# Ignore artifacts:
+build
+coverage
+cypress/screenshots
+cypress/videos
+cypress/snapshots
+cypress/web
+dist
+.vscode

@@ -2,7 +2,7 @@ import { createLogger, format, transports } from 'winston'
 
 const logger = createLogger({
   silent: process.env.visualRegressionLogger !== 'true',
-  level: 'info',
+  level: 'debug',
   format: format.combine(format.splat(), format.json()),
   transports: [
     new transports.Console({
@@ -23,5 +23,4 @@ const logger = createLogger({
     })
   ]
 })
-
 export { logger }

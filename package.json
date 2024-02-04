@@ -1,6 +1,6 @@
 {
   "name": "cypress-visual-regression",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "Module for adding visual regression testing to Cypress",
   "keywords": [
     "visual regression",
@@ -19,15 +19,15 @@
     "prebuild": "rimraf dist && npm run lint && npm run format:check && npm run test",
     "build": "node esbuild.cjs && tsc --project tsconfig.json --declaration --emitDeclarationOnly",
     "typecheck": "tsc --noEmit --project tsconfig.json",
-    "format:check": "prettier --check src/**/*.ts cypress/**/*.ts",
-    "format:fix": "prettier --write src/**/*.ts cypress/**/*.ts",
+    "format:check": "prettier --check ./",
+    "format:fix": "prettier --write ./",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "prepublishOnly": "run-s build",
     "preversion": "run-s lint format:check test build",
     "test": "vitest run",
     "cy:base-and-regression": "npm run cy:base && npm run cy:regression",
-    "cy:open": "cypress open --e2e -b chrome -C cypress.base.config.ts",
+    "cy:open": "visualRegressionLogger=true cypress open --e2e -b chrome -C cypress.base.config.ts",
     "cy:base": "cypress run -C cypress.base.config.ts",
     "cy:regression": "cypress run -C cypress.regression.config.ts"
   },

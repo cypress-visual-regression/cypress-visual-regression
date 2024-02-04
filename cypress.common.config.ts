@@ -22,12 +22,10 @@ const cypressCommonConfig: Cypress.ConfigOptions = {
   }
 }
 
-export const cypressConfigWithEnv = (env: Cypress.ConfigOptions['env']): Cypress.ConfigOptions => {
-  return {
-    ...cypressCommonConfig,
-    env: {
-      ...cypressCommonConfig.env,
-      ...env
-    }
+export const cypressConfigWithEnv = (env: Cypress.ConfigOptions['env']): Cypress.ConfigOptions => ({
+  ...cypressCommonConfig,
+  env: {
+    ...cypressCommonConfig.env,
+    ...env
   }
-}
+})
