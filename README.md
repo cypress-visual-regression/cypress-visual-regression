@@ -119,7 +119,7 @@ e2e: {
 You can also pass default cypress screenshot [arguments](https://docs.cypress.io/api/cypress-api/screenshot-api.html#Arguments) to `addCompareSnapshotCommand()`, like this:
 
 ```javascript
-const addCompareSnapshotCommand = require('cypress-visual-regression/dist/command')
+const { addCompareSnapshotCommand } = require('cypress-visual-regression/dist/command')
 addCompareSnapshotCommand({
   capture: 'fullPage'
 })
@@ -207,7 +207,7 @@ export function beforeCompareSnapshots(
 You may then use this function like:
 
 ```js
-const addCompareSnapshotCommand = require('cypress-visual-regression/dist/command')
+const { addCompareSnapshotCommand } = require('cypress-visual-regression/dist/command')
 const beforeCompareSnapshots = require('./commands/beforeCompareSnapshots')
 addCompareSnapshotCommand({
   errorThreshold: 0.1
