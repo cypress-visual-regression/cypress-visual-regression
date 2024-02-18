@@ -31,6 +31,22 @@ export type CypressConfigEnv = {
   visualRegressionFailSilently?: boolean
 }
 
+export type TakeScreenshotProps = {
+  path: string
+  size: number
+  dimensions: {
+    width: number
+    height: number
+  }
+  multipart: boolean
+  pixelRatio: number
+  takenAt: string
+  name: string
+  blackout: string[]
+  duration: number
+  testAttemptIndex: number
+}
+
 /** Add custom cypress command to compare image snapshots of an element or the window. */
 function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void {
   Cypress.Commands.add(
@@ -60,9 +76,18 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
       }
 
       const visualRegressionOptions: VisualRegressionOptions = prepareOptions(name, errorThreshold, screenshotOptions)
-      console.info('visualRegressionOptions', visualRegressionOptions)
-      return takeScreenshot(subject, name, screenshotOptions).then((screenshotAbsolutePath: string) => {
-        visualRegressionOptions.screenshotAbsolutePath = screenshotAbsolutePath
+
+      return takeScreenshot(subject, name, screenshotOptions).then((screenShotProps) => {
+        console.groupCollapsed(
+          `%c     Visual Regression Test (${visualRegressionOptions.screenshotName}) `,
+          'color: #17EDE1; background: #091806; padding: 12px 6px; border-radius: 4px; width:100%;'
+        )
+        console.info('%c visualRegressionOptions:     ', 'color: #FFF615; background: #091806; padding: 6px;')
+        console.table(visualRegressionOptions)
+        console.info('%c Screenshot taken:     ', 'color: #FFF615; background: #091806; padding: 6px;')
+        console.table(screenShotProps)
+        console.groupEnd()
+        visualRegressionOptions.screenshotAbsolutePath = screenShotProps.path
         switch (visualRegressionOptions.type) {
           case 'regression':
             return compareScreenshots(visualRegressionOptions)
@@ -158,21 +183,19 @@ function takeScreenshot(
   subject: string | undefined,
   name: string,
   screenshotOptions?: ScreenshotOptions
-): Cypress.Chainable<string> {
+): Cypress.Chainable<TakeScreenshotProps> {
   const objToOperateOn = subject !== undefined ? cy.get(subject) : cy
-  let screenshotPath: string
+  let ScreenshotDetails: TakeScreenshotProps
   return (
     objToOperateOn
       .screenshot(name, {
         ...screenshotOptions,
         onAfterScreenshot(_el, props) {
-          screenshotPath = props.path
+          ScreenshotDetails = props
         }
       })
       // @ts-ignore
-      .then(() => {
-        return screenshotPath
-      })
+      .then(() => ScreenshotDetails)
   )
 }
 
