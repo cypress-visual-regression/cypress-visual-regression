@@ -13,7 +13,7 @@ export const parseImage = async (imagePath: string): Promise<PNG> => {
   return await new Promise((resolve, reject) => {
     const stream: ReadStream = createReadStream(imagePath)
     stream.on('error', (error) => {
-      logger.error('Failed to open "%s" with message: "%s"', imagePath, error.message)
+      logger.error(`Failed to open ${imagePath} with message: ${error.message}`)
       reject(new Error(`File '${imagePath}' does not exist.`))
     })
     stream
@@ -22,7 +22,7 @@ export const parseImage = async (imagePath: string): Promise<PNG> => {
         resolve(this)
       })
       .on('error', (error) => {
-        logger.error('Failed to parse image "%s" with message: "%s"', imagePath, error.message)
+        logger.error(`Failed to parse image ${imagePath} with message: ${error.message}`)
         reject(error)
       })
   })

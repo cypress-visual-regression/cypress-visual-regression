@@ -2,6 +2,7 @@
   "name": "cypress-visual-regression",
   "version": "5.0.0",
   "description": "Module for adding visual regression testing to Cypress",
+  "type": "module",
   "keywords": [
     "visual regression",
     "image diff",
@@ -26,10 +27,12 @@
     "prepublishOnly": "run-s build",
     "preversion": "run-s lint format:check test build",
     "test": "vitest run",
+    "clean:snapshots": "rimraf cypress/snapshots",
     "cy:base-and-regression": "npm run cy:base && npm run cy:regression",
-    "cy:open": "visualRegressionLogger=true cypress open --e2e -b chrome -C cypress.base.config.ts",
-    "cy:base": "cypress run -C cypress.base.config.ts",
-    "cy:regression": "cypress run -C cypress.regression.config.ts"
+    "cy:open:base": "visual_regression_log=debug cypress open --e2e -b chrome -C cypress.base.config.ts",
+    "cy:open:regression": "visual_regression_log=debug cypress open --e2e -b chrome -C cypress.regression.config.ts",
+    "cy:base": "visual_regression_log=debug cypress run -C cypress.base.config.ts",
+    "cy:regression": "visual_regression_log=debug cypress run -C cypress.regression.config.ts"
   },
   "prettier": {
     "printWidth": 120,
@@ -38,10 +41,10 @@
     "trailingComma": "none"
   },
   "dependencies": {
+    "chalk": "^5.3.0",
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
-    "sanitize-filename": "^1.6.3",
-    "winston": "^3.10.0"
+    "sanitize-filename": "^1.6.3"
   },
   "devDependencies": {
     "@faker-js/faker": "8.0.2",

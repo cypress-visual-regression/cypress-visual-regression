@@ -34,22 +34,30 @@ describe('Deprecation Tests', () => {
         cy.visit('./cypress/web/04.html')
         cy.get('H1').contains('bar').should('exist')
         cy.compareSnapshot('foo')
-        cy.task('doesExist', './cypress/snapshots/deprecated/base/deprecation.cy.ts/foo.png').should('be.true')
+        cy.task('doesExist', './cypress/snapshots/deprecated/base/cypress/e2e/deprecation.cy.ts/foo.png').should(
+          'be.true'
+        )
         cy.get('H1').compareSnapshot('h1')
-        cy.task('doesExist', './cypress/snapshots/deprecated/base/deprecation.cy.ts/h1.png').should('be.true')
+        cy.task('doesExist', './cypress/snapshots/deprecated/base/cypress/e2e/deprecation.cy.ts/h1.png').should(
+          'be.true'
+        )
       } else {
         cy.visit('./cypress/web/05.html')
         cy.get('H1').contains('none').should('exist')
         cy.compareSnapshot('foo', 0.01).should((result: VisualRegressionResult) => {
           expect(result.error).to.exist
         })
-        cy.task('doesExist', './cypress/snapshots/deprecated/diff/deprecation.cy.ts/foo.png').should('be.true')
+        cy.task('doesExist', './cypress/snapshots/deprecated/diff/cypress/e2e/deprecation.cy.ts/foo.png').should(
+          'be.true'
+        )
         cy.get('H1')
           .compareSnapshot('h1', 0.02)
           .should((result: VisualRegressionResult) => {
             expect(result.error).to.exist
           })
-        cy.task('doesExist', './cypress/snapshots/deprecated/diff/deprecation.cy.ts/h1.png').should('be.true')
+        cy.task('doesExist', './cypress/snapshots/deprecated/diff/cypress/e2e/deprecation.cy.ts/h1.png').should(
+          'be.true'
+        )
       }
     }
   )

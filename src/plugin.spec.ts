@@ -25,7 +25,12 @@ const baseUpdateOptions: UpdateSnapshotOptions = {
   screenshotName: 'enjuto',
   specName: 'sub-folder',
   screenshotAbsolutePath: path.join('fixtures', 'assets', 'base', 'enjuto.png'),
-  baseDirectory: path.join('fixtures', 'assets', 'base')
+  baseDirectory: path.join('fixtures', 'assets', 'base'),
+  spec: {
+    name: 'test',
+    absolute: 'test',
+    relative: 'test'
+  }
 } as const
 
 const baseCompareOptions: CompareSnapshotOptions = {
