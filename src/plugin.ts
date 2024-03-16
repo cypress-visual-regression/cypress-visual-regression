@@ -125,12 +125,10 @@ const pruneEmptyDirectoriesInverse = (directory: string): void => {
 export const compareSnapshots = async (options: CompareSnapshotOptions): Promise<VisualRegressionResult> => {
   const snapshotBaseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
-
   const fileName: string = sanitize(options.screenshotName)
   const actualImage = options.screenshotAbsolutePath
-  const expectedImage = path.join(snapshotBaseDirectory, options.specName, `${fileName}.png`)
-  const diffImage = path.join(snapshotDiffDirectory, options.specName, `${fileName}.png`)
-
+  const expectedImage = path.join(snapshotBaseDirectory, options.spec.relative, `${fileName}.png`)
+  const diffImage = path.join(snapshotDiffDirectory, options.spec.relative, `${fileName}.png`)
   const [imgExpected, imgActual] = await Promise.all([parseImage(expectedImage), parseImage(actualImage)])
   const diffPNG = new PNG({
     width: Math.max(imgActual.width, imgExpected.width),
@@ -151,7 +149,7 @@ export const compareSnapshots = async (options: CompareSnapshotOptions): Promise
   const percentage = (mismatchedPixels / diffPNG.width / diffPNG.height) ** 0.5
 
   if (percentage > options.errorThreshold) {
-    logger.error('Error in visual regression found: "%s"', percentage.toFixed(2))
+    logger.error(`Error in visual regression found: ${percentage.toFixed(2)}`)
     if (options.generateDiff !== 'never') {
       await generateImage(diffPNG, diffImage)
     }

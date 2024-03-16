@@ -163,6 +163,7 @@ function prepareOptions(
     console.error(
       "Environment variable 'failSilently' is deprecated, please rename it to 'visualRegressionFailSilently'. Please check README.md file for latest configuration."
     )
+    options.failSilently = Cypress.env('failSilently')
   }
   if (Cypress.env('SNAPSHOT_BASE_DIRECTORY') !== undefined) {
     console.error(
