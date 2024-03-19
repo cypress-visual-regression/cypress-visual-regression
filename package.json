@@ -23,6 +23,7 @@
     "plugin.d.ts"
   ],
   "scripts": {
+    "build": "run-s build:*",
     "build:dts": "dts-bundle-generator -o dist/commands.d.ts src/commands.d.ts && dts-bundle-generator -o dist/plugin.d.ts src/plugin.d.ts",
     "build:esbuild": "esbuild --bundle --platform=node --target=node16 --outdir=dist src/commands.js src/plugin.js",
     "eslint": "eslint .",
@@ -35,13 +36,12 @@
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write .",
     "postpublish": "release-postpublish",
-    "start": "node server.js",
     "pretest": "run-s prettier:check eslint",
     "test": "jest"
   },
   "commitlint": {
     "extends": [
-      "@forsakringskassan/commitlint-config"
+      "@forsakringskassan/commitlint-config/no-jira"
     ]
   },
   "lint-staged": {
@@ -67,7 +67,6 @@
     "@html-validate/release-scripts": "6.2.0",
     "@types/jest": "29.5.12",
     "@types/node": "16.18.89",
-    "connect": "3.7.0",
     "cypress": "13.7.0",
     "dts-bundle-generator": "9.3.1",
     "esbuild": "0.20.2",
@@ -75,7 +74,6 @@
     "lint-staged": "15.2.2",
     "npm-pkg-lint": "2.2.0",
     "npm-run-all2": "6.1.2",
-    "serve-static": "1.15.0",
     "typescript": "5.4.2"
   },
   "peerDependencies": {
