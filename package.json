@@ -41,7 +41,7 @@
   },
   "commitlint": {
     "extends": [
-      "@forsakringskassan/commitlint-config"
+      "@forsakringskassan/commitlint-config/no-jira"
     ]
   },
   "lint-staged": {
