@@ -1,6 +1,6 @@
 {
   "name": "@forsakringskassan/cypress-visual-regression",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Module for adding visual regression testing to Cypress",
   "keywords": [
     "visual regression",
