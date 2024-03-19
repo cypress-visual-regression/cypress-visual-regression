@@ -1,53 +1,87 @@
 {
-  "name": "cypress-visual-regression",
-  "version": "1.7.0",
+  "name": "@forsakringskassan/cypress-visual-regression",
+  "version": "2.2.0",
   "description": "Module for adding visual regression testing to Cypress",
-  "repository": "https://github.com/mjhea0/cypress-visual-regression",
-  "author": "Michael Herman <michael@mherman.org>",
-  "license": "MIT",
   "keywords": [
     "visual regression",
     "image diff",
     "cypress"
   ],
+  "homepage": "https://github.com/Forsakringskassan/cypress-visual-regression",
+  "bugs": "https://github.com/Forsakringskassan/cypress-visual-regression/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Forsakringskassan/cypress-visual-regression.git"
+  },
+  "license": "MIT",
+  "author": "Försäkringskassan",
+  "files": [
+    "dist",
+    "commands.js",
+    "commands.d.ts",
+    "plugin.js",
+    "plugin.d.ts"
+  ],
   "scripts": {
-    "test": "./node_modules/.bin/cypress run --env type=actual",
-    "base": "./node_modules/.bin/cypress run --env type=base",
-    "prepublish": "npm run jest && npm run lint && npm run prettier:check && npm run build",
-    "lint": "./node_modules/.bin/eslint src/**",
-    "prebuild": "./node_modules/.bin/rimraf dist",
-    "build": "./node_modules/.bin/babel src --out-dir dist --extensions \".js\" --copy-files",
-    "prepare": "npm run build",
-    "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
-    "prettier:check": "prettier --check --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
-    "prettier:fix": "prettier --write --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
-    "jest": "jest tests"
+    "build:dts": "dts-bundle-generator -o dist/commands.d.ts src/commands.d.ts && dts-bundle-generator -o dist/plugin.d.ts src/plugin.d.ts",
+    "build:esbuild": "esbuild --bundle --platform=node --target=node16 --outdir=dist src/commands.js src/plugin.js",
+    "eslint": "eslint .",
+    "eslint:fix": "eslint --fix .",
+    "lint": "npm run eslint",
+    "prepack": "release-prepack --bundle",
+    "postpack": "release-postpack",
+    "prepare": "husky",
+    "prepublishOnly": "release-prepublish --bundle",
+    "prettier:check": "prettier --check .",
+    "prettier:write": "prettier --write .",
+    "postpublish": "release-postpublish",
+    "start": "node server.js",
+    "pretest": "run-s prettier:check eslint",
+    "test": "jest"
+  },
+  "commitlint": {
+    "extends": [
+      "@forsakringskassan/commitlint-config"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,json,md,ts}": "prettier --write",
+    "*.{js,ts}": "eslint --fix"
+  },
+  "prettier": "@forsakringskassan/prettier-config",
+  "release": {
+    "extends": "@forsakringskassan/semantic-release-config"
+  },
+  "jest": {
+    "preset": "@forsakringskassan/jest-config"
+  },
+  "dependencies": {
+    "pngjs": "7.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "eslint": "^7.29.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.23.4",
-    "jest": "^27.0.5",
-    "prettier": "2.3.1",
-    "rimraf": "^3.0.2"
+    "@forsakringskassan/commitlint-config": "1.2.1",
+    "@forsakringskassan/eslint-config": "10.3.0",
+    "@forsakringskassan/eslint-config-jest": "10.3.0",
+    "@forsakringskassan/jest-config": "29.4.0",
+    "@forsakringskassan/prettier-config": "1.4.0",
+    "@html-validate/release-scripts": "6.2.0",
+    "@types/jest": "29.5.12",
+    "@types/node": "16.18.89",
+    "connect": "3.7.0",
+    "cypress": "13.7.0",
+    "dts-bundle-generator": "9.3.1",
+    "esbuild": "0.20.2",
+    "husky": "9.0.11",
+    "lint-staged": "15.2.2",
+    "npm-pkg-lint": "2.2.0",
+    "npm-run-all2": "6.1.2",
+    "serve-static": "1.15.0",
+    "typescript": "5.4.2"
   },
   "peerDependencies": {
-    "cypress": ">=5.6.0"
+    "cypress": "^10.4 || ^11 || ^12 || ^13"
   },
-  "files": [
-    "dist/**/*"
-  ],
-  "ignore": [
-    "src",
-    "cypress",
-    "cypress.json"
-  ],
-  "dependencies": {
-    "pixelmatch": "^5.2.1",
-    "pngjs": "^6.0.0",
-    "sanitize-filename": "^1.6.3"
-  },
-  "types": "dist/command.d.ts"
+  "engines": {
+    "node": ">= 16"
+  }
 }

@@ -1,7 +1,8 @@
-.DS_Store
-npm-debug.log
-
+cypress/screenshots/
 node_modules/
 dist/
-docker/cypress/snapshots/*
-!docker/cypress/snapshots/.gitkeep
+*.tgz
+coverage/
+.jest-cache/
+test-results/
+.vscode/

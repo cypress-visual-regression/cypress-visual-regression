@@ -1,255 +1,237 @@
-# Cypress Visual Regression
-
-[![npm](https://img.shields.io/npm/v/cypress-visual-regression)](https://www.npmjs.com/package/cypress-visual-regression)
-
-[![github actions](https://github.com/mjhea0/cypress-visual-regression/workflows/Continuous%20Integration/badge.svg)](https://github.com/mjhea0/cypress-visual-regression/actions)
-
+# @forsakringskassan/cypress-visual-regression
 
 Module for adding visual regression testing to [Cypress](https://www.cypress.io/).
+
+This is a fork of [cypress-visual-regression](https://github.com/mjhea0/cypress-visual-regression) v1.7.0.
+The most notable changes are:
+
+-   Support both headed and headless.
+-   Support both E2E and Component Tests with screenshots stored next to test-cases in a `__screenshots__` folder.
+-   Retryability: tries multiple times to match the screenshot against the base images.
+-   Delayed screenshots: optional delay before taking base screenshots.
+-   Forced software rendering, antialiasing detection: to prevent flaky tests due to different hardware rendering slightly different pixels.
 
 ## Getting Started
 
 Install:
 
 ```sh
-$ npm install cypress-visual-regression
+$ npm install --save-dev @forsakringskassan/cypress-visual-regression
 ```
 
-Add the following config to your *cypress.json* file:
+Add the following config to your _cypress.config.ts._ file:
+
+the default for screenshotsfolder is `cypress/screenshots`. Your screenshotfolder is where the failing tests will be transfered to.
 
 ```json
 {
-  "screenshotsFolder": "./cypress/snapshots/actual",
-  "trashAssetsBeforeRuns": true
+    "screenshotsFolder": "WHERE_YOU_WANT_FAILING_TEST_IMAGES_TO_END_UP/",
+    "trashAssetsBeforeRuns": true
 }
 ```
 
-Add the plugin to *cypress/plugins/index.js*:
-
-```javascript
-const getCompareSnapshotsPlugin = require('cypress-visual-regression/dist/plugin');
-
-module.exports = (on, config) => {
-  getCompareSnapshotsPlugin(on, config);
-};
-```
-
-Add the command to *cypress/support/commands.js*:
-
-```javascript
-const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
-
-compareSnapshotCommand();
-```
-
-> Make sure you import *commands.js* in *cypress/support/index.js*:
->
-> ```javascript
-> import './commands'
-> ```
-
-### TypeScript
-
-If you're using TypeScript, use files with a `.ts` extension, as follows:
-
-*cypress/plugins/index.ts*
+`cypress/support/commands.ts`:
 
 ```ts
-import type Cypress from 'cypress';
-import getCompareSnapshotsPlugin from 'cypress-visual-regression/dist/plugin';
-
-export default function configurePlugins(
-  on: Cypress.PluginEvents,
-  config: Cypress.PluginConfigOptions,
-) {
-  getCompareSnapshotsPlugin(on, config);
-}
+import "@forsakringskassan/cypress-visual-regression/commands";
 ```
 
-*cypress/support/commands.ts*
+`cypress.config.ts`:
 
 ```ts
-import compareSnapshotCommand from 'cypress-visual-regression/dist/command';
+import getToMatchScreenshotsPlugin from "@forsakringskassan/cypress-visual-regression/plugin";
+import { defineConfig } from "cypress";
 
-compareSnapshotCommand();
-```
-
-*cypress/tsconfig.json*
-
-```json:
-{
-  "compilerOptions": {
-    "types": [
-      "cypress",
-      "cypress-visual-regression"
-    ]
-  }
-}
-```
-
-For more info on how to use TypeScript with Cypress, please refer to [this document](https://docs.cypress.io/guides/tooling/typescript-support#Set-up-your-dev-environment).
-
-
-### Options
-
-`failSilently` is enabled by default. Add the following config to your *cypress.json* file to see the errors:
-
-```json
-{
-  "env": {
-    "failSilently": false
-  }
-}
-```
-
-You can also pass default [arguments](https://docs.cypress.io/api/cypress-api/screenshot-api.html#Arguments) to `compareSnapshotCommand()`:
-
-```javascript
-const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
-
-compareSnapshotCommand({
-  capture: 'fullPage'
+export default defineConfig({
+    e2e: {
+        setupNodeEvents(on, config) {
+            config = getToMatchScreenshotsPlugin(on, config);
+        },
+    },
 });
 ```
 
-These will be used by default when no parameters are passed to the `compareSnapshot` command.
+This plug uses the `before:browser:launch` event, due to [Cypress#5240][#5240] if you have another plugin or you use it yourself in `cypress.config.ts` you need a workaround.
+See the section below on an example of such workaround.
 
-**Configure snapshot paths**
+For more info on how to use TypeScript with Cypress, please refer to [this document](https://docs.cypress.io/guides/tooling/typescript-support#Set-up-your-dev-environment).
 
-You can control where snapshots should be located by setting two environment variables:
+[#5240]: https://github.com/cypress-io/cypress/issues/5240
 
-| Variable | Description |
-|----------|-------------|
-| SNAPSHOT_BASE_DIRECTORY | Directory of the base snapshots |
-| SNAPSHOT_DIFF_DIRECTORY | Directory for the snapshot diff |
+### Options
 
-The `actual` directory always points to the configured screenshot directory.
+`failSilently` is enabled by default. Add the following config to your _cypress.json_ file to see the errors:
 
-
-**Configure snapshot generation**
-
-You can control if diff images are generated for successful tests by setting the following environment variable:
-
-| Variable             | Description               |
-|----------------------|---------------------------|
-| ALWAYS_GENERATE_DIFF | Boolean, defaults to true |
-
+```json
+{
+    "env": {
+        "failSilently": false
+    }
+}
+```
 
 ## To Use
 
-Add `cy.compareSnapshot('home');` in your tests specs whenever you want to test for visual regressions, making sure to replace `home` with a relevant name. You can also add an optional error threshold: Value can range from 0.00 (no difference) to 1.00 (every pixel is different). So, if you enter an error threshold of 0.51, the test would fail only if > 51% of pixels are different.
+The plugin has two modes, `base` and `actual`.
+
+`base` means taking a new screenshot as a baseline while `actual` means taking a screenshot and then comparing it to the _base-image_.
+
+Default is `actual`.
+
+To run in `base-mode` locally, add `type=base` as a environment variable
+
+```sh
+$ cypress run -- --env type=base
+```
+
+### Implementation in test files
+
+Add `cy.toMatchScreenshot();` in your tests specs whenever you want to test for visual regressions. You can also add an optional error threshold: Value can range from 0.00 (no difference) to 1.00 (every pixel is different). So, if you enter an error threshold of 0.51, the test would fail only if > 51% of pixels are different.
+
+Default value of threshold is 0.01, you can not go lower than that.
 
 More examples:
 
 | Threshold | Fails when |
-|-----------|------------|
-| .25 | > 25%  |
-| .30 | > 30% |
-| .50 | > 50% |
-| .75 | > 75% |
+| --------- | ---------- |
+| .25       | > 25%      |
+| .30       | > 30%      |
+| .50       | > 50%      |
+| .75       | > 75%      |
 
 Sample:
 
 ```js
-it('should display the login page correctly', () => {
-  cy.visit('/03.html');
-  cy.get('H1').contains('Login');
-  cy.compareSnapshot('login', 0.0);
-  cy.compareSnapshot('login', 0.1);
+it("should display the login page correctly", () => {
+    cy.visit("/03.html");
+    cy.get("H1").contains("Login");
+    cy.toMatchScreenshot(0.1);
 });
 ```
 
 You can target a single HTML element as well:
 
 ```js
-cy.get('#my-header').compareSnapshot('just-header')
+cy.get("#my-header").toMatchScreenshot();
 ```
 
 You can pass arguments as an object to `cy.screenshot()`, rather than just an error threshold, as well:
 
 ```js
-it('should display the login page correctly', () => {
-  cy.visit('/03.html');
-  cy.compareSnapshot('login', {
-    capture: 'fullPage',
-    errorThreshold: 0.1
-  });
+it("should display the login page correctly", () => {
+    cy.visit("/03.html");
+    cy.toMatchScreenshot({
+        capture: "fullPage",
+        errorThreshold: 0.1,
+    });
 });
 ```
-> Looking for more examples? Review [docker/cypress/integration/main.spec.js](https://github.com/mjhea0/cypress-visual-regression/blob/master/docker/cypress/integration/main.spec.js).
 
+### Waiting for components to load and retry function
 
-Take the base images:
+Sometimes things don't load for the screenshot. In order to solve this, you can use the argument `baseDelay` which will `cy.wait(x)` before taking base screenshots.
 
-```sh
-$ ./node_modules/.bin/cypress run --env type=base --config screenshotsFolder=cypress/snapshots/base,testFiles=\"**/*regression-tests.js\"
-
-# use comma separated format for multiple config commands
-$ ./node_modules/.bin/cypress run \
-  --env type=base \
-  --config screenshotsFolder=cypress/snapshots/base,testFiles=\"**/*regression-tests.js\"
+```js
+cy.toMatchScreenshot({ baseDelay: 500 });
 ```
 
-Find regressions:
+When not running the test as `base`, it will retake screenshots after 200ms delay each until match or the default of 3 tries. If it doesn't find match and no more retires, test will fail.
+You can also configure how many retries it will make.
 
-```sh
-$ ./node_modules/.bin/cypress run --env type=actual
+```js
+cy.toMatchScreenshot({ retries: 6 });
 ```
 
-## Example
+### Saved base images and failing tests
 
-![example](./cypress-visual-regression.gif)
+Base-images will be stored inside same directory in which the test is, in a sub-folder called `__screenshots__`. For example
 
-## Tips & Tricks
+```
+root
+├─┬ cypress
+│ └─┬ e2e
+│   ├── test.cy.ts
+│   └─┬ __screenshots__
+│     └── test -- should match screenshot.png
+└─┬ src
+  └─┬ component
+    ├── component.vue
+    ├── component.cy.ts
+    └─┬ __screenshots__
+      └── component -- should match screenshot.png
+```
 
-### Ignore some elements
+When a test fails, a sub-directory will be created under your configured `screenshotsFolder`, inside there will be a copy of the base image and the actual image.
 
-Following function creates a command that allows you to hide elements of the page based on their className:
+### Using multiple event listeners
+
+Cypress does not support multiple listeners on the same event.
+This plugin uses `before:browser:launch` and if this collides with another plugin you can apply the following workaround:
+
+`cypress.config.ts`:
+
 ```ts
 /**
- * To be called after you setup the command, in order to add a
- * hook that does stuff before the command is triggered
+ * Workaround for https://github.com/cypress-io/cypress/issues/5240
+ *
+ * Cypress `on` cannot accept multiple listeners, since we have multiple plugins
+ * trying to hook into the same eents only one of them gets called. This
+ * workaround creates a wrapped `on` supporting multiple listeners.
  */
-function beforeCompareSnapshotCommand(
-  /** Element you want to ignore */
-  ignoredElementsQuerySelector: string,
-  /** Main app element (if you want for the page to be loaded before triggering the command) */
-  appContentQuerySelector: string = "body"
-) {
-  Cypress.Commands.overwrite("compareSnapshot", (originalFn, ...args) => {
-    return cy
-      // wait for content to be ready 
-      .get(appContentQuerySelector)
-      // hide ignored elements
-      .then($app => {
-        return new Cypress.Promise((resolve, reject) => {
-          setTimeout(() => {
-            $app.find(ignoredElementsQuerySelector).css("visibility", "hidden");
-            resolve();
-            // add a very small delay to wait for the elements to be there, but you should
-            // make sure your test already handles this
-          }, 300);
-        });
-      })
-      .then(() => {
-        return originalFn(...args);
-      });
-  });
+class EventForwarder {
+    private emitter: EventEmitter;
+    private task: Cypress.Tasks;
+    public on: Cypress.PluginEvents;
+
+    public constructor() {
+        this.emitter = new EventEmitter();
+        this.task = {};
+        this.on = (action, arg) => {
+            if (action === "task") {
+                Object.assign(this.task, arg);
+            } else {
+                this.emitter.on(action, arg as () => void);
+            }
+        };
+    }
+
+    public forward(on: Cypress.PluginEvents): void {
+        for (const event of this.emitter.eventNames()) {
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any -- because we cannot extract the action names as a union of strings */
+            on(event as any, async (...args: unknown[]) => {
+                if (event === "before:browser:launch") {
+                    const browser = args[0];
+                    let launchOptions = args[1];
+                    for (const listener of this.emitter.listeners(event)) {
+                        launchOptions = await listener(browser, launchOptions);
+                    }
+                } else {
+                    for (const listener of this.emitter.listeners(event)) {
+                        await listener(...args);
+                    }
+                }
+            });
+        }
+        on("task", this.task);
+    }
 }
 
-module.exports = beforeCompareSnapshotCommand;
-```
-You may then use this function like below:
-```js
-const compareSnapshotCommand = require("cypress-visual-regression/dist/command");
-const beforeCompareSnapshotCommand = require("./commands/beforeCompareSnapshots");
-compareSnapshotCommand({
-  errorThreshold: 0.1
+export default defineConfig({
+    component: {
+        setupNodeEvents(cypressOn, config) {
+            const eventForwarder = new EventForwarder();
+            const on = eventForwarder.on;
+
+            try {
+                /* [..] */
+
+                getToMatchScreenshotsPlugin(on, config);
+
+                /* [..] */
+            } finally {
+                eventForwarder.forward(cypressOn);
+            }
+        },
+    },
 });
-// add a before hook to compareSnapshot (this must be called AFTER compareSnapshotCommand() so the command can be overriden)
-beforeCompareSnapshotCommand(
-  ".chromatic-ignore,[data-chromatic='ignore']",
-  "._app-content"
-);
 ```
-In this example, we ignore the elements that are also ignored by 3rd party tool Chromatic.

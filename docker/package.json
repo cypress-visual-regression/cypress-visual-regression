@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "cypress-visual-regression": "1.7.0",
-    "pixelmatch": "5.2.1",
-    "pngjs": "6.0.0",
-    "sanitize-filename": "^1.6.3"
-  }
-}

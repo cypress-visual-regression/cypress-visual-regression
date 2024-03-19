@@ -1,5 +1,5 @@
-declare function getCompareSnapshotsPlugin(
-  on: Cypress.PluginEvents,
-  config: Cypress.PluginConfigOptions,
-): void;
-export default getCompareSnapshotsPlugin;
+export = getToMatchScreenshotsPlugin;
+declare function getToMatchScreenshotsPlugin(
+    on: any,
+    config: Cypress.PluginConfigOptions,
+): Cypress.PluginConfigOptions;
