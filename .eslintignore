@@ -1,3 +1,5 @@
 coverage/
 dist/
 *.d.ts
+commands.js
+plugin.js
