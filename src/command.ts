@@ -7,6 +7,10 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+    export interface Spec {
+      relativeToCommonRoot?: string
+    }
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     interface Chainable {
       // eslint-disable-next-line @typescript-eslint/method-signature-style
       compareSnapshot(name: string, options?: PluginCommandOptions): Chainable<VisualRegressionResult>
@@ -61,7 +65,6 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
       if (name === undefined || name === '') {
         throw new Error('Snapshot name must be specified')
       }
-
       // prepare screenshot options
       let errorThreshold = 0
       if (typeof commandOptions === 'object') {
@@ -75,19 +78,33 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
         errorThreshold = screenshotOptions.errorThreshold
       }
 
-      const visualRegressionOptions: VisualRegressionOptions = prepareOptions(name, errorThreshold, screenshotOptions)
-
-      return takeScreenshot(subject, name, screenshotOptions).then((screenShotProps) => {
+      const nameSanitized = name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
+      const visualRegressionOptions: VisualRegressionOptions = prepareOptions(
+        nameSanitized,
+        errorThreshold,
+        screenshotOptions
+      )
+      // We need to add the folder structure so we can have as many levels as we want
+      // https://github.com/cypress-visual-regression/cypress-visual-regression/issues/225
+      const folderAndName = `${Cypress.spec.relative}/${nameSanitized}`
+      return takeScreenshot(subject, folderAndName, screenshotOptions).then((screenShotProps) => {
+        // Screenshot already taken
+        visualRegressionOptions.screenshotAbsolutePath = screenShotProps.path
+        visualRegressionOptions.spec = Cypress.spec
         console.groupCollapsed(
           `%c     Visual Regression Test (${visualRegressionOptions.screenshotName}) `,
           'color: #17EDE1; background: #091806; padding: 12px 6px; border-radius: 4px; width:100%;'
         )
-        console.info('%c visualRegressionOptions:     ', 'color: #FFF615; background: #091806; padding: 6px;')
-        console.table(visualRegressionOptions)
-        console.info('%c Screenshot taken:     ', 'color: #FFF615; background: #091806; padding: 6px;')
-        console.table(screenShotProps)
+        console.info('%c folderAndName:', 'color: #FFF615; background: #091806; padding: 6px;', folderAndName)
+        console.info('%c subject:', 'color: #FFF615; background: #091806; padding: 6px;', subject)
+        console.info('%c screenshotOptions', 'color: #FFF615; background: #091806; padding: 6px;', screenshotOptions)
+        console.info(
+          '%c visualRegressionOptions',
+          'color: #FFF615; background: #091806; padding: 6px;',
+          visualRegressionOptions
+        )
+        console.info('%c Screenshot taken', 'color: #FFF615; background: #091806; padding: 6px;', screenShotProps)
         console.groupEnd()
-        visualRegressionOptions.screenshotAbsolutePath = screenShotProps.path
         switch (visualRegressionOptions.type) {
           case 'regression':
             return compareScreenshots(visualRegressionOptions)
@@ -124,11 +141,13 @@ function prepareOptions(
     baseDirectory: Cypress.env('visualRegressionBaseDirectory'),
     diffDirectory: Cypress.env('visualRegressionDiffDirectory'),
     generateDiff: Cypress.env('visualRegressionGenerateDiff'),
-    failSilently: Cypress.env('visualRegressionFailSilently')
+    failSilently: Cypress.env('visualRegressionFailSilently'),
+    spec: Cypress.spec
   }
 
   if (screenshotOptions?.failSilently !== undefined) {
     options.failSilently = screenshotOptions.failSilently
+    // FIXME: it looks to me that we can remove this condition since we are doing that on line 134 (options object), to be addressed in a separate PR
   } else if (Cypress.env('visualRegressionFailSilently') !== undefined) {
     options.failSilently = Cypress.env('visualRegressionFailSilently')
   }
@@ -144,6 +163,7 @@ function prepareOptions(
     console.error(
       "Environment variable 'failSilently' is deprecated, please rename it to 'visualRegressionFailSilently'. Please check README.md file for latest configuration."
     )
+    options.failSilently = Cypress.env('failSilently')
   }
   if (Cypress.env('SNAPSHOT_BASE_DIRECTORY') !== undefined) {
     console.error(
@@ -174,7 +194,6 @@ function prepareOptions(
     )
     options.failSilently = Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL')
   }
-
   return options
 }
 
@@ -203,11 +222,29 @@ function takeScreenshot(
 function compareScreenshots(options: VisualRegressionOptions): Cypress.Chainable {
   // @ts-expect-error todo: fix this
   return cy.task('compareSnapshots', options).then((results: VisualRegressionResult) => {
+    console.log('VisualRegressionResult')
+    console.groupCollapsed(
+      `%c     VisualRegressionResult `,
+      'color: #ede917; background: #091806; padding: 12px 6px; border-radius: 4px; width:100%;'
+    )
+    console.info('%c VisualRegressionResult:', 'color: #FFF615; background: #091806; padding: 6px;', results)
+    console.groupEnd()
     if (results.error !== undefined && !options.failSilently) {
       throw new Error(results.error)
     }
     return results
   })
 }
+/** Helper command to use cy.log when runnung in headless  mode or console when  used in a browser */
+Cypress.Commands.overwrite('log', function (log, ...args) {
+  if (Cypress.browser.isHeadless) {
+    return cy.task('log', args, { log: false }).then(() => {
+      return log(...args)
+    })
+  } else {
+    console.log(...args)
+    return log(...args)
+  }
+})
 
 export { addCompareSnapshotCommand }

@@ -9,13 +9,21 @@ const cypressCommonConfig: Cypress.ConfigOptions = {
   e2e: {
     screenshotsFolder: './cypress/snapshots/actual',
     setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
-      on('before:browser:launch', (_browser, launchOptions) => {
-        launchOptions.args.push('--force-device-scale-factor=1')
+      on('before:browser:launch', (browser, launchOptions) => {
+        if (browser.name === 'chrome' && browser.family === 'chromium') {
+          launchOptions.args.push('--force-device-scale-factor=1')
+        }
         return launchOptions
       })
       configureVisualRegression(on)
       on('task', {
         doesExist: (path: string) => fs.existsSync(path)
+      })
+      on('task', {
+        log(args) {
+          console.log(...args)
+          return null
+        }
       })
       return config
     }

@@ -26,23 +26,33 @@ describe(
         cy.visit('./cypress/web/01.html')
         cy.get('H1').contains('Hello, World')
         cy.compareSnapshot('home')
-        cy.task('doesExist', `${env.visualRegressionBaseDirectory}/main.env.cy.ts/home.png`).should('be.true')
+        cy.task('doesExist', `${env.visualRegressionBaseDirectory}/cypress/e2e/main.env.cy.ts/home.png`).should(
+          'be.true'
+        )
       } else {
         cy.visit('./cypress/web/01.html')
         cy.get('H1').contains('Hello, World')
         cy.compareSnapshot('home')
-        cy.task('doesExist', `${env.visualRegressionDiffDirectory}/main.env.cy.ts/home.png`).should('be.true')
+        cy.task('doesExist', `${env.visualRegressionDiffDirectory}/cypress/e2e/main.env.cy.ts/home.png`).should(
+          'be.true'
+        )
       }
     })
     it('take screenshot with child command', () => {
       if (env.visualRegressionType === 'base') {
         cy.visit('./cypress/web/01.html')
         cy.get('H1').contains('Hello, World').compareSnapshot('home-child')
-        cy.task('doesExist', `${visualRegressionConfig.baseDirectory}/main.env.cy.ts/home-child.png`).should('be.true')
+        cy.task(
+          'doesExist',
+          `${visualRegressionConfig.baseDirectory}/cypress/e2e/main.env.cy.ts/home_child.png`
+        ).should('be.true')
       } else {
         cy.visit('./cypress/web/01.html')
         cy.get('H1').contains('Hello, World').compareSnapshot('home-child')
-        cy.task('doesExist', `${visualRegressionConfig.diffDirectory}/main.env.cy.ts/home-child.png`).should('be.true')
+        cy.task(
+          'doesExist',
+          `${visualRegressionConfig.diffDirectory}/cypress/e2e/main.env.cy.ts/home_child.png`
+        ).should('be.true')
       }
     })
   }

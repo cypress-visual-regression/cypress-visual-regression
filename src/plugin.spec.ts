@@ -25,7 +25,12 @@ const baseUpdateOptions: UpdateSnapshotOptions = {
   screenshotName: 'enjuto',
   specName: 'sub-folder',
   screenshotAbsolutePath: path.join('fixtures', 'assets', 'base', 'enjuto.png'),
-  baseDirectory: path.join('fixtures', 'assets', 'base')
+  baseDirectory: path.join('fixtures', 'assets', 'base'),
+  spec: {
+    name: 'enjuto.png',
+    absolute: '',
+    relative: ''
+  }
 } as const
 
 const baseCompareOptions: CompareSnapshotOptions = {
@@ -43,16 +48,8 @@ const validImagePath = path.join('mock', 'test.png')
 const systemFileName = path.join('System', 'ass\0ets*', 'test.png')
 const wrongAbsolutePath = path.join('fixtures', 'assets', 'wadus.png')
 const rootFileName = path.join('te\0st.png*')
-const copiedFileName = path.join(
-  baseDirectoryDefault,
-  baseUpdateOptions.specName,
-  `${baseUpdateOptions.screenshotName}.png`
-)
-const copiedFileNameCustom = path.join(
-  baseDirectoryCustom,
-  baseUpdateOptions.specName,
-  `${baseUpdateOptions.screenshotName}.png`
-)
+const copiedFileName = path.join(baseDirectoryDefault, `${baseUpdateOptions.screenshotName}.png`)
+const copiedFileNameCustom = path.join(baseDirectoryCustom, `${baseUpdateOptions.screenshotName}.png`)
 
 const buildPNG = (): PNG => {
   const png = new PNG({ width: 1, height: 1 })
@@ -114,7 +111,7 @@ describe('plugin', () => {
         expect(isFileCopied).toBe(true)
       })
     })
-    describe('when there is an error in updating the snapshot', () => {
+    describe('when there is an error on updating the snapshot', () => {
       it('should throw an error if cannot copy file', async () => {
         const options: UpdateSnapshotOptions = {
           ...baseUpdateOptions,
@@ -124,7 +121,6 @@ describe('plugin', () => {
         await expect(result).rejects.toThrow(
           `Failed to copy file from '${wrongAbsolutePath}' to '${path.join(
             options.baseDirectory ?? '',
-            options.specName,
             `${options.screenshotName}.png`
           )}'.`
         )
