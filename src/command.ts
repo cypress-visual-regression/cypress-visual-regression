@@ -211,6 +211,7 @@ function takeScreenshot(
         ...screenshotOptions,
         onAfterScreenshot(_el, props) {
           ScreenshotDetails = props
+          screenshotOptions?.onAfterScreenshot?.(_el, props)
         }
       })
       // @ts-ignore
