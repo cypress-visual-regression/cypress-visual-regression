@@ -1,5 +1,9 @@
 # Change Log
 
+## v5.x.x
+
+- Split integration tests into platform, project and plugin tests
+
 ## v5.0.2
 
 - Switch to `tsup` library (instead of regular `esbuild`)
