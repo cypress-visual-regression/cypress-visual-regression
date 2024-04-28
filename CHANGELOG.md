@@ -1,5 +1,11 @@
 # Change Log
 
+## v5.0.1
+
+- TODO
+- Restore onAfterScreenshot from the original API of 'cy screenshot' (PR [#235](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/235))
+- build(deps-dev): bump vite from 4.5.2 to 4.5.3 (PR [#234](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/234))
+
 ## v5.0.0
 
 - Formatting using prettier
@@ -7,7 +13,7 @@
 - **FIX**: [errorThreshold when used in an object](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/220)
 
 - **BREAKING**: Rollback to use single keys to configure cypress-regression-plugin, instead of using an object.
-  This is do to the fact that we cannot override an object on cypress CLI , please refer to [this issue](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/223) for more info .
+  This is due to the fact that we cannot override an object on cypress CLI , please refer to [this issue](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/223) for more info .
 
   Now any config key will have a **namespace** and will follow **camelCase** notation:
 
