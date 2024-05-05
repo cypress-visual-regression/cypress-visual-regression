@@ -2,7 +2,10 @@
 
 ## v5.0.1
 
-- TODO
+- Fixing path depth and cypress wrong saved path on headless (PR [#233](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/233))
+- Fixing compareSnapshots paths (PR [#233](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/233))
+- 225 v4 spec directory not included in screenshot path (PR [#233](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/233))
+- Changing return type of takeScreenshot function (PR [#228](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/228))
 - Restore onAfterScreenshot from the original API of 'cy screenshot' (PR [#235](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/235))
 - build(deps-dev): bump vite from 4.5.2 to 4.5.3 (PR [#234](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/234))
 
