@@ -29,10 +29,10 @@
     "test": "vitest run",
     "clean:snapshots": "rimraf cypress/snapshots",
     "cy:base-and-regression": "npm run cy:base && npm run cy:regression",
-    "cy:open:base": "visual_regression_log=debug cypress open --e2e -b chrome -C cypress.base.config.ts",
-    "cy:open:regression": "visual_regression_log=debug cypress open --e2e -b chrome -C cypress.regression.config.ts",
-    "cy:base": "visual_regression_log=debug cypress run -C cypress.base.config.ts",
-    "cy:regression": "visual_regression_log=debug cypress run -C cypress.regression.config.ts"
+    "cy:open:base": "set visual_regression_log=debug && cypress open --e2e -b chrome -C cypress.base.config.ts",
+    "cy:open:regression": "set visual_regression_log=debug && cypress open --e2e -b chrome -C cypress.regression.config.ts",
+    "cy:base": "set visual_regression_log=debug && cypress run -C cypress.base.config.ts",
+    "cy:regression": "set visual_regression_log=debug && cypress run -C cypress.regression.config.ts"
   },
   "prettier": {
     "printWidth": 120,

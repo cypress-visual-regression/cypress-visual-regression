@@ -67,27 +67,27 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
       }
       // prepare screenshot options
       let errorThreshold = 0
+      let regressionOptions: ScreenshotOptions
       if (typeof commandOptions === 'object') {
-        screenshotOptions = { ...screenshotOptions, ...commandOptions }
+        regressionOptions = { ...screenshotOptions, ...commandOptions }
         if (commandOptions.errorThreshold !== undefined) {
           errorThreshold = commandOptions.errorThreshold
         }
-      } else if (typeof commandOptions === 'number') {
+      } else {
+        regressionOptions = { ...screenshotOptions }
         errorThreshold = commandOptions
-      } else if (screenshotOptions?.errorThreshold !== undefined) {
-        errorThreshold = screenshotOptions.errorThreshold
       }
 
       const nameSanitized = name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
       const visualRegressionOptions: VisualRegressionOptions = prepareOptions(
         nameSanitized,
         errorThreshold,
-        screenshotOptions
+        regressionOptions
       )
       // We need to add the folder structure so we can have as many levels as we want
       // https://github.com/cypress-visual-regression/cypress-visual-regression/issues/225
       const folderAndName = `${Cypress.spec.relative}/${nameSanitized}`
-      return takeScreenshot(subject, folderAndName, screenshotOptions).then((screenShotProps) => {
+      return takeScreenshot(subject, folderAndName, regressionOptions).then((screenShotProps) => {
         // Screenshot already taken
         visualRegressionOptions.screenshotAbsolutePath = screenShotProps.path
         visualRegressionOptions.spec = Cypress.spec
@@ -97,7 +97,7 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
         )
         console.info('%c folderAndName:', 'color: #FFF615; background: #091806; padding: 6px;', folderAndName)
         console.info('%c subject:', 'color: #FFF615; background: #091806; padding: 6px;', subject)
-        console.info('%c screenshotOptions', 'color: #FFF615; background: #091806; padding: 6px;', screenshotOptions)
+        console.info('%c screenshotOptions', 'color: #FFF615; background: #091806; padding: 6px;', regressionOptions)
         console.info(
           '%c visualRegressionOptions',
           'color: #FFF615; background: #091806; padding: 6px;',
