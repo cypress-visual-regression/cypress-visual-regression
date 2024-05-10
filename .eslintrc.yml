@@ -42,3 +42,4 @@ rules:
   '@typescript-eslint/no-unsafe-call': 'off'
   'import/no-default-export': 'off'
   'import/no-unresolved': 'off'
+  'no-param-reassign': 'error'
