@@ -3,6 +3,7 @@ const fsPromises = require("node:fs/promises");
 const path = require("path");
 
 const { compareImages } = require("./utils");
+const { getSubfolderName } = require("./get-subfolder-name");
 
 /** @type {string} */
 let CYPRESS_SCREENSHOT_DIR = "cypress/screenshots";
@@ -91,7 +92,7 @@ async function visualRegressionCopy(args) {
         if (parentFolder[0] === "src") {
             parentFolder = absolute.split("/").slice(-4, -1).join("/");
         } else {
-            parentFolder = parentFolder.join("/");
+            parentFolder = getSubfolderName(absolute, "src");
         }
         const checkFrom = path.join(parentFolder, from);
 
