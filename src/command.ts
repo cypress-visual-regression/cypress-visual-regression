@@ -7,10 +7,6 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-    export interface Spec {
-      relativeToCommonRoot?: string
-    }
-    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     interface Chainable {
       // eslint-disable-next-line @typescript-eslint/method-signature-style
       compareSnapshot(name: string, options?: PluginCommandOptions): Chainable<VisualRegressionResult>
@@ -84,7 +80,7 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
         errorThreshold,
         regressionOptions
       )
-      // We need to add the folder structure so we can have as many levels as we want
+      // We need to add the folder structure, so we can have as many levels as we want
       // https://github.com/cypress-visual-regression/cypress-visual-regression/issues/225
       const folderAndName = `${Cypress.spec.relative}/${nameSanitized}`
       return takeScreenshot(subject, folderAndName, regressionOptions).then((screenShotProps) => {
@@ -236,7 +232,7 @@ function compareScreenshots(options: VisualRegressionOptions): Cypress.Chainable
     return results
   })
 }
-/** Helper command to use cy.log when runnung in headless  mode or console when  used in a browser */
+/** Helper command to use cy.log when running in headless  mode or console when  used in a browser */
 Cypress.Commands.overwrite('log', function (log, ...args) {
   if (Cypress.browser.isHeadless) {
     return cy.task('log', args, { log: false }).then(() => {

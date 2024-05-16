@@ -9,7 +9,7 @@
     "jsx": "react",
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "outDir": "dist",
+    "outDir": "./dist",
     "rootDir": "./src",
     "useDefineForClassFields": true,
     "types": ["node", "vitest/globals", "cypress"],
