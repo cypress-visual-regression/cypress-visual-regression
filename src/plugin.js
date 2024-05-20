@@ -161,7 +161,7 @@ async function toMatchScreenshotsPlugin(args) {
     const percentage = result.rawMisMatchPercentage / 100;
 
     if (percentage > args.errorThreshold) {
-        copyMismatchingFiles(
+        await copyMismatchingFiles(
             actualImage,
             expectedImage,
             CYPRESS_SCREENSHOT_DIR,
