@@ -72,11 +72,8 @@ function getScreenshotTargetDirectory(type, testPath) {
 }
 
 async function visualRegressionCopy(args) {
-    let { from } = args;
-    let { deleteFolder } = args;
-    const { absolute } = args;
-    const { specType } = args;
-    const { isHeadless } = args;
+    let { from, deleteFolder } = args;
+    const { absolute, specType, isHeadless, relativePath } = args;
     const folderName = getScreenshotTargetDirectory(args.type, args.testPath);
 
     /* In version 10, Cypress.spec.name stops inkluding parent folder.
@@ -106,7 +103,11 @@ async function visualRegressionCopy(args) {
         deleteFolder = "All Specs";
     }
 
-    from = path.join(CYPRESS_SCREENSHOT_DIR, from, `${args.fileName}.png`);
+    from = path.join(
+        CYPRESS_SCREENSHOT_DIR,
+        relativePath,
+        `${args.fileName}.png`,
+    );
 
     const to = path.join(folderName, `${args.fileName}.png`);
 

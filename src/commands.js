@@ -23,6 +23,7 @@ function takeScreenshot(args) {
             isHeadless: Cypress.browser.isHeadless,
             absolute: Cypress.spec.absolute,
             specType: Cypress.spec.specType,
+            relativePath: Cypress.spec.relativeToCommonRoot ?? "",
         },
         { log: false },
     );
