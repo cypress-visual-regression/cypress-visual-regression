@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [2.3.2](https://github.com/Forsakringskassan/cypress-visual-regression/compare/v2.3.1...v2.3.2) (2024-05-20)
+
+
+### Bug Fixes
+
+* use relative path for spec file ([c009f82](https://github.com/Forsakringskassan/cypress-visual-regression/commit/c009f82d93d19e9836f0354d81906872818ec6ed))
+* wait on file copy ([8971e95](https://github.com/Forsakringskassan/cypress-visual-regression/commit/8971e9500ef51b831db7cb28d302fbab80cffca9))
+
 ## [2.3.1](https://github.com/Forsakringskassan/cypress-visual-regression/compare/v2.3.0...v2.3.1) (2024-05-14)
 
 
