@@ -67,7 +67,7 @@
     "@html-validate/release-scripts": "6.4.0",
     "@types/jest": "29.5.12",
     "@types/node": "16.18.97",
-    "cypress": "13.9.0",
+    "cypress": "13.10.0",
     "dts-bundle-generator": "9.5.1",
     "esbuild": "0.21.3",
     "husky": "9.0.11",
