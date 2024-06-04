@@ -79,12 +79,11 @@ _cypress/tsconfig.json_
 
 ```json:
 {
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "types": [
-      "cypress",
-      "cypress-visual-regression"
-    ]
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "ES2015"
+    }
   }
 }
 ```
@@ -220,8 +219,8 @@ In this example, we ignore the elements that are also ignored by 3rd party tool 
 
 ## Debug
 
-set process env `visualRegressionLogger` to `true` to enable logging. ie:
+set process env `visual_regression_log` to `debug` to enable logging:
 
 ```bash
-visualRegressionLogger=true cypress open --e2e -b chrome -C cypress.base.config.ts
+visual_regression_log=debug cypress open --e2e -b chrome -C cypress.base.config.ts
 ```
