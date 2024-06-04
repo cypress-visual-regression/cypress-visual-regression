@@ -1,12 +1,8 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "lib": ["es2021", "dom"],
-    "types": ["cypress", "cypress-visual-regression"],
-    "esModuleInterop": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "baseUrl": "./"
-  },
-  "include": ["**/*.ts"]
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "ES2015"
+    }
+  }
 }

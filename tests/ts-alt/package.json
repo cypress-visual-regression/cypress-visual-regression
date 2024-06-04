@@ -1,8 +1,7 @@
 {
-  "name": "ts",
+  "name": "ts-alt",
   "version": "1.0.0",
-  "description": "ts testing project",
-  "type": "module",
+  "description": "ts (no type: module) testing project",
   "scripts": {
     "test": "cypress run"
   },

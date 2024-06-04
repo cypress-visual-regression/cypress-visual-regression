@@ -12,7 +12,7 @@ jobs:
       matrix:
         node-version: [18.x, 20.x]
         cypress-version: [12.x, 13.x]
-        project-setup: [esm, cjs, ts]
+        project-setup: [esm, cjs, ts, ts-alt]
 
     steps:
       - name: Checkout code
