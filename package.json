@@ -63,7 +63,7 @@
     "@forsakringskassan/eslint-config": "11.0.5",
     "@forsakringskassan/eslint-config-jest": "11.0.0",
     "@forsakringskassan/jest-config": "29.5.4",
-    "@forsakringskassan/prettier-config": "2.0.1",
+    "@forsakringskassan/prettier-config": "2.0.2",
     "@html-validate/release-scripts": "6.4.0",
     "@types/jest": "29.5.12",
     "@types/node": "16.18.97",
