@@ -4,12 +4,12 @@ parserOptions:
 
 ignorePatterns:
   - 'dist'
-  - 'vitest.config.ts'
   - 'cypress.base.config.ts'
   - 'cypress.regression.config.ts'
   - 'cypress.common.config.ts'
   - 'cypress'
   - 'src/utils/*.spec.ts'
+  - 'tests'
 
 plugins:
   - '@typescript-eslint'

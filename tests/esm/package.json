@@ -1,0 +1,15 @@
+{
+  "name": "esm",
+  "version": "1.0.0",
+  "description": "esm testing project",
+  "type": "module",
+  "scripts": {
+    "test": "cypress run"
+  },
+  "devDependencies": {
+    "cypress-visual-regression": "../../../cypress-visual-regression"
+  },
+  "peerDependencies": {
+    "cypress": ">=12"
+  }
+}

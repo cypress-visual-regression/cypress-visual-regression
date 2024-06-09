@@ -71,7 +71,8 @@ describe('plugin', () => {
     describe('when the image is not generated', () => {
       it('should not generate an image and throw an error on directory creation', async () => {
         const result = generateImage(buildPNG(), systemFileName)
-        await expect(result).rejects.toThrow(`cannot create directory '${path.dirname(systemFileName)}'.`)
+        const fullPath = path.dirname(systemFileName)
+        await expect(result).rejects.toThrow(`cannot create directory '${fullPath}'.`)
       })
       it('should not generate an image and throw an error on file creation', async () => {
         const result = generateImage(buildPNG(), rootFileName)
@@ -118,12 +119,8 @@ describe('plugin', () => {
           screenshotAbsolutePath: wrongAbsolutePath
         }
         const result = updateSnapshot(options)
-        await expect(result).rejects.toThrow(
-          `Failed to copy file from '${wrongAbsolutePath}' to '${path.join(
-            options.baseDirectory ?? '',
-            `${options.screenshotName}.png`
-          )}'.`
-        )
+        const fullPath = path.join(options.baseDirectory ?? '', `${options.screenshotName}.png`)
+        await expect(result).rejects.toThrow(`Failed to copy file from '${wrongAbsolutePath}' to '${fullPath}'.`)
       })
       it('should throw an error if cannot create a directory', async () => {
         const options: UpdateSnapshotOptions = {

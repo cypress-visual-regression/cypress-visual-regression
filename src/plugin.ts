@@ -29,7 +29,8 @@ export type VisualRegressionOptions = {
   /** if set to true failing test will not be thrown */
   failSilently: boolean
   /** Cypress spec file object info */
-  spec: Cypress.Spec
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  spec: any // TODO change to Cypress.Spec after https://github.com/cypress-io/cypress/issues/29048 is fixed
 }
 
 export type UpdateSnapshotOptions = Pick<
@@ -80,7 +81,7 @@ export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<Vi
  * [CORRECT]   cypress open => .../snapshots/actual/cypress/e2e/alt-sub/foo/deep.cy.ts/inside_context.png
  * [INCORRECT] cypress run =>  .../snapshots/actual/deep.cy.ts/cypress/e2e/alt-sub/foo/deep.cy.ts/inside_context.png
  *
- * looking at Cypress.spec we can see that the relativeToCommonRoot is set only when running in headless mode
+ * looking at Cypress.Spec we can see that the relativeToCommonRoot is set only when running in headless mode
  * and that is the only time we need to remove the extra folder from the path
  *
  * ref: https://github.com/cypress-io/cypress/issues/29057
@@ -176,7 +177,7 @@ export async function generateImage(diffPNG: PNG, imagePath: string): Promise<bo
     await fs.mkdir(dirName, { recursive: true })
   } catch (error) {
     logger.error(`Failed to create directory '${dirName}' with error:`, error)
-    return await Promise.reject(new Error(`cannot create directory '${dirName}'.`))
+    throw new Error(`cannot create directory '${dirName}'.`)
   }
   return await new Promise((resolve, reject) => {
     const file = createWriteStream(imagePath)

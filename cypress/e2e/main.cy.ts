@@ -9,7 +9,7 @@ describe('Visual Regression Example', () => {
   })
 
   it('handle missing base snapshot file as a failed spec', () => {
-    const randomWord = faker.word.sample()
+    const randomWord = faker.word.verb()
     cy.on('fail', (error) => {
       expect(error.message).to.match(new RegExp(`File '.*${randomWord}.png' does not exist.`))
       return

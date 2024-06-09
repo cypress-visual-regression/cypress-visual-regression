@@ -1,5 +1,13 @@
 # Change Log
 
+## v5.0.2
+
+- Switch to `tsup` library (instead of regular `esbuild`)
+- Remove `"type": "module"` from `package.json` file
+- Output dedicated files for `cjs`, `esm` and `ts` projects. Fix issues [#244](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/244) and [#243](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/243)
+- Add tests different project setups (`cjs`, `esm`, `ts`)
+- Downgrade to `chalk` v4 (because of `cjs` support)
+
 ## v5.0.1
 
 - Fixing path depth and cypress wrong saved path on headless (PR [#233](https://github.com/cypress-visual-regression/cypress-visual-regression/pull/233))
