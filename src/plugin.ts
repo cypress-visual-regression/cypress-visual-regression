@@ -126,10 +126,10 @@ const pruneEmptyDirectoriesInverse = (directory: string): void => {
 export const compareSnapshots = async (options: CompareSnapshotOptions): Promise<VisualRegressionResult> => {
   const snapshotBaseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const snapshotDiffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
-  const fileName: string = sanitize(options.screenshotName)
+  const sanitizedFileName: string = sanitize(options.screenshotName)
   const actualImage = options.screenshotAbsolutePath
-  const expectedImage = path.join(snapshotBaseDirectory, options.spec.relative, `${fileName}.png`)
-  const diffImage = path.join(snapshotDiffDirectory, options.spec.relative, `${fileName}.png`)
+  const expectedImage = path.join(snapshotBaseDirectory, options.spec.relative, `${sanitizedFileName}.png`)
+  const diffImage = path.join(snapshotDiffDirectory, options.spec.relative, `${sanitizedFileName}.png`)
   const [imgExpected, imgActual] = await Promise.all([parseImage(expectedImage), parseImage(actualImage)])
   const diffPNG = new PNG({
     width: Math.max(imgActual.width, imgExpected.width),
@@ -156,7 +156,7 @@ export const compareSnapshots = async (options: CompareSnapshotOptions): Promise
     }
 
     return {
-      error: `The "${fileName}" image is different. Threshold limit exceeded!
+      error: `The "${options.screenshotName}" image is different. Threshold limit exceeded!
        Expected: ${options.errorThreshold}
        Actual: ${percentage}`,
       mismatchedPixels,

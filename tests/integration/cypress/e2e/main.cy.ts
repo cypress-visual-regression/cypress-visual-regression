@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import type { VisualRegressionResult } from '../../src/plugin'
+import type { VisualRegressionResult } from '@src/plugin'
 
 describe('Visual Regression Example', () => {
   it('should display the home page correctly', () => {
@@ -11,7 +11,7 @@ describe('Visual Regression Example', () => {
   it('handle missing base snapshot file as a failed spec', () => {
     const randomWord = faker.word.verb()
     cy.on('fail', (error) => {
-      expect(error.message).to.match(new RegExp(`File '.*${randomWord}.png' does not exist.`))
+      expect(error.message).to.match(new RegExp(`no such file or directory, .*${randomWord}.png`))
       return
     })
     cy.visit('./cypress/web/01.html')

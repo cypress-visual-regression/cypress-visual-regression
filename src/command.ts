@@ -56,7 +56,7 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
     function (
       subject: keyof HTMLElementTagNameMap,
       name: string,
-      commandOptions: PluginCommandOptions
+      commandOptions?: PluginCommandOptions
     ): Cypress.Chainable {
       if (name === undefined || name === '') {
         throw new Error('Snapshot name must be specified')
@@ -212,7 +212,7 @@ function takeScreenshot(
           screenshotOptions?.onAfterScreenshot?.(_el, props)
         }
       })
-      // @ts-ignore
+      // @ts-expect-error todo: fix
       .then(() => ScreenshotDetails)
   )
 }

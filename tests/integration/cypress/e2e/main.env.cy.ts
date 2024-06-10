@@ -1,6 +1,4 @@
-// const visualRegressionConfig = Cypress.env('visualRegression')
-
-import { CypressConfigEnv } from '../../src/command'
+import { CypressConfigEnv } from '@src/command'
 
 const visualRegressionConfig = Cypress.env()
 

@@ -2,11 +2,8 @@
 npm-debug.log
 
 node_modules/
-cypress/screenshots/
 dist/
-
-cypress/snapshots/*
-!cypress/snapshots/.gitkeep
+cypress/
 
 .vscode/*
 !.vscode/extensions.json

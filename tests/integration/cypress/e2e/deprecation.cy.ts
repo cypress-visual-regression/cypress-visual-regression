@@ -1,4 +1,4 @@
-import { VisualRegressionResult } from '../../src/plugin'
+import { VisualRegressionResult } from '@src/plugin'
 
 describe('Deprecation Tests', () => {
   it(
