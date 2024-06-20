@@ -8,7 +8,7 @@ describe('utils/image module', () => {
     test('should throw error if image does not exist', async () => {
       const filename = 'img'
       const promise = parseImage(filename)
-      await expect(promise).rejects.toThrow(`File '${filename}' does not exist.`)
+      await expect(promise).rejects.toThrow('no such file or directory')
     })
     // TODO mock createReadStream
     test('should throw error on invalid file type', async () => {

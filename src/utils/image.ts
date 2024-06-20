@@ -14,7 +14,7 @@ export const parseImage = async (imagePath: string): Promise<PNG> => {
     const stream: ReadStream = createReadStream(imagePath)
     stream.on('error', (error) => {
       logger.error(`Failed to open ${imagePath} with message: ${error.message}`)
-      reject(new Error(`File '${imagePath}' does not exist.`))
+      reject(error)
     })
     stream
       .pipe(new PNG())
