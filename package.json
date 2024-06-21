@@ -62,7 +62,7 @@
     "@forsakringskassan/commitlint-config": "1.3.2",
     "@forsakringskassan/eslint-config": "11.0.5",
     "@forsakringskassan/eslint-config-jest": "11.0.0",
-    "@forsakringskassan/jest-config": "29.5.4",
+    "@forsakringskassan/jest-config": "29.5.5",
     "@forsakringskassan/prettier-config": "2.1.0",
     "@html-validate/release-scripts": "6.4.0",
     "@types/jest": "29.5.12",
