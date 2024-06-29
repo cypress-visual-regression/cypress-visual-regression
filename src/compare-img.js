@@ -386,6 +386,7 @@ var getGlobalThis = function () {
             return h;
         }
 
+        /* eslint-disable-next-line max-params -- technical debt */
         function isAntialiased(
             sourcePix,
             pix,
