@@ -126,7 +126,7 @@ describe('Visual Regression Example', () => {
 
   it('should compare images of different sizes', () => {
     cy.on('fail', (error) => {
-      if (error.message.includes('The "bar-07" image is different. Threshold limit exceeded!')) {
+      if (error.message.includes('The "bar_07" image is different. Threshold limit exceeded!')) {
         return
       }
       throw error
