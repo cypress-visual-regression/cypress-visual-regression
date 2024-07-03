@@ -71,7 +71,9 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
         }
       } else {
         regressionOptions = { ...screenshotOptions }
-        errorThreshold = commandOptions
+        if (commandOptions !== undefined) {
+          errorThreshold = commandOptions
+        }
       }
 
       const nameSanitized = name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
