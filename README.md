@@ -179,7 +179,7 @@ export function beforeCompareSnapshots(
   /** Main app element (if you want for the page to be loaded before triggering the command) */
   appContentQuerySelector: string = 'body'
 ) {
-  Cypress.Commands.overwrite('compareSnapshots', (originalFn, ...args) => {
+  Cypress.Commands.overwrite('compareSnapshot', (originalFn, ...args) => {
     return (
       cy
         // wait for content to be ready
