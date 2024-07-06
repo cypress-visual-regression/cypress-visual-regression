@@ -3,6 +3,7 @@
 ## v5.x.x
 
 - Split integration tests into platform, project and plugin tests
+- Fix a typo in documentation. Closes issue [#248](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/248)
 
 ## v5.0.2
 
