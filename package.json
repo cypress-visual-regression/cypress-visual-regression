@@ -26,19 +26,7 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "prepublishOnly": "npm run build",
     "preversion": "npm run lint && npm run format:check && npm run test && npm run build",
-    "test": "vitest run --globals",
-    "clean:snapshots": "rimraf cypress/snapshots",
-    "cy:base-and-regression": "npm run cy:base && npm run cy:regression",
-    "cy:open:base": "cross-env visual_regression_log=debug cypress open --e2e -b chrome -C cypress.base.config.ts",
-    "cy:open:regression": "cross-env visual_regression_log=debug cypress open --e2e -b chrome -C cypress.regression.config.ts",
-    "cy:base": "cypress run -C cypress.base.config.ts",
-    "cy:regression": "cypress run -C cypress.regression.config.ts"
-  },
-  "prettier": {
-    "printWidth": 120,
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "none"
+    "test": "vitest run --globals"
   },
   "dependencies": {
     "chalk": "^4.1.2",

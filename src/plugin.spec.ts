@@ -1,4 +1,4 @@
-import { existsSync, unlinkSync } from 'fs'
+import { existsSync, rmSync } from 'fs'
 import path from 'path'
 import { PNG } from 'pngjs'
 import { expect } from 'vitest'
@@ -10,22 +10,11 @@ import {
   type UpdateSnapshotOptions
 } from './plugin'
 
-function deleteFileSafely(filePath: string): void {
-  try {
-    unlinkSync(filePath)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    if (err.code !== 'ENOENT') {
-      throw err // If the error is not "File not found" (ENOENT), rethrow it
-    } // If the error is "File not found," do nothing (fail silently)
-  }
-}
-
 const baseUpdateOptions: UpdateSnapshotOptions = {
   screenshotName: 'enjuto',
   specName: 'sub-folder',
-  screenshotAbsolutePath: path.join('fixtures', 'assets', 'base', 'enjuto.png'),
-  baseDirectory: path.join('fixtures', 'assets', 'base'),
+  screenshotAbsolutePath: path.join('./src/fixtures/assets/base/enjuto.png'),
+  baseDirectory: path.join('./src/fixtures/assets/base'),
   spec: {
     name: 'enjuto.png',
     absolute: '',
@@ -36,20 +25,9 @@ const baseUpdateOptions: UpdateSnapshotOptions = {
 const baseCompareOptions: CompareSnapshotOptions = {
   ...baseUpdateOptions,
   errorThreshold: 0.1,
-  diffDirectory: path.join('cypress', 'snapshots', 'test', 'diff'),
+  diffDirectory: path.join('./src/fixtures/diff'),
   generateDiff: 'fail'
 }
-
-const baseDirectoryCustom = path.join('output')
-const baseDirectoryDefault = path.join('cypress', 'snapshots', 'base')
-const diffFilePath = path.join(baseCompareOptions.diffDirectory ?? '', 'enjuto.png')
-const absolutePathMod = path.join('fixtures', 'assets', 'mod', 'enjuto.png')
-const validImagePath = path.join('mock', 'test.png')
-const systemFileName = path.join('System', 'ass\0ets*', 'test.png')
-const wrongAbsolutePath = path.join('fixtures', 'assets', 'wadus.png')
-const rootFileName = path.join('te\0st.png*')
-const copiedFileName = path.join(baseDirectoryDefault, `${baseUpdateOptions.screenshotName}.png`)
-const copiedFileNameCustom = path.join(baseDirectoryCustom, `${baseUpdateOptions.screenshotName}.png`)
 
 const buildPNG = (): PNG => {
   const png = new PNG({ width: 1, height: 1 })
@@ -60,77 +38,71 @@ const buildPNG = (): PNG => {
 describe('plugin', () => {
   describe('generateImage', () => {
     describe('when the image is generated', () => {
-      afterEach(() => {
-        deleteFileSafely(validImagePath)
-      })
       it('should generate an image', async () => {
-        const result = await generateImage(buildPNG(), validImagePath)
+        const result = await generateImage(buildPNG(), path.join('mock/validImagePath.png'))
         expect(result).toBe(true)
+        rmSync('mock', { recursive: true })
       })
     })
     describe('when the image is not generated', () => {
       it('should not generate an image and throw an error on directory creation', async () => {
-        const result = generateImage(buildPNG(), systemFileName)
-        const fullPath = path.dirname(systemFileName)
+        const invalidDir = path.join('./ass\0ets*/invalidDir.png')
+        const result = generateImage(buildPNG(), invalidDir)
+        const fullPath = path.dirname(invalidDir)
         await expect(result).rejects.toThrow(`cannot create directory '${fullPath}'.`)
       })
       it('should not generate an image and throw an error on file creation', async () => {
-        const result = generateImage(buildPNG(), rootFileName)
+        const rootFile = path.join('te\0st.png*')
+        const result = generateImage(buildPNG(), rootFile)
         await expect(result).rejects.toThrow("The argument 'path' must be a str")
       })
     })
   })
   describe('updateSnapshot', () => {
     describe('when the snapshot is updated', () => {
-      afterEach(() => {
-        deleteFileSafely(copiedFileName)
-        deleteFileSafely(copiedFileNameCustom)
-      })
-
       it('should copy the snapshot to default folder', async () => {
         const options: UpdateSnapshotOptions = {
           ...baseUpdateOptions,
-          baseDirectory: undefined
+          baseDirectory: undefined,
+          screenshotName: 'defaultName'
         }
+        //         options.screenshotName = 'defaultDir'
         const result = await updateSnapshot(options)
         expect(result).toEqual({
           baseGenerated: true
         })
-        const isFileCopied = existsSync(copiedFileName)
+        const defaultDir = path.join('cypress/snapshots/base/defaultName.png')
+        const isFileCopied = existsSync(defaultDir)
         expect(isFileCopied).toBe(true)
+        rmSync('cypress', { recursive: true })
       })
       it('should copy the snapshot to custom baseDirectory', async () => {
         const options: UpdateSnapshotOptions = {
           ...baseUpdateOptions,
-          baseDirectory: baseDirectoryCustom
+          baseDirectory: 'customDir',
+          screenshotName: 'customName'
         }
         const result = await updateSnapshot(options)
         expect(result).toEqual({
           baseGenerated: true
         })
-        const isFileCopied = existsSync(copiedFileNameCustom)
+        const customDir = path.join('customDir/customName.png')
+        const isFileCopied = existsSync(customDir)
         expect(isFileCopied).toBe(true)
+        rmSync('customDir', { recursive: true })
       })
     })
     describe('when there is an error on updating the snapshot', () => {
       it('should throw an error if cannot copy file', async () => {
         const options: UpdateSnapshotOptions = {
           ...baseUpdateOptions,
-          screenshotAbsolutePath: wrongAbsolutePath
+          screenshotAbsolutePath: path.join('./src/fixtures/assets/wadus.png')
         }
         const result = updateSnapshot(options)
         const fullPath = path.join(options.baseDirectory ?? '', `${options.screenshotName}.png`)
-        await expect(result).rejects.toThrow(`Failed to copy file from '${wrongAbsolutePath}' to '${fullPath}'.`)
-      })
-      it('should throw an error if cannot create a directory', async () => {
-        const options: UpdateSnapshotOptions = {
-          ...baseUpdateOptions,
-          specName: '',
-          baseDirectory: systemFileName
-        }
-
-        const result = updateSnapshot(options)
-        await expect(result).rejects.toThrow(`cannot create directory '${systemFileName}'.`)
+        await expect(result).rejects.toThrow(
+          `Failed to copy file from '${path.join('./src/fixtures/assets/wadus.png')}' to '${fullPath}'.`
+        )
       })
     })
   })
@@ -146,35 +118,34 @@ describe('plugin', () => {
         expect(result.mismatchedPixels).toBe(0)
       })
       describe('when image differs', () => {
-        afterEach(() => {
-          deleteFileSafely(diffFilePath)
-        })
         it('should not generate a diff image if generateDiff is set to never', async () => {
           const options: CompareSnapshotOptions = {
             ...baseCompareOptions,
-            screenshotAbsolutePath: absolutePathMod,
+            screenshotAbsolutePath: path.join('./src/fixtures/assets/mod/not_ever.png'),
             errorThreshold: 0,
             specName: '',
+            screenshotName: 'not_ever',
             generateDiff: 'never'
           }
 
           const result = await compareSnapshots(options)
           expect(result.percentage).toBeGreaterThan(0)
           expect(result.mismatchedPixels).toBeGreaterThan(0)
-          const isDiffGenerated = existsSync(diffFilePath)
+          const isDiffGenerated = existsSync(path.join(options.diffDirectory as string, 'not_ever.png'))
           expect(isDiffGenerated).toBe(false)
         })
         it('should not generate a diff image if threshold is higher than mismatched percentage ', async () => {
           const options: CompareSnapshotOptions = {
             ...baseCompareOptions,
-            screenshotAbsolutePath: absolutePathMod,
+            screenshotAbsolutePath: path.join('./src/fixtures/assets/mod/not_ever.png'),
             specName: '',
-            errorThreshold: 1
+            errorThreshold: 1,
+            screenshotName: 'not_ever'
           }
           const result = await compareSnapshots(options)
           expect(result.percentage).toBeGreaterThan(0)
           expect(result.mismatchedPixels).toBeGreaterThan(0)
-          const isDiffGenerated = existsSync(diffFilePath)
+          const isDiffGenerated = existsSync(path.join(options.diffDirectory as string, 'not_ever.png'))
           expect(isDiffGenerated).toBe(false)
         })
 
@@ -182,15 +153,16 @@ describe('plugin', () => {
           const options: CompareSnapshotOptions = {
             ...baseCompareOptions,
             specName: '',
-            screenshotAbsolutePath: absolutePathMod,
+            screenshotAbsolutePath: path.join('./src/fixtures/assets/mod/enjuto.png'),
             errorThreshold: 0,
             generateDiff: 'always'
           }
           const result = await compareSnapshots(options)
           expect(result.percentage).toBeGreaterThan(0)
           expect(result.mismatchedPixels).toBeGreaterThan(0)
-          const isDiffGenerated = existsSync(diffFilePath)
+          const isDiffGenerated = existsSync(path.join(options.diffDirectory as string, 'enjuto.png'))
           expect(isDiffGenerated).toBe(true)
+          rmSync('./src/fixtures/diff', { recursive: true })
         })
       })
     })

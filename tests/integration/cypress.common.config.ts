@@ -1,5 +1,7 @@
 import * as fs from 'fs'
-import { configureVisualRegression } from './src/plugin'
+import { configureVisualRegression } from 'cypress-visual-regression'
+import webpackPreprocessor from '@cypress/webpack-preprocessor'
+import webpackConfig from './webpack.config'
 
 const cypressCommonConfig: Cypress.ConfigOptions = {
   trashAssetsBeforeRuns: true,
@@ -25,6 +27,10 @@ const cypressCommonConfig: Cypress.ConfigOptions = {
           return null
         }
       })
+
+      // required for enabling typescript aliases
+      on('file:preprocessor', webpackPreprocessor({ webpackOptions: webpackConfig }))
+
       return config
     }
   }

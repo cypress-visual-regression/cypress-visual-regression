@@ -1,0 +1,20 @@
+{
+  "name": "cypress-tests",
+  "version": "1.0.0",
+  "description": "Cypress integration tests",
+  "scripts": {
+    "cy:base-and-regression": "npm run cy:base && npm run cy:regression",
+    "cy:open:base": "cross-env visual_regression_log=debug cypress open --e2e -b chrome -C cypress.base.config.ts",
+    "cy:open:regression": "cross-env visual_regression_log=debug cypress open --e2e -b chrome -C cypress.regression.config.ts",
+    "cy:base": "cypress run -C cypress.base.config.ts",
+    "cy:regression": "cypress run -C cypress.regression.config.ts"
+  },
+  "peerDependencies": {
+    "cypress": ">=12"
+  },
+  "devDependencies": {
+    "cypress-visual-regression": "../../../cypress-visual-regression",
+    "@cypress/webpack-preprocessor": "^6.0.2",
+    "ts-loader": "^9.5.1"
+  }
+}
