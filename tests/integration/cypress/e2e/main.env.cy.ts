@@ -42,14 +42,14 @@ describe(
         cy.get('H1').contains('Hello, World').compareSnapshot('home-child')
         cy.task(
           'doesExist',
-          `${visualRegressionConfig.baseDirectory}/cypress/e2e/main.env.cy.ts/home_child.png`
+          `${visualRegressionConfig.baseDirectory}/cypress/e2e/main.env.cy.ts/home-child.png`
         ).should('be.true')
       } else {
         cy.visit('./cypress/web/01.html')
         cy.get('H1').contains('Hello, World').compareSnapshot('home-child')
         cy.task(
           'doesExist',
-          `${visualRegressionConfig.diffDirectory}/cypress/e2e/main.env.cy.ts/home_child.png`
+          `${visualRegressionConfig.diffDirectory}/cypress/e2e/main.env.cy.ts/home-child.png`
         ).should('be.true')
       }
     })

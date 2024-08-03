@@ -76,15 +76,10 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
         }
       }
 
-      const nameSanitized = name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
-      const visualRegressionOptions: VisualRegressionOptions = prepareOptions(
-        nameSanitized,
-        errorThreshold,
-        regressionOptions
-      )
+      const visualRegressionOptions: VisualRegressionOptions = prepareOptions(name, errorThreshold, regressionOptions)
       // We need to add the folder structure, so we can have as many levels as we want
       // https://github.com/cypress-visual-regression/cypress-visual-regression/issues/225
-      const folderAndName = `${Cypress.spec.relative}/${nameSanitized}`
+      const folderAndName = `${Cypress.spec.relative}/${name}`
       return takeScreenshot(subject, folderAndName, regressionOptions).then((screenShotProps) => {
         // Screenshot already taken
         visualRegressionOptions.screenshotAbsolutePath = screenShotProps.path

@@ -22,6 +22,13 @@ jobs:
         run: |
           npm ci
           npm run build
+          npm install cypress
+
+      - name: Run simple tests
+        run: |
+          cd ./tests/cjs
+          npm ci
+          npm run test
 
   project-tests:
     timeout-minutes: 10

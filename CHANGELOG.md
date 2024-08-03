@@ -1,7 +1,8 @@
 # Change Log
 
-## v5.x.x
+## v5.0.3
 
+- Remove the unneeded sanitation in the commnads.ts file, add missing one in updateSnapshot function. Fixes #247 and #252
 - Split integration tests into platform, project and plugin tests
 - Fix a typo in documentation. Closes issue [#248](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/248)
 

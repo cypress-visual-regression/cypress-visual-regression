@@ -126,18 +126,22 @@ describe('Visual Regression Example', () => {
 
   it('should compare images of different sizes', () => {
     cy.on('fail', (error) => {
-      if (error.message.includes('The "bar_07" image is different. Threshold limit exceeded!')) {
+      if (error.message.includes('The "bar-07" image is different. Threshold limit exceeded!')) {
         return
       }
       throw error
     })
     if (Cypress.env('visualRegressionType') === 'base') {
       cy.visit('./cypress/web/07.html')
+      cy.get('H1').contains('Color').should('exist')
+      cy.compareSnapshot('bar-07')
     } else {
       cy.visit('./cypress/web/08.html')
+      cy.get('H1').contains('Color').should('exist')
+      cy.compareSnapshot('bar-07').then((result) => {
+        expect(result.error).to.exist
+      })
     }
-    cy.get('H1').contains('Color').should('exist')
-    cy.compareSnapshot('bar-07')
   })
 
   it('should pass parameters to cy.screenshot', () => {
