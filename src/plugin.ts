@@ -12,7 +12,7 @@ export type TypeOption = 'regression' | 'base'
 export type VisualRegressionOptions = {
   /** kind of comparison that we are going to execute */
   type: TypeOption
-  /** new image name **_without_** file termination */
+  /** new image name */
   screenshotName: string
   /** threshold value from 0 to 1. 0.01 will be 1%  */
   errorThreshold: number
@@ -54,7 +54,8 @@ export type VisualRegressionResult = {
 export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<VisualRegressionResult> => {
   const toDir = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
   const destDir = path.join(toDir, options.spec.relative)
-  const destFile = path.join(destDir, `${options.screenshotName}.png`)
+  const sanitizedFileName: string = sanitize(options.screenshotName)
+  const destFile = path.join(destDir, `${sanitizedFileName}.png`)
   try {
     await fs.mkdir(destDir, { recursive: true })
   } catch (error) {
