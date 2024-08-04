@@ -1,4 +1,4 @@
-import { CypressConfigEnv } from '@src/command'
+import type { CypressConfigEnv } from '@src/command'
 
 const visualRegressionConfig = Cypress.env()
 
@@ -7,7 +7,7 @@ visualRegressionConfig.diffDirectory = './cypress/snapshots/alternative-diff'
 visualRegressionConfig.generateDiff = 'always'
 
 const env: Partial<CypressConfigEnv> = {
-  ...Cypress.env(),
+  ...visualRegressionConfig,
   visualRegressionBaseDirectory: './cypress/snapshots/alternative-base',
   visualRegressionDiffDirectory: './cypress/snapshots/alternative-diff',
   visualRegressionGenerateDiff: 'always'
@@ -24,33 +24,46 @@ describe(
         cy.visit('./cypress/web/01.html')
         cy.get('H1').contains('Hello, World')
         cy.compareSnapshot('home')
-        cy.task('doesExist', `${env.visualRegressionBaseDirectory}/cypress/e2e/main.env.cy.ts/home.png`).should(
-          'be.true'
-        )
+        cy.readFile(`${env.visualRegressionBaseDirectory}/cypress/e2e/main.env.cy.ts/home.png`).should('exist')
       } else {
         cy.visit('./cypress/web/01.html')
         cy.get('H1').contains('Hello, World')
         cy.compareSnapshot('home')
-        cy.task('doesExist', `${env.visualRegressionDiffDirectory}/cypress/e2e/main.env.cy.ts/home.png`).should(
-          'be.true'
-        )
+        cy.readFile(`${env.visualRegressionDiffDirectory}/cypress/e2e/main.env.cy.ts/home.png`).should('exist')
       }
     })
+
     it('take screenshot with child command', () => {
       if (env.visualRegressionType === 'base') {
         cy.visit('./cypress/web/01.html')
         cy.get('H1').contains('Hello, World').compareSnapshot('home-child')
-        cy.task(
-          'doesExist',
-          `${visualRegressionConfig.baseDirectory}/cypress/e2e/main.env.cy.ts/home-child.png`
-        ).should('be.true')
+        cy.readFile(`${visualRegressionConfig.baseDirectory}/cypress/e2e/main.env.cy.ts/home-child.png`).should('exist')
       } else {
         cy.visit('./cypress/web/01.html')
         cy.get('H1').contains('Hello, World').compareSnapshot('home-child')
-        cy.task(
-          'doesExist',
-          `${visualRegressionConfig.diffDirectory}/cypress/e2e/main.env.cy.ts/home-child.png`
-        ).should('be.true')
+        cy.readFile(`${visualRegressionConfig.diffDirectory}/cypress/e2e/main.env.cy.ts/home-child.png`).should('exist')
+      }
+    })
+  }
+)
+
+describe(
+  'Overriding default configuration',
+  {
+    env
+  },
+  () => {
+    it('should consider errorThershold from e2e file', () => {
+      cy.visit('./cypress/web/01.html')
+      cy.get('H1').contains('Hello, World')
+      if (env.visualRegressionType === 'base') {
+        cy.get('H1').compareSnapshot('config')
+      } else {
+        cy.get('H1')
+          .compareSnapshot('config', { padding: 30 })
+          .then((result) => {
+            expect(result.percentage).to.be.greaterThan(0).to.be.lessThan(5)
+          })
       }
     })
   }

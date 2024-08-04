@@ -1,4 +1,3 @@
-import * as fs from 'fs'
 import { configureVisualRegression } from 'cypress-visual-regression'
 import webpackPreprocessor from '@cypress/webpack-preprocessor'
 import webpackConfig from './webpack.config'
@@ -18,9 +17,6 @@ const cypressCommonConfig: Cypress.ConfigOptions = {
         return launchOptions
       })
       configureVisualRegression(on)
-      on('task', {
-        doesExist: (path: string) => fs.existsSync(path)
-      })
       on('task', {
         log(args) {
           console.log(...args)
