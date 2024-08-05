@@ -3,7 +3,6 @@ npm-debug.log
 
 node_modules/
 dist/
-cypress/
 
 .vscode/*
 !.vscode/extensions.json

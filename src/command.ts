@@ -61,8 +61,11 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
       if (name === undefined || name === '') {
         throw new Error('Snapshot name must be specified')
       }
-      // prepare screenshot options
       let errorThreshold = 0
+      // prepare screenshot options
+      if (screenshotOptions?.errorThreshold !== undefined) {
+        errorThreshold = screenshotOptions?.errorThreshold
+      }
       let regressionOptions: ScreenshotOptions
       if (typeof commandOptions === 'object') {
         regressionOptions = { ...screenshotOptions, ...commandOptions }
@@ -122,7 +125,7 @@ function prepareOptions(
 ): VisualRegressionOptions {
   if (Cypress.env('visualRegression') !== undefined) {
     throw new Error(
-      'Environment variables under "visualRegression" object (Version 4) si deprecated, please use single keys, ie visualRegressionType, visualRegressionBaseDirectory, etc.'
+      'Environment variables under "visualRegression" object (Version 4) is deprecated, please use single keys, i.e. visualRegressionType, visualRegressionBaseDirectory, etc.'
     )
   }
   const options: VisualRegressionOptions = {
