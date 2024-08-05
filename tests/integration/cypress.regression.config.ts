@@ -1,6 +1,6 @@
 import { defineConfig } from 'cypress'
-import { CypressConfigEnv } from '@src/command'
 import { cypressConfigWithEnv } from './cypress.common.config'
+import type { CypressConfigEnv } from '@src/command'
 
 const config: CypressConfigEnv = {
   visualRegressionType: 'regression'
