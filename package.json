@@ -71,7 +71,7 @@
     "dts-bundle-generator": "9.5.1",
     "esbuild": "0.23.0",
     "husky": "9.1.4",
-    "lint-staged": "15.2.7",
+    "lint-staged": "15.2.8",
     "npm-pkg-lint": "2.4.1",
     "npm-run-all2": "6.2.2",
     "typescript": "5.5.4"
