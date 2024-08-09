@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker'
-import type { VisualRegressionResult } from '@src/plugin'
 
 describe('Visual Regression Example', () => {
   it('should display the home page correctly', () => {
@@ -11,7 +10,7 @@ describe('Visual Regression Example', () => {
   it('handle missing base snapshot file as a failed spec', () => {
     const randomWord = faker.word.verb()
     cy.on('fail', (error) => {
-      expect(error.message).to.match(new RegExp(`no such file or directory, .*${randomWord}.png`))
+      expect(error.message).to.match(new RegExp(`Base screenshot not found at .*${randomWord}.png`))
       return
     })
     cy.visit('./cypress/web/01.html')
@@ -36,22 +35,28 @@ describe('Visual Regression Example', () => {
     cy.get('H1').contains('Login').should('exist')
     cy.get('form')
       .compareSnapshot('login-form')
-      .should((result: VisualRegressionResult) => {
+      .should((result) => {
         if (Cypress.env('visualRegressionType') === 'base') {
           expect(result.mismatchedPixels).to.not.exist
           expect(result.percentage).to.not.exist
           expect(result.error).to.not.exist
+          expect(result.images.actual).to.exist
+          expect(result.images.base).to.not.exist
+          expect(result.images.diff).to.not.exist
           expect(result.baseGenerated).to.be.true
         } else {
           expect(result.mismatchedPixels).to.equal(0)
           expect(result.percentage).to.equal(0)
           expect(result.error).to.not.exist
+          expect(result.images.actual).to.exist
+          expect(result.images.base).to.exist
+          expect(result.images.diff).to.not.exist
           expect(result.baseGenerated).to.not.exist
         }
       })
     cy.get('form')
       .compareSnapshot('login-form', 0.02)
-      .should((result: VisualRegressionResult) => {
+      .should((result) => {
         if (Cypress.env('visualRegressionType') === 'base') {
           expect(result.baseGenerated).to.be.true
         } else {
@@ -64,7 +69,7 @@ describe('Visual Regression Example', () => {
 
   it('should display the foo page incorrectly', () => {
     cy.on('fail', (error) => {
-      if (error.message.includes('The "bar" image is different. Threshold limit exceeded!')) {
+      if (error.message.includes("The 'bar' image is different. Threshold limit of '0' exceeded")) {
         return
       }
       throw error
@@ -87,26 +92,27 @@ describe('Visual Regression Example', () => {
     } else {
       cy.visit('./cypress/web/05.html')
       cy.get('H1').contains('none').should('exist')
-      cy.compareSnapshot('foo', 0.02).should((result: VisualRegressionResult) => {
+      cy.compareSnapshot('foo', 0.02).should((result) => {
         expect(result.error).to.be.undefined
         expect(result.percentage).to.be.below(0.02)
       })
-      cy.compareSnapshot('foo', { errorThreshold: 0.01, failSilently: true }).should(
-        (result: VisualRegressionResult) => {
-          expect(result.percentage).to.be.above(0.01)
-          expect(result.error).to.exist
-        }
-      )
+      cy.compareSnapshot('foo', { errorThreshold: 0.01, failSilently: true }).should((result) => {
+        expect(result.percentage).to.be.above(0.01)
+        expect(result.error).to.exist
+      })
       cy.get('H1')
         .compareSnapshot('h1', 0.085)
-        .should((result: VisualRegressionResult) => {
+        .should((result) => {
           expect(result.error).to.be.undefined
           expect(result.percentage).to.be.below(0.085)
         })
       cy.get('H1')
         .compareSnapshot('h1', { errorThreshold: 0.01, failSilently: true })
-        .should((result: VisualRegressionResult) => {
+        .should((result) => {
           expect(result.percentage).to.be.above(0.01)
+          expect(result.images.actual).to.exist
+          expect(result.images.base).to.exist
+          expect(result.images.diff).to.exist
           expect(result.error).to.exist
         })
     }
@@ -126,7 +132,7 @@ describe('Visual Regression Example', () => {
 
   it('should compare images of different sizes', () => {
     cy.on('fail', (error) => {
-      if (error.message.includes('The "bar-07" image is different. Threshold limit exceeded!')) {
+      if (error.message.includes("The 'bar-07' image is different. Threshold limit of '0.1' exceeded")) {
         return
       }
       throw error
@@ -134,11 +140,11 @@ describe('Visual Regression Example', () => {
     if (Cypress.env('visualRegressionType') === 'base') {
       cy.visit('./cypress/web/07.html')
       cy.get('H1').contains('Color').should('exist')
-      cy.compareSnapshot('bar-07')
+      cy.compareSnapshot('bar-07', 0.1)
     } else {
       cy.visit('./cypress/web/08.html')
       cy.get('H1').contains('Color').should('exist')
-      cy.compareSnapshot('bar-07').then((result) => {
+      cy.compareSnapshot('bar-07', 0.1).then((result) => {
         expect(result.error).to.exist
       })
     }
@@ -148,7 +154,7 @@ describe('Visual Regression Example', () => {
     cy.visit('./cypress/web/08.html')
     cy.compareSnapshot('screenshot-params-full', {
       capture: 'fullPage'
-    }).then((result: VisualRegressionResult) => {
+    }).then((result) => {
       expect(result.error).is.undefined
     })
   })
@@ -172,12 +178,12 @@ describe('Visual Regression Example', () => {
       } else {
         cy.visit('./cypress/web/05.html')
         cy.get('H1').contains('none').should('exist')
-        cy.compareSnapshot('foo', 0.01).should((result: VisualRegressionResult) => {
+        cy.compareSnapshot('foo', 0.01).should((result) => {
           expect(result.error).to.exist
         })
         cy.get('H1')
           .compareSnapshot('h1', 0.02)
-          .should((result: VisualRegressionResult) => {
+          .should((result) => {
             expect(result.error).to.exist
           })
       }

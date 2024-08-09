@@ -8,7 +8,7 @@ describe('run cypress-visual-regression in cjs project', () => {
     cy.on('fail', (error) => {
       if (
         error.message.includes(
-          'The "files-1[2<3>4:5"6\\7|8?9*10, 11]12(13)" image is different. Threshold limit exceeded!'
+          "The 'files-1[2<3>4:5\"6\\7|8?9*10, 11]12(13)' image is different. Threshold limit of '0' exceeded"
         )
       ) {
         return
