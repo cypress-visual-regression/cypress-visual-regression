@@ -11,6 +11,7 @@ describe('Visual Regression Example', () => {
     const randomWord = faker.word.verb()
     cy.on('fail', (error) => {
       expect(error.message).to.match(new RegExp(`Base screenshot not found at .*${randomWord}.png`))
+      expect(error.message).to.not.contain(' - [Show Difference]')
       return
     })
     cy.visit('./cypress/web/01.html')
@@ -69,7 +70,9 @@ describe('Visual Regression Example', () => {
 
   it('should display the foo page incorrectly', () => {
     cy.on('fail', (error) => {
-      if (error.message.includes("The 'bar' image is different. Threshold limit of '0' exceeded")) {
+      if (error.message.includes("The 'bar' image is different.")) {
+        expect(error.message).to.contain("Threshold limit of '0' exceeded")
+        expect(error.message).to.contain(' - [Show Difference]')
         return
       }
       throw error

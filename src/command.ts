@@ -5,7 +5,8 @@ import type {
   VisualRegressionOptions,
   VisualRegressionResult,
   ScreenshotOptions,
-  PluginCommandOptions
+  PluginCommandOptions,
+  VisualRegressionImages
 } from './plugin'
 import JQueryWithSelector = Cypress.JQueryWithSelector
 
@@ -126,9 +127,6 @@ function prepareOptions(
 
   if (screenshotOptions?.failSilently !== undefined) {
     options.failSilently = screenshotOptions.failSilently
-    // FIXME: it looks to me that we can remove this condition since we are doing that on line 134 (options object), to be addressed in a separate PR
-  } else if (Cypress.env('visualRegressionFailSilently') !== undefined) {
-    options.failSilently = Cypress.env('visualRegressionFailSilently')
   }
 
   // deprecation methods
@@ -182,8 +180,7 @@ function takeScreenshot(
   name: string,
   screenshotOptions?: ScreenshotOptions
 ): Cypress.Chainable<TakeScreenshotProps> {
-  // @ts-expect-error TODO fix
-  const objToOperateOn = subject !== undefined ? cy.get(subject) : cy
+  const objToOperateOn = subject !== undefined ? cy.get(subject as unknown as string) : cy
   let screenshotDetails: TakeScreenshotProps
   return (
     objToOperateOn
@@ -195,7 +192,7 @@ function takeScreenshot(
           screenshotOptions?.onAfterScreenshot?.(_el, props)
         }
       })
-      // @ts-expect-error todo: fix
+      // @ts-expect-error TODO fix
       .then(() => screenshotDetails)
   )
 }
@@ -226,6 +223,32 @@ function compareScreenshots(
       log.set('message', `captureMode: ${options.screenshotOptions.capture}`)
     }
     if (result.error !== undefined && !options.failSilently) {
+      if (result.error.includes('image is different') && top !== null) {
+        const random = Math.random()
+        result.error += ` - [Show Difference](#visualRegressionPopup${random})`
+        Cypress.$(top.document.body).on('click', `a[href^="#visualRegressionPopup${random}"]`, (e) => {
+          e.preventDefault()
+          if (top === null) {
+            throw Error('Cypress runner not properly initialized')
+          }
+          Cypress.$(getVisual(result.images)).appendTo(top.document.body)
+          if (result.images.diff === undefined) {
+            Cypress.$('#diffContainer', top.document.body).remove()
+          }
+
+          const popup = Cypress.$('#visualRegressionPopup', top.document.body)
+          popup.on('click', 'button[data-type="close"]', () => {
+            popup.remove()
+          })
+          popup.on('click', function (e) {
+            if (e.target === this) {
+              popup.remove()
+            }
+          })
+
+          return false
+        })
+      }
       throw constructCypressError(log, new Error(result.error))
     }
     return result
@@ -263,6 +286,54 @@ const constructCypressError = (log: Cypress.Log, err: Error): unknown => {
   // https://github.com/cypress-io/cypress/blob/5f94cad3cb4126e0567290b957050c33e3a78e3c/packages/driver/src/cypress/error_utils.ts#L214-L216
   ;(err as unknown as { onFail: (e: Error) => void }).onFail = (err: Error) => log.error(err)
   return err
+}
+
+function getVisual(images: VisualRegressionImages): string {
+  return `
+<div id="visualRegressionPopup" style="position:fixed;z-index:10;top:0;bottom:0;left:0;right:0;display:flex;flex-flow:column;backdrop-filter:blur(5px)">
+  <div class="runner" style="position:fixed;top:100px;bottom:100px;left:100px;right:100px;display:flex;flex-flow:column">
+    <header style="position:static">
+    <nav style="display:flex;width:100%;align-items:center;justify-content:space-between;padding:10px 15px;">
+      <h2>Vusual Regression Plugin - screenshot difference inspection</h2>
+      <form style="display:flex;align-items:center;gap:5px;text-align:right">
+        <button style="background-color:white;color:rgb(73 86 227);border-radius:4px" type="button" data-type="close"><i class="fa fa-times"></i> Close</button>
+      <form>
+    </nav>
+    </header>
+    <div style="padding:15px;overflow:auto">
+      <div style="display:flex;justify-content:space-evenly;align-items:flex-start;gap:15px">
+        <div id="imageContainer"
+          style="position:relative;background:#fff;border:solid 15px #fff"
+        >
+          <img alt="Actual image" style="min-width:300px;width:100%;" src="data:image/png;base64,${images.actual}" />
+          <img id="baseImage" alt="Base image" style="position:absolute;top:0;left:0;min-width:300px;width:100%" src="data:image/png;base64,${images.base}" />
+          <div id="redLine" style="position: absolute; top: 0; height: 100%; width: 2px; background-color: red; display: none;"></div>
+        </div>
+        <div id="diffContainer" style="background:#fff;border:solid 15px #fff">
+          <img alt="Diff image" style="min-width:300px;width:100%" src="data:image/png;base64,${images.diff}" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.getElementById('imageContainer').addEventListener('mousemove', (e) => {
+    const containerRect = document.getElementById('imageContainer').getBoundingClientRect()
+    const mouseX = e.clientX - containerRect.left
+    const width = containerRect.width
+
+    // Calculate the percentage position of the mouse relative to the container
+    const percentage = (mouseX / width) * 100
+
+    // Update the clip-path to show part of the second image based on the mouse position
+    document.getElementById('baseImage').style.clipPath = \`inset(0 \${100 - percentage}% 0 0)\`
+    
+    // Update the red line
+    document.getElementById('redLine').style.left = \`\${mouseX}px\`
+    document.getElementById('redLine').style.display = 'block'
+  })
+</script>
+`
 }
 
 export { addCompareSnapshotCommand }
