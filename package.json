@@ -69,7 +69,7 @@
     "@types/node": "16.18.105",
     "cypress": "13.13.3",
     "dts-bundle-generator": "9.5.1",
-    "esbuild": "0.23.0",
+    "esbuild": "0.23.1",
     "husky": "9.1.4",
     "lint-staged": "15.2.9",
     "npm-pkg-lint": "2.4.1",
