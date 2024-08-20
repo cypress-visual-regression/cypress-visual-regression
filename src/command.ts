@@ -1,8 +1,14 @@
 // Load type definitions that come with Cypress module
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-import type { DiffOption, TypeOption, VisualRegressionOptions, VisualRegressionResult } from './plugin'
+import type {
+  DiffOption,
+  TypeOption,
+  VisualRegressionOptions,
+  VisualRegressionResult,
+  ScreenshotOptions,
+  PluginCommandOptions
+} from './plugin'
+import JQueryWithSelector = Cypress.JQueryWithSelector
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
@@ -12,15 +18,6 @@ declare global {
       compareSnapshot(name: string, options?: PluginCommandOptions): Chainable<VisualRegressionResult>
     }
   }
-}
-
-export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginSetupOptions>
-
-export type PluginCommandOptions = number | ScreenshotOptions
-
-export type PluginSetupOptions = {
-  errorThreshold: number
-  failSilently: boolean
 }
 
 export type CypressConfigEnv = {
@@ -51,10 +48,9 @@ export type TakeScreenshotProps = {
 function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void {
   Cypress.Commands.add(
     'compareSnapshot',
-    // @ts-expect-error todo: fix this
-    { prevSubject: 'optional' },
+    { prevSubject: ['optional', 'element'] },
     function (
-      subject: keyof HTMLElementTagNameMap,
+      subject: JQueryWithSelector<HTMLElement> | void,
       name: string,
       commandOptions?: PluginCommandOptions
     ): Cypress.Chainable {
@@ -87,30 +83,16 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
         // Screenshot already taken
         visualRegressionOptions.screenshotAbsolutePath = screenShotProps.path
         visualRegressionOptions.spec = Cypress.spec
-        console.groupCollapsed(
-          `%c     Visual Regression Test (${visualRegressionOptions.screenshotName}) `,
-          'color: #17EDE1; background: #091806; padding: 12px 6px; border-radius: 4px; width:100%;'
-        )
-        console.info('%c folderAndName:', 'color: #FFF615; background: #091806; padding: 6px;', folderAndName)
-        console.info('%c subject:', 'color: #FFF615; background: #091806; padding: 6px;', subject)
-        console.info('%c screenshotOptions', 'color: #FFF615; background: #091806; padding: 6px;', regressionOptions)
-        console.info(
-          '%c visualRegressionOptions',
-          'color: #FFF615; background: #091806; padding: 6px;',
-          visualRegressionOptions
-        )
-        console.info('%c Screenshot taken', 'color: #FFF615; background: #091806; padding: 6px;', screenShotProps)
-        console.groupEnd()
         switch (visualRegressionOptions.type) {
           case 'regression':
-            return compareScreenshots(visualRegressionOptions)
+            return compareScreenshots(subject, visualRegressionOptions)
           case 'base':
-            return cy.task('updateSnapshot', visualRegressionOptions)
+            return updateSnapshots(subject, visualRegressionOptions)
           default:
             throw new Error(
-              `The "type" environment variable is unknown.
-              Expected: "regression" or "base"
-              Actual: ${visualRegressionOptions.type as string}`
+              `The 'type' environment variable is unknown. Expected: 'regression' or 'base' instead of '${
+                visualRegressionOptions.type as string
+              }'`
             )
         }
       })
@@ -121,7 +103,7 @@ function addCompareSnapshotCommand(screenshotOptions?: ScreenshotOptions): void 
 function prepareOptions(
   name: string,
   errorThreshold: number,
-  screenshotOptions?: ScreenshotOptions
+  screenshotOptions: ScreenshotOptions
 ): VisualRegressionOptions {
   if (Cypress.env('visualRegression') !== undefined) {
     throw new Error(
@@ -133,6 +115,7 @@ function prepareOptions(
     screenshotName: name,
     specName: Cypress.spec.name,
     screenshotAbsolutePath: 'null', // will be set after takeScreenshot
+    screenshotOptions,
     errorThreshold,
     baseDirectory: Cypress.env('visualRegressionBaseDirectory'),
     diffDirectory: Cypress.env('visualRegressionDiffDirectory'),
@@ -195,53 +178,91 @@ function prepareOptions(
 
 /** Take a screenshot and move screenshot to base or actual folder */
 function takeScreenshot(
-  subject: string | undefined,
+  subject: JQueryWithSelector<HTMLElement> | void,
   name: string,
   screenshotOptions?: ScreenshotOptions
 ): Cypress.Chainable<TakeScreenshotProps> {
+  // @ts-expect-error TODO fix
   const objToOperateOn = subject !== undefined ? cy.get(subject) : cy
-  let ScreenshotDetails: TakeScreenshotProps
+  let screenshotDetails: TakeScreenshotProps
   return (
     objToOperateOn
       .screenshot(name, {
         ...screenshotOptions,
+        log: false,
         onAfterScreenshot(_el, props) {
-          ScreenshotDetails = props
+          screenshotDetails = props
           screenshotOptions?.onAfterScreenshot?.(_el, props)
         }
       })
       // @ts-expect-error todo: fix
-      .then(() => ScreenshotDetails)
+      .then(() => screenshotDetails)
   )
 }
 
 /** Call the plugin to compare snapshot images and generate a diff */
-function compareScreenshots(options: VisualRegressionOptions): Cypress.Chainable {
-  // @ts-expect-error todo: fix this
-  return cy.task('compareSnapshots', options).then((results: VisualRegressionResult) => {
-    console.log('VisualRegressionResult')
-    console.groupCollapsed(
-      `%c     VisualRegressionResult `,
-      'color: #ede917; background: #091806; padding: 12px 6px; border-radius: 4px; width:100%;'
-    )
-    console.info('%c VisualRegressionResult:', 'color: #FFF615; background: #091806; padding: 6px;', results)
-    console.groupEnd()
-    if (results.error !== undefined && !options.failSilently) {
-      throw new Error(results.error)
+function compareScreenshots(
+  subject: JQueryWithSelector<HTMLElement> | void,
+  options: VisualRegressionOptions
+): Cypress.Chainable<VisualRegressionResult> {
+  return cy.task<VisualRegressionResult>('compareSnapshots', options, { log: false }).then((result) => {
+    const log = Cypress.log({
+      type: 'parent',
+      name: 'compareScreenshots',
+      displayName: 'compareScreenshots',
+      message: "captureMode: 'fullPage'",
+      consoleProps: () => {
+        return {
+          Options: options,
+          Result: result
+        }
+      }
+    })
+    if (subject != null) {
+      log.set('$el', subject)
+      log.set('message', subject.selector)
+      log.set('type', 'child')
+    } else if (options.screenshotOptions.capture !== undefined) {
+      log.set('message', `captureMode: ${options.screenshotOptions.capture}`)
     }
-    return results
+    if (result.error !== undefined && !options.failSilently) {
+      throw constructCypressError(log, new Error(result.error))
+    }
+    return result
   })
 }
-/** Helper command to use cy.log when running in headless  mode or console when  used in a browser */
-Cypress.Commands.overwrite('log', function (log, ...args) {
-  if (Cypress.browser.isHeadless) {
-    return cy.task('log', args, { log: false }).then(() => {
-      return log(...args)
+
+/** Call the plugin to update base snapshot images */
+function updateSnapshots(
+  subject: JQueryWithSelector<HTMLElement> | void,
+  options: VisualRegressionOptions
+): Cypress.Chainable<VisualRegressionResult> {
+  return cy.task<VisualRegressionResult>('updateSnapshot', options, { log: false }).then((result) => {
+    const log = Cypress.log({
+      type: 'parent',
+      name: 'compareScreenshots',
+      displayName: 'compareScreenshots',
+      message: 'base generation',
+      consoleProps: () => {
+        return {
+          Options: options,
+          Result: result
+        }
+      }
     })
-  } else {
-    console.log(...args)
-    return log(...args)
-  }
-})
+    if (subject != null) {
+      log.set('$el', subject)
+      log.set('type', 'child')
+    }
+    return result
+  })
+}
+
+const constructCypressError = (log: Cypress.Log, err: Error): unknown => {
+  // only way to throw & log the message properly in Cypress
+  // https://github.com/cypress-io/cypress/blob/5f94cad3cb4126e0567290b957050c33e3a78e3c/packages/driver/src/cypress/error_utils.ts#L214-L216
+  ;(err as unknown as { onFail: (e: Error) => void }).onFail = (err: Error) => log.error(err)
+  return err
+}
 
 export { addCompareSnapshotCommand }

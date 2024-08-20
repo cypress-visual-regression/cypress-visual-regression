@@ -1,11 +1,19 @@
-import { createWriteStream, promises as fs, renameSync, existsSync, mkdirSync, readdirSync, rmdirSync } from 'fs'
+import * as fs from 'fs'
+import { existsSync } from 'fs'
 import * as path from 'path'
 import pixelMatch from 'pixelmatch'
 import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
-import { adjustCanvas, parseImage } from './utils/image'
+import { adjustCanvas } from './utils/image'
 import { logger } from './utils/logger'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 
+export type PluginSetupOptions = {
+  errorThreshold: number
+  failSilently: boolean
+}
+export type PluginCommandOptions = number | ScreenshotOptions
+export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginSetupOptions>
 export type DiffOption = 'always' | 'fail' | 'never'
 export type TypeOption = 'regression' | 'base'
 
@@ -20,6 +28,7 @@ export type VisualRegressionOptions = {
   specName: string
   /** absolute path and name of the original image **_including file termination_** */
   screenshotAbsolutePath: string
+  screenshotOptions: ScreenshotOptions
   /** base directory where to move the image, if omitted default will be **'cypress/snapshots/base'** */
   baseDirectory?: string
   /** diff directory were we store the diff images, if omitted default will be  **'cypress/snapshots/diff'** */
@@ -42,9 +51,14 @@ export type CompareSnapshotOptions = Omit<VisualRegressionOptions, 'failSilently
 
 export type VisualRegressionResult = {
   error?: string
+  images: {
+    actual?: string // base64
+    base?: string // base64
+    diff?: string // base64
+  }
+  baseGenerated?: boolean
   mismatchedPixels?: number
   percentage?: number
-  baseGenerated?: boolean
 }
 
 /**
@@ -56,22 +70,13 @@ export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<Vi
   const destDir = path.join(toDir, options.spec.relative)
   const sanitizedFileName: string = sanitize(options.screenshotName)
   const destFile = path.join(destDir, `${sanitizedFileName}.png`)
-  try {
-    await fs.mkdir(destDir, { recursive: true })
-  } catch (error) {
-    logger.error(`Failed to create directory '${destDir}' with error:`, error)
-    throw new Error(`cannot create directory '${destDir}'.`)
-  }
-  try {
-    await fs.copyFile(options.screenshotAbsolutePath, destFile)
-    logger.info(`Updated base snapshot '${options.screenshotName}' at ${destFile}`)
-    logger.debug('UpdateSnapshotOptions: ', JSON.stringify(options, undefined, 2))
-    moveActualSnapshotIfNeeded(options.screenshotAbsolutePath, options.spec.relativeToCommonRoot)
-    return { baseGenerated: true }
-  } catch (error) {
-    logger.error(`Failed to copy file '${destDir}' with error:`, error)
-    throw new Error(`Failed to copy file from '${options.screenshotAbsolutePath}' to '${destFile}'.`)
-  }
+  fs.mkdirSync(destDir, { recursive: true })
+  fs.copyFileSync(options.screenshotAbsolutePath, destFile)
+  const fileBuffer = fs.readFileSync(destFile)
+  logger.info(`Updated base snapshot '${options.screenshotName}' at ${destFile}`)
+  logger.debug('UpdateSnapshotOptions: ', JSON.stringify(options, undefined, 2))
+  moveActualSnapshotIfNeeded(options.screenshotAbsolutePath, options.spec.relativeToCommonRoot)
+  return { images: { actual: fileBuffer.toString('base64') }, baseGenerated: true }
 }
 
 /**
@@ -95,16 +100,11 @@ const moveActualSnapshotIfNeeded = (actualScreenshot: string, relativeToCommonRo
   if (relativeToCommonRoot != null) {
     const newPath = actualScreenshot.replace(relativeToCommonRoot + '/', '')
     const newDirectory = path.dirname(newPath)
-    try {
-      if (!existsSync(newDirectory)) {
-        mkdirSync(newDirectory, { recursive: true })
-      }
-      renameSync(actualScreenshot, newPath)
-      pruneEmptyDirectoriesInverse(path.dirname(actualScreenshot))
-    } catch (error) {
-      logger.error(`Failed to move file '${actualScreenshot}' with error:`, error)
-      throw new Error(`Failed to move file  '${actualScreenshot}' to '${newPath}'.`)
+    if (!fs.existsSync(newDirectory)) {
+      fs.mkdirSync(newDirectory, { recursive: true })
     }
+    fs.renameSync(actualScreenshot, newPath)
+    pruneEmptyDirectoriesInverse(path.dirname(actualScreenshot))
   }
   return true
 }
@@ -112,8 +112,8 @@ const moveActualSnapshotIfNeeded = (actualScreenshot: string, relativeToCommonRo
 // Function to recursively prune empty directories in the inverse order
 const pruneEmptyDirectoriesInverse = (directory: string): void => {
   // check if the current directory is empty and remove it if it is
-  if (readdirSync(directory).length === 0) {
-    rmdirSync(directory)
+  if (fs.readdirSync(directory).length === 0) {
+    fs.rmdirSync(directory)
     logger.debug(`Removed empty directory: ${directory}`)
     // recursively prune the parent directory
     pruneEmptyDirectoriesInverse(path.dirname(directory))
@@ -125,78 +125,65 @@ const pruneEmptyDirectoriesInverse = (directory: string): void => {
  * Uses the pixelmatch library internally.
  * */
 export const compareSnapshots = async (options: CompareSnapshotOptions): Promise<VisualRegressionResult> => {
-  const snapshotBaseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
-  const snapshotDiffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
+  options.baseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
+  options.diffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
+  options.generateDiff = options.generateDiff ?? 'fail'
   const sanitizedFileName: string = sanitize(options.screenshotName)
-  const actualImage = options.screenshotAbsolutePath
-  const expectedImage = path.join(snapshotBaseDirectory, options.spec.relative, `${sanitizedFileName}.png`)
-  const diffImage = path.join(snapshotDiffDirectory, options.spec.relative, `${sanitizedFileName}.png`)
-  const [imgExpected, imgActual] = await Promise.all([parseImage(expectedImage), parseImage(actualImage)])
-  const diffPNG = new PNG({
-    width: Math.max(imgActual.width, imgExpected.width),
-    height: Math.max(imgActual.height, imgExpected.height)
+
+  const expectedImagePath = path.join(options.baseDirectory, options.spec.relative, `${sanitizedFileName}.png`)
+  if (!existsSync(expectedImagePath)) {
+    return { error: `Base screenshot not found at ${expectedImagePath}`, images: {} }
+  }
+  const expectedImageBuffer = readFileSync(expectedImagePath)
+  const expectedImage = PNG.sync.read(expectedImageBuffer)
+
+  const actualImagePath = options.screenshotAbsolutePath
+  const actualImageBuffer = readFileSync(actualImagePath)
+  const actualImage = PNG.sync.read(actualImageBuffer)
+
+  const diffImagePath = path.join(options.diffDirectory, options.spec.relative, `${sanitizedFileName}.png`)
+  const diffImage = new PNG({
+    width: Math.max(actualImage.width, expectedImage.width),
+    height: Math.max(actualImage.height, expectedImage.height)
   })
 
-  const imgActualFullCanvas = adjustCanvas(imgActual, diffPNG.width, diffPNG.height)
-  const imgExpectedFullCanvas = adjustCanvas(imgExpected, diffPNG.width, diffPNG.height)
+  const imgActualFullCanvas = adjustCanvas(actualImage, diffImage.width, diffImage.height)
+  const imgExpectedFullCanvas = adjustCanvas(expectedImage, diffImage.width, diffImage.height)
 
   const mismatchedPixels = pixelMatch(
     imgActualFullCanvas.data,
     imgExpectedFullCanvas.data,
-    diffPNG.data,
-    diffPNG.width,
-    diffPNG.height,
+    diffImage.data,
+    diffImage.width,
+    diffImage.height,
     { threshold: 0.1 }
   )
-  const percentage = (mismatchedPixels / diffPNG.width / diffPNG.height) ** 0.5
-
-  if (percentage > options.errorThreshold) {
-    logger.error(`Error in visual regression found: ${percentage.toFixed(2)}`)
-    if (options.generateDiff !== 'never') {
-      await generateImage(diffPNG, diffImage)
-    }
-
-    return {
-      error: `The "${options.screenshotName}" image is different. Threshold limit exceeded!
-       Expected: ${options.errorThreshold}
-       Actual: ${percentage}`,
-      mismatchedPixels,
-      percentage
-    }
-  } else if (options.generateDiff === 'always') {
-    await generateImage(diffPNG, diffImage)
-  }
-  return {
+  const percentage = (mismatchedPixels / diffImage.width / diffImage.height) ** 0.5
+  const regressionError = percentage > options.errorThreshold
+  const result: VisualRegressionResult = {
+    images: {
+      actual: actualImageBuffer.toString('base64'),
+      base: expectedImageBuffer.toString('base64')
+    },
     mismatchedPixels,
     percentage
   }
-}
 
-export async function generateImage(diffPNG: PNG, imagePath: string): Promise<boolean> {
-  const dirName = path.dirname(imagePath)
-  try {
-    await fs.mkdir(dirName, { recursive: true })
-  } catch (error) {
-    logger.error(`Failed to create directory '${dirName}' with error:`, error)
-    throw new Error(`cannot create directory '${dirName}'.`)
+  if (options.generateDiff === 'always' || (regressionError && options.generateDiff === 'fail')) {
+    mkdirSync(path.dirname(diffImagePath), { recursive: true })
+    const diffImageBuffer = PNG.sync.write(diffImage)
+    writeFileSync(diffImagePath, diffImageBuffer)
+    result.images.diff = diffImageBuffer.toString('base64')
   }
-  return await new Promise((resolve, reject) => {
-    const file = createWriteStream(imagePath)
-    file.on('error', (error) => {
-      logger.error(`Failed to write stream '${imagePath}' with error:`, error)
-      reject(new Error(`cannot create file '${imagePath}'.`))
-    })
-    diffPNG
-      .pack()
-      .pipe(file)
-      .on('finish', () => {
-        resolve(true)
-      })
-      .on('error', (error) => {
-        logger.error(`Failed to parse image '${imagePath}' with error:`, error)
-        reject(error)
-      })
-  })
+
+  if (regressionError) {
+    logger.error(`Error in visual regression found: ${percentage.toFixed(2)}`)
+
+    result.error = `The '${options.screenshotName}' image is different. Threshold limit of '${
+      options.errorThreshold
+    }' exceeded: '${percentage.toFixed(2)}'`
+  }
+  return result
 }
 
 /** Configure the plugin to compare snapshots. */
