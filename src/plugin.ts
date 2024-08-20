@@ -49,13 +49,14 @@ export type UpdateSnapshotOptions = Pick<
 
 export type CompareSnapshotOptions = Omit<VisualRegressionOptions, 'failSilently' | 'type'>
 
+export type VisualRegressionImages = {
+  actual?: string // base64
+  base?: string // base64
+  diff?: string // base64
+}
 export type VisualRegressionResult = {
   error?: string
-  images: {
-    actual?: string // base64
-    base?: string // base64
-    diff?: string // base64
-  }
+  images: VisualRegressionImages
   baseGenerated?: boolean
   mismatchedPixels?: number
   percentage?: number

@@ -1,5 +1,10 @@
 # Change Log
 
+## v5.1.0
+
+- Add a show difference functionality
+- Expose created images in the plugin results
+
 ## v5.0.4
 
 - Fix ignored parameters from the support file, fixes [#258](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/258)
