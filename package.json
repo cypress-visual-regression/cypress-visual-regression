@@ -1,6 +1,6 @@
 {
   "name": "cypress-visual-regression",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "Module for adding visual regression testing to Cypress",
   "keywords": [
     "visual regression",
@@ -65,7 +65,6 @@
   },
   "ignore": [
     "src",
-    "docker",
     "tests"
   ],
   "overrides": {

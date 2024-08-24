@@ -10,6 +10,6 @@
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "cypress": ">=12"
+    "cypress": "13.13.3"
   }
 }

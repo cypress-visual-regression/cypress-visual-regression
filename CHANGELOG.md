@@ -1,5 +1,11 @@
 # Change Log
 
+## v5.2.0
+
+- Enable overriding pixelmatch options, fixes [#263](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/263) and [#113](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/113)
+- Move plugin options preparation logic to command.ts file
+- Refactor how options priority works: default < e2e file < env vars < command options
+
 ## v5.1.0
 
 - Add a show difference functionality

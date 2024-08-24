@@ -192,4 +192,72 @@ describe('Visual Regression Example', () => {
       }
     }
   )
+
+  it('should log command options to Cypress.log', () => {
+    cy.on('fail', (error) => {
+      if (error.message.includes("The 'random' image is different.")) {
+        return
+      }
+      throw error
+    })
+    cy.on('log:added', (attr) => {
+      if (attr.name === 'compareScreenshots') {
+        const options = attr.consoleProps.props.Options
+        const result = attr.consoleProps.props.Result
+        expect(options.baseDirectory).to.equal('cypress/snapshots/base')
+        expect(options.diffDirectory).to.equal('cypress/snapshots/diff')
+        expect(options.pluginOptions.errorThreshold).to.equal(0)
+        expect(options.pluginOptions.failSilently).to.be.false
+        expect(options.generateDiff).to.equal('fail')
+        expect(options.screenshotAbsolutePath).to.exist
+        expect(options.screenshotName).to.equal('random')
+        expect(options.screenshotOptions.pixelmatchOptions.threshold).to.equal(0.1)
+        expect(options.spec.baseName).to.equal('main.cy.ts')
+        expect(options.type).to.exist
+
+        if (options.type === 'base') {
+          expect(result.baseGenerated).to.be.true
+        } else {
+          expect(options.type).to.equal('regression')
+          expect(result.error).to.contain("The 'random' image is different")
+          expect(result.images.base).to.exist
+          expect(result.images.diff).to.exist
+          expect(result.mismatchedPixels).to.be.greaterThan(0)
+          expect(result.percentage).to.be.greaterThan(0)
+        }
+        expect(result.images.actual).to.exist
+      }
+    })
+    cy.visit('./cypress/web/random.html')
+    cy.get('H1').should('be.visible')
+    cy.compareSnapshot('random')
+  })
+
+  it('should not detect errors because of default pixelmatch sensitivity', () => {
+    cy.visit('./cypress/web/pixelmatch.html')
+    if (Cypress.env('visualRegressionType') === 'base') {
+      cy.get('#first').compareSnapshot('pixelmatch-1')
+    } else {
+      cy.get('#second').compareSnapshot('pixelmatch-1')
+    }
+  })
+
+  it('should detect errors when pixelmatch sensitivity is 0', () => {
+    cy.on('fail', (error) => {
+      if (error.message.includes("The 'pixelmatch-2' image is different.")) {
+        return
+      }
+      throw error
+    })
+    cy.visit('./cypress/web/pixelmatch.html')
+    if (Cypress.env('visualRegressionType') === 'base') {
+      cy.get('#first').compareSnapshot('pixelmatch-2')
+    } else {
+      cy.get('#second')
+        .compareSnapshot('pixelmatch-2', { pixelmatchOptions: { threshold: 0 } })
+        .then((result) => {
+          expect(result.error).to.exist
+        })
+    }
+  })
 })
