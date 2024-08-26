@@ -4,7 +4,9 @@
 
 [![github actions](https://github.com/mjhea0/cypress-visual-regression/workflows/Continuous%20Integration/badge.svg)](https://github.com/mjhea0/cypress-visual-regression/actions)
 
-Module for adding visual regression testing to [Cypress](https://www.cypress.io/).
+Plugin that adds powerful visual regression testing capabilities to [Cypress](https://www.cypress.io/):
+
+![example](./cypress-visual-regression.gif)
 
 ## Installation
 
@@ -35,7 +37,7 @@ module.exports = defineConfig({
 })
 ```
 
-Pay attention to the `type` option. Use 'base' to generate baseline images, and 'regression' to compare current
+Pay attention to the `visualRegressionType` option. Use 'base' to generate baseline images, and 'regression' to compare current
 screenshot to the base screenshot
 
 In your support file _cypress/support/e2e.js_ add the following:
@@ -92,35 +94,45 @@ For more info on how to use TypeScript with Cypress, please refer to [this docum
 
 ## Plugin options
 
-All options can be configured within `visualRegression` namespace under `env` variable inside `cypress.config.js` file, like this:
+All options can be configured within `visualRegression` prefix under `env` variable inside `cypress.config.js` file, like this:
 
 ```javascript
-e2e: {
-  screenshotsFolder: './cypress/snapshots/actual',
-  env: {
-    visualRegressionType: 'regression',
-    visualRegressionBaseDirectory: 'cypress/snapshot/base',
-    visualRegressionDiffDirectory: 'cypress/snapshot/diff',
-    visualRegressionGenerateDiff: 'always',
-    visualRegressionFailSilently: true
+module.exports = defineConfig({
+  e2e: {
+    screenshotsFolder: './cypress/snapshots/actual',
+    env: {
+      visualRegressionType: 'regression',
+      visualRegressionBaseDirectory: 'cypress/snapshot/base',
+      visualRegressionDiffDirectory: 'cypress/snapshot/diff',
+      visualRegressionGenerateDiff: 'always',
+      visualRegressionFailSilently: true
+    }
   }
-}
+})
 ```
 
-| Variable                      | Default                 | Description                                                                                                                                                  |
-| ----------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| visualRegressionType          | /                       | Either 'regression' or 'base'. Base will override any existing base images with new screenshots. Regression will compare the base to the current screenshot. |
-| visualRegressionBaseDirectory | 'cypress/snapshot/base' | Path to the directory where the base snapshots will be stored.                                                                                               |
-| visualRegressionDiffDirectory | 'cypress/snapshot/diff' | Path to the directory where the generated image differences will be stored.                                                                                  |
-| visualRegressionGenerateDiff  | 'fail'                  | Either 'fail', 'never' or 'always'. Determines if and when image differences are generated.                                                                  |
-| visualRegressionFailSilently  | false                   | Used to decide if any error found in regression should be thrown or returned as part of the result.                                                          |
+| Variable                      | Default                  | Description                                                                                                                                                  |
+| ----------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| visualRegressionType          | /                        | Either 'regression' or 'base'. Base will override any existing base images with new screenshots. Regression will compare the base to the current screenshot. |
+| visualRegressionBaseDirectory | 'cypress/snapshots/base' | Path to the directory where the base snapshots will be stored.                                                                                               |
+| visualRegressionDiffDirectory | 'cypress/snapshots/diff' | Path to the directory where the generated image differences will be stored.                                                                                  |
+| visualRegressionGenerateDiff  | 'fail'                   | Either 'fail', 'never' or 'always'. Determines if and when image differences are generated.                                                                  |
+| visualRegressionFailSilently  | false                    | Used to decide if any error found in regression should be thrown or returned as part of the result.                                                          |
 
-You can also pass default cypress screenshot [arguments](https://docs.cypress.io/api/cypress-api/screenshot-api.html#Arguments) to `addCompareSnapshotCommand()`, like this:
+To override different default arguments/options on a global level pass them to the `addCompareSnapshotCommand()` command:
+
+- cypress screenshot [arguments](https://docs.cypress.io/api/cypress-api/screenshot-api.html#Arguments)
+- pixelmatch [options](https://github.com/mapbox/pixelmatch?tab=readme-ov-file#pixelmatchimg1-img2-output-width-height-options)
+- plugin configuration (errorThreshold, failSilently)
 
 ```javascript
 const { addCompareSnapshotCommand } = require('cypress-visual-regression/dist/command')
 addCompareSnapshotCommand({
-  capture: 'fullPage'
+  capture: 'fullPage', // cypress screenshot option
+  errorThreshold: 0.5, // plugin threshold option
+  pixelmatchOptions: {
+    threshold: 0 // pixelmatch threshold option
+  }
 })
 ```
 
@@ -136,11 +148,23 @@ cy.compareSnapshot(name, options)
 
 ### > arguments
 
-| Arguments      | Default | Description                                                                                                  |
-| -------------- | ------- | ------------------------------------------------------------------------------------------------------------ |
-| name           | /       | Represents the name of the base snapshot file that the actual screenshot will be compared with.              |
-| errorThreshold | 0       | Threshold under which any image difference will be considered as failed test. Represented in percentages.    |
-| options        | {}      | Used to provide additional cypress screenshot options as well as `failSilently` and `errorThreshold` values. |
+| Arguments      | Default | Description                                                                                                                  |
+| -------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| name           | /       | Represents the name of the base snapshot file that the actual screenshot will be compared with.                              |
+| errorThreshold | 0       | Threshold under which any image difference will be considered as failed test. Represented in percentages.                    |
+| options        | {}      | Used to provide additional cypress screenshot arguments, pixelmatch options, and `failSilently` and `errorThreshold` values. |
+
+### > yields
+
+- `.compareSnapshot()` yields the Visual Regression Result object which contains the following info:
+
+| Result           | Type               | Description                                                                                                  |
+| ---------------- | ------------------ | ------------------------------------------------------------------------------------------------------------ |
+| error            | string (optional)  | Contains visual regression error message                                                                     |
+| images           | object             | Contains `base64` string of generated images for `actual`, `base` (optional) and `diff` (optional) images    |
+| baseGenerated    | boolean (optional) | Set to `true` if visual regression plugin was run for base generation (`visualRegressionType` set to 'base') |
+| mismatchedPixels | number (optional)  | Represents the number of total mismatched pixels during visual comparison. Set if difference were discovered |
+| percentage       | number (optional)  | Represents the difference between the images in percentage. Set if difference were discovered                |
 
 ### > examples
 
@@ -157,10 +181,6 @@ cy.compareSnapshot('homePage', {errorThreshold: 1, failSilently: true}).then(com
 ```
 
 > Looking for more examples? See [cypress/e2e/main.cy.ts](https://github.com/cypress-visual-regression/cypress-visual-regression/blob/master/cypress/e2e/main.cy.ts).
-
-## Example
-
-![example](./cypress-visual-regression.gif)
 
 ## Tips & Tricks
 

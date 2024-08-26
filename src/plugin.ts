@@ -1,19 +1,19 @@
 import * as fs from 'fs'
 import { existsSync } from 'fs'
 import * as path from 'path'
-import pixelMatch from 'pixelmatch'
+import pixelmatch, { type PixelmatchOptions } from 'pixelmatch'
 import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
 import { adjustCanvas } from './utils/image'
 import { logger } from './utils/logger'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 
-export type PluginSetupOptions = {
+export type PluginOptions = {
   errorThreshold: number
   failSilently: boolean
+  pixelmatchOptions: PixelmatchOptions
 }
-export type PluginCommandOptions = number | ScreenshotOptions
-export type ScreenshotOptions = Partial<Cypress.ScreenshotOptions & PluginSetupOptions>
+export type PluginCommandOptions = number | Partial<Cypress.ScreenshotOptions & PluginOptions>
 export type DiffOption = 'always' | 'fail' | 'never'
 export type TypeOption = 'regression' | 'base'
 
@@ -22,35 +22,29 @@ export type VisualRegressionOptions = {
   type: TypeOption
   /** new image name */
   screenshotName: string
-  /** threshold value from 0 to 1. 0.01 will be 1%  */
-  errorThreshold: number
-  /** subdirectory to be added to base directory */
-  specName: string
   /** absolute path and name of the original image **_including file termination_** */
   screenshotAbsolutePath: string
-  screenshotOptions: ScreenshotOptions
-  /** base directory where to move the image, if omitted default will be **'cypress/snapshots/base'** */
-  baseDirectory?: string
-  /** diff directory were we store the diff images, if omitted default will be  **'cypress/snapshots/diff'** */
-  diffDirectory?: string
+  /** cypress screenshot options (currently bundled together with pluginOptions) */
+  screenshotOptions: Partial<Cypress.ScreenshotOptions>
+  /** visual regression plugin options */
+  pluginOptions: PluginOptions
+  /** base directory where to move the image (defaults to **'cypress/snapshots/base'**) */
+  baseDirectory: string
+  /** diff directory were we store the diff images (defaults to **'cypress/snapshots/diff'**) */
+  diffDirectory: string
   /** how we should handle diff images */
-  generateDiff?: DiffOption
-  /** if set to true failing test will not be thrown */
-  failSilently: boolean
+  generateDiff: DiffOption
   /** Cypress spec file object info */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  spec: any // TODO change to Cypress.Spec after https://github.com/cypress-io/cypress/issues/29048 is fixed
+  spec: Cypress.Spec
 }
 
 export type UpdateSnapshotOptions = Pick<
   VisualRegressionOptions,
-  'screenshotName' | 'specName' | 'screenshotAbsolutePath' | 'baseDirectory' | 'spec'
+  'screenshotName' | 'screenshotAbsolutePath' | 'baseDirectory' | 'spec' | 'type'
 >
 
-export type CompareSnapshotOptions = Omit<VisualRegressionOptions, 'failSilently' | 'type'>
-
 export type VisualRegressionImages = {
-  actual?: string // base64
+  actual: string // base64
   base?: string // base64
   diff?: string // base64
 }
@@ -67,15 +61,14 @@ export type VisualRegressionResult = {
  * The target path is constructed from parts at runtime in node to be OS independent.
  * */
 export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<VisualRegressionResult> => {
-  const toDir = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
-  const destDir = path.join(toDir, options.spec.relative)
+  const destDir = path.join(options.baseDirectory, options.spec.relative)
   const sanitizedFileName: string = sanitize(options.screenshotName)
   const destFile = path.join(destDir, `${sanitizedFileName}.png`)
   fs.mkdirSync(destDir, { recursive: true })
   fs.copyFileSync(options.screenshotAbsolutePath, destFile)
   const fileBuffer = fs.readFileSync(destFile)
   logger.info(`Updated base snapshot '${options.screenshotName}' at ${destFile}`)
-  logger.debug('UpdateSnapshotOptions: ', JSON.stringify(options, undefined, 2))
+  // @ts-expect-error // TODO remove this line after https://github.com/cypress-io/cypress/issues/29048 is fixed
   moveActualSnapshotIfNeeded(options.screenshotAbsolutePath, options.spec.relativeToCommonRoot)
   return { images: { actual: fileBuffer.toString('base64') }, baseGenerated: true }
 }
@@ -125,15 +118,12 @@ const pruneEmptyDirectoriesInverse = (directory: string): void => {
  * Cypress plugin to compare image snapshots & generate a diff image.
  * Uses the pixelmatch library internally.
  * */
-export const compareSnapshots = async (options: CompareSnapshotOptions): Promise<VisualRegressionResult> => {
-  options.baseDirectory = options.baseDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'base')
-  options.diffDirectory = options.diffDirectory ?? path.join(process.cwd(), 'cypress', 'snapshots', 'diff')
-  options.generateDiff = options.generateDiff ?? 'fail'
+export const compareSnapshots = async (options: VisualRegressionOptions): Promise<VisualRegressionResult> => {
   const sanitizedFileName: string = sanitize(options.screenshotName)
 
   const expectedImagePath = path.join(options.baseDirectory, options.spec.relative, `${sanitizedFileName}.png`)
   if (!existsSync(expectedImagePath)) {
-    return { error: `Base screenshot not found at ${expectedImagePath}`, images: {} }
+    return { error: `Base screenshot not found at ${expectedImagePath}`, images: { actual: '' } }
   }
   const expectedImageBuffer = readFileSync(expectedImagePath)
   const expectedImage = PNG.sync.read(expectedImageBuffer)
@@ -151,16 +141,16 @@ export const compareSnapshots = async (options: CompareSnapshotOptions): Promise
   const imgActualFullCanvas = adjustCanvas(actualImage, diffImage.width, diffImage.height)
   const imgExpectedFullCanvas = adjustCanvas(expectedImage, diffImage.width, diffImage.height)
 
-  const mismatchedPixels = pixelMatch(
+  const mismatchedPixels = pixelmatch(
     imgActualFullCanvas.data,
     imgExpectedFullCanvas.data,
     diffImage.data,
     diffImage.width,
     diffImage.height,
-    { threshold: 0.1 }
+    options.pluginOptions.pixelmatchOptions
   )
   const percentage = (mismatchedPixels / diffImage.width / diffImage.height) ** 0.5
-  const regressionError = percentage > options.errorThreshold
+  const regressionError = percentage > options.pluginOptions.errorThreshold
   const result: VisualRegressionResult = {
     images: {
       actual: actualImageBuffer.toString('base64'),
@@ -181,7 +171,7 @@ export const compareSnapshots = async (options: CompareSnapshotOptions): Promise
     logger.error(`Error in visual regression found: ${percentage.toFixed(2)}`)
 
     result.error = `The '${options.screenshotName}' image is different. Threshold limit of '${
-      options.errorThreshold
+      options.pluginOptions.errorThreshold
     }' exceeded: '${percentage.toFixed(2)}'`
   }
   return result
