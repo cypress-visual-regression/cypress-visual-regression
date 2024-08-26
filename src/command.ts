@@ -214,7 +214,7 @@ function takeScreenshot(
 
 /** Call the plugin to compare snapshot images and generate a diff */
 function compareScreenshots(
-  subject: Cypress.JQueryWithSelector<HTMLElement> | void,
+  subject: Cypress.JQueryWithSelector | void,
   options: VisualRegressionOptions
 ): Cypress.Chainable<VisualRegressionResult> {
   return cy.task<VisualRegressionResult>('compareSnapshots', options, { log: false }).then((result) => {
@@ -272,7 +272,7 @@ function compareScreenshots(
 
 /** Call the plugin to update base snapshot images */
 function updateSnapshots(
-  subject: Cypress.JQueryWithSelector<HTMLElement> | void,
+  subject: Cypress.JQueryWithSelector | void,
   options: VisualRegressionOptions
 ): Cypress.Chainable<VisualRegressionResult> {
   return cy.task<VisualRegressionResult>('updateSnapshot', options, { log: false }).then((result) => {

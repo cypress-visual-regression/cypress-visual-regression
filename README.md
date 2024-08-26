@@ -4,7 +4,9 @@
 
 [![github actions](https://github.com/mjhea0/cypress-visual-regression/workflows/Continuous%20Integration/badge.svg)](https://github.com/mjhea0/cypress-visual-regression/actions)
 
-Plugin for adding visual regression testing to [Cypress](https://www.cypress.io/).
+Plugin that adds powerful visual regression testing capabilities to [Cypress](https://www.cypress.io/):
+
+![example](./cypress-visual-regression.gif)
 
 ## Installation
 
@@ -35,7 +37,7 @@ module.exports = defineConfig({
 })
 ```
 
-Pay attention to the `type` option. Use 'base' to generate baseline images, and 'regression' to compare current
+Pay attention to the `visualRegressionType` option. Use 'base' to generate baseline images, and 'regression' to compare current
 screenshot to the base screenshot
 
 In your support file _cypress/support/e2e.js_ add the following:
@@ -152,6 +154,18 @@ cy.compareSnapshot(name, options)
 | errorThreshold | 0       | Threshold under which any image difference will be considered as failed test. Represented in percentages.                    |
 | options        | {}      | Used to provide additional cypress screenshot arguments, pixelmatch options, and `failSilently` and `errorThreshold` values. |
 
+### > yields
+
+- `.compareSnapshot()` yields the Visual Regression Result object which contains the following info:
+
+| Result           | Type               | Description                                                                                                  |
+| ---------------- | ------------------ | ------------------------------------------------------------------------------------------------------------ |
+| error            | string (optional)  | Contains visual regression error message                                                                     |
+| images           | object             | Contains `base64` string of generated images for `actual`, `base` (optional) and `diff` (optional) images    |
+| baseGenerated    | boolean (optional) | Set to `true` if visual regression plugin was run for base generation (`visualRegressionType` set to 'base') |
+| mismatchedPixels | number (optional)  | Represents the number of total mismatched pixels during visual comparison. Set if difference were discovered |
+| percentage       | number (optional)  | Represents the difference between the images in percentage. Set if difference were discovered                |
+
 ### > examples
 
 ```TypeScript
@@ -167,10 +181,6 @@ cy.compareSnapshot('homePage', {errorThreshold: 1, failSilently: true}).then(com
 ```
 
 > Looking for more examples? See [cypress/e2e/main.cy.ts](https://github.com/cypress-visual-regression/cypress-visual-regression/blob/master/cypress/e2e/main.cy.ts).
-
-## Example
-
-![example](./cypress-visual-regression.gif)
 
 ## Tips & Tricks
 
