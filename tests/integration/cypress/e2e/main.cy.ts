@@ -202,8 +202,15 @@ describe('Visual Regression Example', () => {
     })
     cy.on('log:added', (attr) => {
       if (attr.name === 'compareScreenshots') {
-        const options = attr.consoleProps.props.Options
-        const result = attr.consoleProps.props.Result
+        let options: any, result: any
+        const cypressVersion = Number.parseInt(Cypress.version.match(/^\d+/)[0])
+        if (cypressVersion <= 12) {
+          options = attr.consoleProps.Options
+          result = attr.consoleProps.Result
+        } else {
+          options = attr.consoleProps.props.Options
+          result = attr.consoleProps.props.Result
+        }
         expect(options.baseDirectory).to.equal('cypress/snapshots/base')
         expect(options.diffDirectory).to.equal('cypress/snapshots/diff')
         expect(options.pluginOptions.errorThreshold).to.equal(0)
