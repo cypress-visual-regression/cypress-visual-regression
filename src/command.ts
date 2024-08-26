@@ -36,8 +36,6 @@ export type CypressConfigEnv = {
   visualRegressionFailSilently?: boolean
 }
 
-type TakeScreenshotProps = Partial<Cypress.ScreenshotOptions> & { path: string }
-
 /** Add custom cypress command to compare image snapshots of an element or the window. */
 function addCompareSnapshotCommand(screenshotOptions?: Partial<Cypress.ScreenshotOptions & PluginOptions>): void {
   Cypress.Commands.add(
@@ -52,23 +50,21 @@ function addCompareSnapshotCommand(screenshotOptions?: Partial<Cypress.Screensho
         throw new Error('Snapshot name must be specified')
       }
 
-      const realScreenshotOptions = { ...screenshotOptions }
+      // if screenshotOptions are undefined, this will evaluate to empty object: {}
+      const screenshotOptionsObject = { ...screenshotOptions }
 
-      let realCommandOptions
-      if (typeof commandOptions === 'number') {
-        realCommandOptions = { errorThreshold: commandOptions }
-      } else {
-        realCommandOptions = { ...commandOptions }
-      }
+      // if commandOptions are undefined, this will evaluate to empty object: {}
+      const commandOptionsObject =
+        typeof commandOptions === 'number' ? { errorThreshold: commandOptions } : { ...commandOptions }
 
-      const visualRegressionOptions = prepareOptions(name, realScreenshotOptions, realCommandOptions)
+      const visualRegressionOptions = prepareOptions(name, screenshotOptionsObject, commandOptionsObject)
       // We need to add the folder structure, so we can have as many levels as we want
       // https://github.com/cypress-visual-regression/cypress-visual-regression/issues/225
       const folderAndName = `${Cypress.spec.relative}/${name}`
       return takeScreenshot(subject, folderAndName, visualRegressionOptions.screenshotOptions).then(
-        (screenShotProps) => {
+        (screenshotPath) => {
           // Screenshot already taken
-          visualRegressionOptions.screenshotAbsolutePath = screenShotProps.path
+          visualRegressionOptions.screenshotAbsolutePath = screenshotPath
           visualRegressionOptions.spec = Cypress.spec
           switch (visualRegressionOptions.type) {
             case 'regression':
@@ -198,16 +194,16 @@ function takeScreenshot(
   subject: Cypress.JQueryWithSelector | void,
   name: string,
   screenshotOptions: Partial<Cypress.ScreenshotOptions>
-): Cypress.Chainable<TakeScreenshotProps> {
+): Cypress.Chainable {
   const objToOperateOn = subject !== undefined ? cy.get(subject as unknown as string) : cy
-  let screenshotDetails: TakeScreenshotProps
+  let screenshotDetails: string
   return (
     objToOperateOn
       .screenshot(name, {
         ...screenshotOptions,
         log: false,
         onAfterScreenshot(_el, props) {
-          screenshotDetails = props
+          screenshotDetails = props.path
           screenshotOptions?.onAfterScreenshot?.(_el, props)
         }
       })
