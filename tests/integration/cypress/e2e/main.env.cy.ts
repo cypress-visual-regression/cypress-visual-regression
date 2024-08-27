@@ -27,6 +27,7 @@ describe(
         cy.readFile(`${env.visualRegressionDiffDirectory}/cypress/e2e/main.env.cy.ts/home.png`).should('exist')
       }
     })
+
     it('take screenshot with child command', () => {
       cy.visit('./cypress/web/01.html')
       cy.get('H1').contains('Hello, World').compareSnapshot('home-child')
@@ -34,6 +35,28 @@ describe(
         cy.readFile(`${visualRegressionConfig.baseDirectory}/cypress/e2e/main.env.cy.ts/home-child.png`).should('exist')
       } else {
         cy.readFile(`${visualRegressionConfig.diffDirectory}/cypress/e2e/main.env.cy.ts/home-child.png`).should('exist')
+      }
+    })
+  }
+)
+
+describe(
+  'Overriding default configuration',
+  {
+    env
+  },
+  () => {
+    it('should consider errorThershold from e2e file', () => {
+      cy.visit('./cypress/web/01.html')
+      cy.get('H1').contains('Hello, World')
+      if (env.visualRegressionType === 'base') {
+        cy.get('H1').compareSnapshot('config')
+      } else {
+        cy.get('H1')
+          .compareSnapshot('config', { padding: 30 })
+          .then((result) => {
+            expect(result.percentage).to.be.greaterThan(0).to.be.lessThan(5)
+          })
       }
     })
   }

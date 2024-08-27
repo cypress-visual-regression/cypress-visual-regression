@@ -46,10 +46,6 @@ function addCompareSnapshotCommand(screenshotOptions?: Partial<Cypress.Screensho
       name: string,
       commandOptions?: PluginCommandOptions
     ): Cypress.Chainable {
-      if (name === undefined || name === '') {
-        throw new Error('Snapshot name must be specified')
-      }
-
       // if screenshotOptions are undefined, this will evaluate to empty object: {}
       const screenshotOptionsObject = { ...screenshotOptions }
 
@@ -57,32 +53,48 @@ function addCompareSnapshotCommand(screenshotOptions?: Partial<Cypress.Screensho
       const commandOptionsObject =
         typeof commandOptions === 'number' ? { errorThreshold: commandOptions } : { ...commandOptions }
 
-      const visualRegressionOptions = prepareOptions(name, screenshotOptionsObject, commandOptionsObject)
-      // We need to add the folder structure, so we can have as many levels as we want
-      // https://github.com/cypress-visual-regression/cypress-visual-regression/issues/225
-      const folderAndName = `${Cypress.spec.relative}/${name}`
-      return takeScreenshot(subject, folderAndName, visualRegressionOptions.screenshotOptions).then(
-        (screenshotPath) => {
-          // Screenshot already taken
-          visualRegressionOptions.screenshotAbsolutePath = screenshotPath
-          visualRegressionOptions.spec = Cypress.spec
-          switch (visualRegressionOptions.type) {
-            case 'regression':
-              return compareScreenshots(subject, visualRegressionOptions)
-            case 'base':
-              return updateSnapshots(subject, visualRegressionOptions)
-            default:
-              throw new Error(
-                `The 'type' environment variable is invalid. Expected: 'regression' or 'base' instead of '${visualRegressionOptions.type}'`
-              )
-          }
-        }
-      )
+      return addCommand(Cypress, cy, subject, name, commandOptionsObject, screenshotOptionsObject)
+    }
+  )
+}
+
+export function addCommand(
+  Cypress: Cypress.Cypress,
+  cy: Cypress.cy,
+  subject: Cypress.JQueryWithSelector | void,
+  name: string,
+  commandOptions: Partial<Cypress.ScreenshotOptions & PluginOptions>,
+  screenshotOptions: Partial<Cypress.ScreenshotOptions & PluginOptions>
+): Cypress.Chainable<VisualRegressionResult> {
+  if (name === undefined || name === '') {
+    throw new Error('Snapshot name must be specified')
+  }
+
+  const visualRegressionOptions = prepareOptions(Cypress, name, screenshotOptions, commandOptions)
+  // We need to add the folder structure, so we can have as many levels as we want
+  // https://github.com/cypress-visual-regression/cypress-visual-regression/issues/225
+  const folderAndName = `${Cypress.spec.relative}/${name}`
+  return takeScreenshot(cy, subject, folderAndName, visualRegressionOptions.screenshotOptions).then(
+    (screenshotPath) => {
+      // Screenshot already taken
+      visualRegressionOptions.screenshotAbsolutePath = screenshotPath
+      visualRegressionOptions.spec = Cypress.spec
+      switch (visualRegressionOptions.type) {
+        case 'regression':
+          return compareScreenshots(subject, visualRegressionOptions)
+        case 'base':
+          return updateSnapshots(subject, visualRegressionOptions)
+        default:
+          throw new Error(
+            `The 'type' environment variable is invalid. Expected: 'regression' or 'base' instead of '${visualRegressionOptions.type}'`
+          )
+      }
     }
   )
 }
 
 function prepareOptions(
+  Cypress: Cypress.Cypress,
   name: string,
   screenshotOptions: Partial<Cypress.ScreenshotOptions & PluginOptions>,
   commandOptions: Partial<Cypress.ScreenshotOptions & PluginOptions>
@@ -197,6 +209,7 @@ function prepareOptions(
 
 /** Take a screenshot and move screenshot to base or actual folder */
 function takeScreenshot(
+  cy: Cypress.cy,
   subject: Cypress.JQueryWithSelector | void,
   name: string,
   screenshotOptions: Partial<Cypress.ScreenshotOptions>
