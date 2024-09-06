@@ -1,5 +1,9 @@
 # Change Log
 
+## v5.2.1
+
+- Fix bug with providing options through e2e file, fixes [#267](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/267)
+
 ## v5.2.0
 
 - Enable overriding pixelmatch options, fixes [#263](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/263) and [#113](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/113)

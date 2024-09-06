@@ -71,7 +71,7 @@ describe('Visual Regression Example', () => {
   it('should display the foo page incorrectly', () => {
     cy.on('fail', (error) => {
       if (error.message.includes("The 'bar' image is different.")) {
-        expect(error.message).to.contain("Threshold limit of '0' exceeded")
+        expect(error.message).to.contain("Threshold limit of '0.007' exceeded")
         expect(error.message).to.contain(' - [Show Difference]')
         return
       }
@@ -213,7 +213,7 @@ describe('Visual Regression Example', () => {
         }
         expect(options.baseDirectory).to.equal('cypress/snapshots/base')
         expect(options.diffDirectory).to.equal('cypress/snapshots/diff')
-        expect(options.pluginOptions.errorThreshold).to.equal(0)
+        expect(options.pluginOptions.errorThreshold).to.equal(0.007)
         expect(options.pluginOptions.failSilently).to.be.false
         expect(options.generateDiff).to.equal('fail')
         expect(options.screenshotAbsolutePath).to.exist
