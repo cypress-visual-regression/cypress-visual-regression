@@ -20,11 +20,7 @@ describe('Inner file within context', () => {
 describe('File name tests', () => {
   it('test file names', () => {
     cy.on('fail', (error) => {
-      if (
-        error.message.includes(
-          "The 'files-1[2<3>4:5\"6\\7|8?9*10, 11]12(13)' image is different. Threshold limit of '0' exceeded"
-        )
-      ) {
+      if (error.message.includes("The 'files-1[2<3>4:5\"6\\7|8?9*10, 11]12(13)' image is different")) {
         return
       }
       throw error

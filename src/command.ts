@@ -116,6 +116,12 @@ function prepareOptions(
   if (screenshotOptions.pixelmatchOptions !== undefined) {
     options.pluginOptions.pixelmatchOptions = screenshotOptions.pixelmatchOptions
   }
+  if (screenshotOptions.errorThreshold !== undefined) {
+    options.pluginOptions.errorThreshold = screenshotOptions.errorThreshold
+  }
+  if (screenshotOptions.failSilently !== undefined) {
+    options.pluginOptions.failSilently = screenshotOptions.failSilently
+  }
   // TODO refactor this in next release, separate plugin vs screenshot properties
   options.screenshotOptions = { ...screenshotOptions, ...commandOptions }
 

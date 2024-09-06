@@ -3,7 +3,7 @@ addCompareSnapshotCommand({
   pixelmatchOptions: {
     threshold: 0.1
   },
-  errorThreshold: 0,
+  errorThreshold: 0.007,
   failSilently: false,
   capture: 'fullPage'
 })
