@@ -68,50 +68,7 @@ export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<Vi
   fs.copyFileSync(options.screenshotAbsolutePath, destFile)
   const fileBuffer = fs.readFileSync(destFile)
   logger.info(`Updated base snapshot '${options.screenshotName}' at ${destFile}`)
-  // @ts-expect-error // TODO remove this line after https://github.com/cypress-io/cypress/issues/29048 is fixed
-  moveActualSnapshotIfNeeded(options.screenshotAbsolutePath, options.spec.relativeToCommonRoot)
   return { images: { actual: fileBuffer.toString('base64') }, baseGenerated: true }
-}
-
-/**
- * @description  For some reason Cypress does save the screenshots in the wrong folder when running in headless mode
- * It will use spec file to build an extra folder in the path
- * This is a workaround to remove the extra folder from the path
- * ie:
- * [CORRECT]   cypress open => .../snapshots/actual/cypress/e2e/alt-sub/foo/deep.cy.ts/inside_context.png
- * [INCORRECT] cypress run =>  .../snapshots/actual/deep.cy.ts/cypress/e2e/alt-sub/foo/deep.cy.ts/inside_context.png
- *
- * looking at Cypress.Spec we can see that the relativeToCommonRoot is set only when running in headless mode
- * and that is the only time we need to remove the extra folder from the path
- *
- * ref: https://github.com/cypress-io/cypress/issues/29057
- *
- * @param actualScreenshot
- * @param relativeToCommonRoot
- * @returns boolean
- */
-const moveActualSnapshotIfNeeded = (actualScreenshot: string, relativeToCommonRoot?: string): boolean => {
-  if (relativeToCommonRoot != null) {
-    const newPath = actualScreenshot.replace(relativeToCommonRoot + '/', '')
-    const newDirectory = path.dirname(newPath)
-    if (!fs.existsSync(newDirectory)) {
-      fs.mkdirSync(newDirectory, { recursive: true })
-    }
-    fs.renameSync(actualScreenshot, newPath)
-    pruneEmptyDirectoriesInverse(path.dirname(actualScreenshot))
-  }
-  return true
-}
-
-// Function to recursively prune empty directories in the inverse order
-const pruneEmptyDirectoriesInverse = (directory: string): void => {
-  // check if the current directory is empty and remove it if it is
-  if (fs.readdirSync(directory).length === 0) {
-    fs.rmdirSync(directory)
-    logger.debug(`Removed empty directory: ${directory}`)
-    // recursively prune the parent directory
-    pruneEmptyDirectoriesInverse(path.dirname(directory))
-  }
 }
 
 /**
@@ -119,7 +76,7 @@ const pruneEmptyDirectoriesInverse = (directory: string): void => {
  * Uses the pixelmatch library internally.
  * */
 export const compareSnapshots = async (options: VisualRegressionOptions): Promise<VisualRegressionResult> => {
-  const sanitizedFileName: string = sanitize(options.screenshotName)
+  const sanitizedFileName = sanitize(options.screenshotName)
 
   const expectedImagePath = path.join(options.baseDirectory, options.spec.relative, `${sanitizedFileName}.png`)
   if (!existsSync(expectedImagePath)) {

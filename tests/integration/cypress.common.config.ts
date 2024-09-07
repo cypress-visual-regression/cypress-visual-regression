@@ -17,12 +17,6 @@ const cypressCommonConfig: Cypress.ConfigOptions = {
         return launchOptions
       })
       configureVisualRegression(on)
-      on('task', {
-        log(args) {
-          console.log(...args)
-          return null
-        }
-      })
 
       // required for enabling typescript aliases
       on('file:preprocessor', webpackPreprocessor({ webpackOptions: webpackConfig }))
