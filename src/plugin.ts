@@ -106,7 +106,7 @@ export const compareSnapshots = async (options: VisualRegressionOptions): Promis
     diffImage.height,
     options.pluginOptions.pixelmatchOptions
   )
-  const percentage = (mismatchedPixels / diffImage.width / diffImage.height) ** 0.5
+  const percentage = mismatchedPixels / diffImage.width / diffImage.height
   const regressionError = percentage > options.pluginOptions.errorThreshold
   const result: VisualRegressionResult = {
     images: {

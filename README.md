@@ -158,24 +158,24 @@ cy.compareSnapshot(name, options)
 
 - `.compareSnapshot()` yields the Visual Regression Result object which contains the following info:
 
-| Result           | Type               | Description                                                                                                  |
-| ---------------- | ------------------ | ------------------------------------------------------------------------------------------------------------ |
-| error            | string (optional)  | Contains visual regression error message                                                                     |
-| images           | object             | Contains `base64` string of generated images for `actual`, `base` (optional) and `diff` (optional) images    |
-| baseGenerated    | boolean (optional) | Set to `true` if visual regression plugin was run for base generation (`visualRegressionType` set to 'base') |
-| mismatchedPixels | number (optional)  | Represents the number of total mismatched pixels during visual comparison. Set if difference were discovered |
-| percentage       | number (optional)  | Represents the difference between the images in percentage. Set if difference were discovered                |
+| Result           | Type               | Description                                                                                                   |
+| ---------------- | ------------------ | ------------------------------------------------------------------------------------------------------------- |
+| error            | string (optional)  | Contains visual regression error message                                                                      |
+| images           | object             | Contains `base64` string of generated images for `actual`, `base` (optional) and `diff` (optional) images     |
+| baseGenerated    | boolean (optional) | Set to `true` if visual regression plugin was run for base generation (`visualRegressionType` set to 'base')  |
+| mismatchedPixels | number (optional)  | Represents the number of total mismatched pixels during visual comparison. Set if difference were discovered  |
+| percentage       | number (optional)  | Represents the percentage of the difference between the images in decimals. Set if difference were discovered |
 
 ### > examples
 
 ```TypeScript
 cy.compareSnapshot('homePage') // will compare actual screenshot to current and fail if there's any difference in the images
 
-cy.get('h1').compareSnapshot('homePage', 0.2) // will compare only the image of h1 element and fail only if the percentage of pixels that are different is bigger than 0.2%
+cy.get('h1').compareSnapshot('homePage', 0.2) // will compare only the image of h1 element and fail only if the percentage of pixels that are different is bigger than 0.2 (20% difference)
 
 cy.compareSnapshot('homePage', {errorThreshold: 1, failSilently: true}).then(comparisonResults => {
   console.log(comparisonResults.mismatchedPixels) // will print the number of mismatched pixels
-  console.log(comparisonResults.percentage) // will print the percentage of mismatched pixels
+  console.log(comparisonResults.percentage) // will print the percentage (in decimals) of mismatched pixels
   console.log(comparisonResults.error) // will print the visual regression error message (if any)
 })
 ```

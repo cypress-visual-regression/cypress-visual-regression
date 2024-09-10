@@ -19,7 +19,7 @@ describe(
   () => {
     it('take screenshot with parent command', () => {
       cy.visit('./cypress/web/01.html')
-      cy.get('H1').contains('Hello, World')
+      cy.get('div').contains('Hello, World')
       cy.compareSnapshot('home')
       if (env.visualRegressionType === 'base') {
         cy.readFile(`${env.visualRegressionBaseDirectory}/cypress/e2e/main.env.cy.ts/home.png`).should('exist')
@@ -29,7 +29,7 @@ describe(
     })
     it('take screenshot with child command', () => {
       cy.visit('./cypress/web/01.html')
-      cy.get('H1').contains('Hello, World').compareSnapshot('home-child')
+      cy.get('div').contains('Hello, World').compareSnapshot('home-child')
       if (env.visualRegressionType === 'base') {
         cy.readFile(`${visualRegressionConfig.baseDirectory}/cypress/e2e/main.env.cy.ts/home-child.png`).should('exist')
       } else {
