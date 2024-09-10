@@ -149,49 +149,6 @@ function prepareOptions(
   if (commandOptions.pixelmatchOptions !== undefined) {
     options.pluginOptions.pixelmatchOptions = commandOptions.pixelmatchOptions
   }
-
-  // deprecation methods
-  if (Cypress.env('type') !== undefined) {
-    console.error(
-      "Environment variable 'type' is deprecated, please rename it to 'visualRegressionType'. Please check README.md file for latest configuration."
-    )
-    options.type = Cypress.env('type')
-  }
-  if (Cypress.env('failSilently') !== undefined) {
-    console.error(
-      "Environment variable 'failSilently' is deprecated, please rename it to 'visualRegressionFailSilently'. Please check README.md file for latest configuration."
-    )
-    options.pluginOptions.failSilently = Cypress.env('failSilently')
-  }
-  if (Cypress.env('SNAPSHOT_BASE_DIRECTORY') !== undefined) {
-    console.error(
-      "Environment variable 'SNAPSHOT_BASE_DIRECTORY' is deprecated. Please check README.md file for latest configuration."
-    )
-    options.baseDirectory = Cypress.env('SNAPSHOT_BASE_DIRECTORY')
-  }
-  if (Cypress.env('SNAPSHOT_DIFF_DIRECTORY') !== undefined) {
-    console.error(
-      "Environment variable 'SNAPSHOT_DIFF_DIRECTORY' is deprecated. Please check README.md file for latest configuration."
-    )
-    options.diffDirectory = Cypress.env('SNAPSHOT_DIFF_DIRECTORY')
-  }
-  if (Cypress.env('INTEGRATION_FOLDER') !== undefined) {
-    console.error(
-      "Environment variable 'INTEGRATION_FOLDER' is deprecated. Please check README.md file for latest configuration."
-    )
-  }
-  if (Cypress.env('ALWAYS_GENERATE_DIFF') !== undefined) {
-    console.error(
-      "Environment variable 'ALWAYS_GENERATE_DIFF' is deprecated. Please check README.md file for latest configuration."
-    )
-    options.generateDiff = Cypress.env('ALWAYS_GENERATE_DIFF') !== '' ? 'always' : 'never'
-  }
-  if (Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL') !== undefined) {
-    console.error(
-      "Environment variable 'ALLOW_VISUAL_REGRESSION_TO_FAIL' is deprecated. Please check README.md file for latest configuration."
-    )
-    options.pluginOptions.failSilently = Cypress.env('ALLOW_VISUAL_REGRESSION_TO_FAIL')
-  }
   return options
 }
 

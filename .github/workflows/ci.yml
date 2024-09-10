@@ -28,7 +28,7 @@ jobs:
       - name: Run simple tests
         run: |
           cd ./tests/cjs
-          npm ci
+          npm i
           npm run test
 
   project-tests:
@@ -55,7 +55,7 @@ jobs:
       - name: Run plugin on ${{ matrix.project-setup }} project setup
         run: |
           cd ./tests/${{ matrix.project-setup }}
-          npm ci
+          npm i
           npm run test
 
   plugin-tests:
@@ -84,5 +84,5 @@ jobs:
         run: |
           cd tests/integration
           npm install cypress@${{ matrix.cypress-version }}
-          npm ci
+          npm i
           npm run cy:base-and-regression

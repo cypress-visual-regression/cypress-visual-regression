@@ -1,8 +1,10 @@
 # Change Log
 
-## v5.2.x
+## v5.2.2
 
+- Remove the square root in percentage calculation, fixes [#270] (https://github.com/cypress-visual-regression/cypress-visual-regression/issues/270)
 - Remove code that moves the actual screenshot image
+- Remove deprecated code introduced in v4.0.0
 
 ## v5.2.1
 

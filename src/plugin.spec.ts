@@ -6,8 +6,8 @@ import { compareSnapshots, updateSnapshot, type VisualRegressionOptions, type Up
 const baseUpdateOptions: UpdateSnapshotOptions = {
   screenshotName: 'enjuto',
   type: 'regression',
-  screenshotAbsolutePath: './src/fixtures/assets/base/cypress/e2e/sub-folder/spec.cy.ts/enjuto.png',
-  baseDirectory: './src/fixtures/assets/base',
+  screenshotAbsolutePath: './src/fixtures/actual/enjuto.png',
+  baseDirectory: './src/fixtures/base',
   spec: {
     name: 'spec.cy.ts',
     absolute: 'unneeded/absolute/path/spec.cy.ts',
@@ -52,7 +52,7 @@ describe('plugin', () => {
       it('should throw an error if cannot copy file', async () => {
         const options: UpdateSnapshotOptions = {
           ...baseUpdateOptions,
-          screenshotAbsolutePath: './src/fixtures/assets/cypress/e2e/sub-folder/spec.cy.ts/wadus.png'
+          screenshotAbsolutePath: './src/fixtures/actual/wadus.png'
         }
         const result = updateSnapshot(options)
         await expect(result).rejects.toThrow('no such file or directory')
@@ -79,7 +79,7 @@ describe('plugin', () => {
         it('should generate a diff image by default', async () => {
           const options: VisualRegressionOptions = {
             ...baseCompareOptions,
-            screenshotAbsolutePath: './src/fixtures/assets/mod/cypress/e2e/sub-folder/spec.cy.ts/random.png',
+            screenshotAbsolutePath: './src/fixtures/actual/random.png',
             pluginOptions: {
               errorThreshold: 0,
               failSilently: false,
@@ -102,7 +102,7 @@ describe('plugin', () => {
         it('should not generate a diff image if generateDiff is set to never', async () => {
           const options: VisualRegressionOptions = {
             ...baseCompareOptions,
-            screenshotAbsolutePath: './src/fixtures/assets/mod/cypress/e2e/sub-folder/spec.cy.ts/not_ever.png',
+            screenshotAbsolutePath: './src/fixtures/actual/not_ever.png',
             pluginOptions: {
               errorThreshold: 0,
               failSilently: false,
@@ -127,7 +127,7 @@ describe('plugin', () => {
           const options: VisualRegressionOptions = {
             ...baseCompareOptions,
             screenshotName: 'not_ever',
-            screenshotAbsolutePath: './src/fixtures/assets/mod/cypress/e2e/sub-folder/spec.cy.ts/not_ever.png',
+            screenshotAbsolutePath: './src/fixtures/actual/not_ever.png',
             pluginOptions: {
               errorThreshold: 1,
               failSilently: false,
@@ -149,7 +149,7 @@ describe('plugin', () => {
         it('should generate a diff image if generateDiff is set to always', async () => {
           const options: VisualRegressionOptions = {
             ...baseCompareOptions,
-            screenshotAbsolutePath: './src/fixtures/assets/base/cypress/e2e/sub-folder/spec.cy.ts/enjuto.png',
+            screenshotAbsolutePath: './src/fixtures/actual/enjuto.png',
             pluginOptions: {
               errorThreshold: 0,
               failSilently: false,
@@ -168,6 +168,38 @@ describe('plugin', () => {
           const isDiffGenerated = existsSync(path.join(options.diffDirectory, options.spec.relative, 'enjuto.png'))
           expect(isDiffGenerated).toBe(true)
           rmSync('./src/fixtures/diff', { recursive: true })
+        })
+
+        it('should calculate percentage difference correctly', async () => {
+          const options: VisualRegressionOptions = {
+            ...baseCompareOptions,
+            screenshotAbsolutePath: './src/fixtures/actual/percentage-actual-10.png',
+            pluginOptions: {
+              errorThreshold: 0,
+              failSilently: false,
+              pixelmatchOptions: {}
+            },
+            generateDiff: 'never',
+            screenshotName: 'percentage-base'
+          }
+          const result10 = await compareSnapshots(options)
+          expect(result10.percentage).toEqual(0.1)
+          expect(result10.mismatchedPixels).toEqual(10)
+
+          options.screenshotAbsolutePath = './src/fixtures/actual/percentage-actual-50.png'
+          const result50 = await compareSnapshots(options)
+          expect(result50.percentage).toEqual(0.5)
+          expect(result50.mismatchedPixels).toEqual(50)
+
+          options.screenshotAbsolutePath = './src/fixtures/actual/percentage-actual-75.png'
+          const result75 = await compareSnapshots(options)
+          expect(result75.percentage).toEqual(0.75)
+          expect(result75.mismatchedPixels).toEqual(75)
+
+          options.screenshotAbsolutePath = './src/fixtures/actual/percentage-actual-100.png'
+          const result100 = await compareSnapshots(options)
+          expect(result100.percentage).toEqual(1)
+          expect(result100.mismatchedPixels).toEqual(100)
         })
       })
     })
