@@ -1,5 +1,9 @@
 # Change Log
 
+## v5.2.x
+
+- Remove code that moves the actual screenshot image
+
 ## v5.2.1
 
 - Fix bug with providing options through e2e file, fixes [#267](https://github.com/cypress-visual-regression/cypress-visual-regression/issues/267)
