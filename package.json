@@ -73,7 +73,7 @@
     "husky": "9.1.6",
     "lint-staged": "15.2.10",
     "npm-pkg-lint": "2.4.1",
-    "npm-run-all2": "6.2.2",
+    "npm-run-all2": "6.2.3",
     "typescript": "5.6.2"
   },
   "peerDependencies": {
