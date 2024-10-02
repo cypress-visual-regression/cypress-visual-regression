@@ -64,7 +64,7 @@
     "@forsakringskassan/eslint-config-jest": "11.4.1",
     "@forsakringskassan/jest-config": "29.6.0",
     "@forsakringskassan/prettier-config": "2.1.1",
-    "@html-validate/release-scripts": "6.6.0",
+    "@html-validate/release-scripts": "6.7.0",
     "@types/jest": "29.5.13",
     "@types/node": "16.18.112",
     "cypress": "13.15.0",
