@@ -1,5 +1,9 @@
 # Change Log
 
+## v5.2.3
+
+- Fix typo in visual regression popup
+
 ## v5.2.2
 
 - Remove the square root in percentage calculation, fixes [#270] (https://github.com/cypress-visual-regression/cypress-visual-regression/issues/270)
