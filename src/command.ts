@@ -272,7 +272,7 @@ function getVisual(images: VisualRegressionImages): string {
   <div class="runner" style="position:fixed;top:100px;bottom:100px;left:100px;right:100px;display:flex;flex-flow:column">
     <header style="position:static">
     <nav style="display:flex;width:100%;align-items:center;justify-content:space-between;padding:10px 15px;">
-      <h2>Vusual Regression Plugin - screenshot difference inspection</h2>
+      <h2>Visual Regression Plugin - screenshot difference inspection</h2>
       <form style="display:flex;align-items:center;gap:5px;text-align:right">
         <button style="background-color:white;color:rgb(73 86 227);border-radius:4px" type="button" data-type="close"><i class="fa fa-times"></i> Close</button>
       <form>
