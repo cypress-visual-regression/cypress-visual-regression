@@ -180,7 +180,9 @@ function compareScreenshots(
   subject: Cypress.JQueryWithSelector | void,
   options: VisualRegressionOptions
 ): Cypress.Chainable<VisualRegressionResult> {
-  return cy.task<VisualRegressionResult>('compareSnapshots', options, { log: false }).then((result) => {
+  const retryAttempt = Cypress.currentRetry
+  const compareSnapshotsOptions = { retryAttempt, ...options }
+  return cy.task<VisualRegressionResult>('compareSnapshots', compareSnapshotsOptions, { log: false }).then((result) => {
     const log = Cypress.log({
       type: 'parent',
       name: 'compareScreenshots',
