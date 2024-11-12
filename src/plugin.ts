@@ -75,8 +75,11 @@ export const updateSnapshot = async (options: UpdateSnapshotOptions): Promise<Vi
  * Cypress plugin to compare image snapshots & generate a diff image.
  * Uses the pixelmatch library internally.
  * */
-export const compareSnapshots = async (options: VisualRegressionOptions): Promise<VisualRegressionResult> => {
+export const compareSnapshots = async (
+  options: VisualRegressionOptions & { retryAttempt: number }
+): Promise<VisualRegressionResult> => {
   const sanitizedFileName = sanitize(options.screenshotName)
+  const retryAttempt = options.retryAttempt
 
   const expectedImagePath = path.join(options.baseDirectory, options.spec.relative, `${sanitizedFileName}.png`)
   if (!existsSync(expectedImagePath)) {
@@ -89,7 +92,10 @@ export const compareSnapshots = async (options: VisualRegressionOptions): Promis
   const actualImageBuffer = readFileSync(actualImagePath)
   const actualImage = PNG.sync.read(actualImageBuffer)
 
-  const diffImagePath = path.join(options.diffDirectory, options.spec.relative, `${sanitizedFileName}.png`)
+  const diffFileName =
+    retryAttempt > 0 ? `${sanitizedFileName} (attempt ${retryAttempt + 1}).png` : `${sanitizedFileName}.png`
+
+  const diffImagePath = path.join(options.diffDirectory, options.spec.relative, diffFileName)
   const diffImage = new PNG({
     width: Math.max(actualImage.width, expectedImage.width),
     height: Math.max(actualImage.height, expectedImage.height)
