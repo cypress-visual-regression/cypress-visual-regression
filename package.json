@@ -70,7 +70,7 @@
     "cypress": "13.15.2",
     "dts-bundle-generator": "9.5.1",
     "esbuild": "0.24.0",
-    "husky": "9.1.6",
+    "husky": "9.1.7",
     "lint-staged": "15.2.10",
     "npm-pkg-lint": "2.4.1",
     "npm-run-all2": "7.0.1",
