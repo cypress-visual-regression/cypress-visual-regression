@@ -11,7 +11,7 @@
   "bugs": "https://github.com/Forsakringskassan/cypress-visual-regression/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Forsakringskassan/cypress-visual-regression.git"
+    "url": "git+https://github.com/Forsakringskassan/cypress-visual-regression.git"
   },
   "license": "MIT",
   "author": "Försäkringskassan",
@@ -72,7 +72,7 @@
     "esbuild": "0.24.0",
     "husky": "9.1.7",
     "lint-staged": "15.2.10",
-    "npm-pkg-lint": "2.4.1",
+    "npm-pkg-lint": "3.10.3",
     "npm-run-all2": "7.0.1",
     "typescript": "5.7.2"
   },
