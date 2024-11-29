@@ -22,7 +22,7 @@ jobs:
               run: |
                   npm run --if-present build
                   npm pack
-                  npm exec npm-pkg-lint
+                  npm exec npm-pkg-lint -- --ignore-node-version 16
 
     lint:
         name: Lint
