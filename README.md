@@ -5,11 +5,11 @@ Module for adding visual regression testing to [Cypress](https://www.cypress.io/
 This is a fork of [cypress-visual-regression](https://github.com/mjhea0/cypress-visual-regression) v1.7.0.
 The most notable changes are:
 
--   Support both headed and headless.
--   Support both E2E and Component Tests with screenshots stored next to test-cases in a `__screenshots__` folder.
--   Retryability: tries multiple times to match the screenshot against the base images.
--   Delayed screenshots: optional delay before taking base screenshots.
--   Forced software rendering, antialiasing detection: to prevent flaky tests due to different hardware rendering slightly different pixels.
+- Support both headed and headless.
+- Support both E2E and Component Tests with screenshots stored next to test-cases in a `__screenshots__` folder.
+- Retryability: tries multiple times to match the screenshot against the base images.
+- Delayed screenshots: optional delay before taking base screenshots.
+- Forced software rendering, antialiasing detection: to prevent flaky tests due to different hardware rendering slightly different pixels.
 
 ## Getting Started
 
