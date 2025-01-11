@@ -74,7 +74,7 @@
     "lint-staged": "15.3.0",
     "npm-pkg-lint": "3.10.6",
     "npm-run-all2": "7.0.2",
-    "typescript": "5.7.2"
+    "typescript": "5.7.3"
   },
   "peerDependencies": {
     "cypress": "^10.4 || ^11 || ^12 || ^13"
