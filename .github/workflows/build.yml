@@ -45,7 +45,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                cypress-version: [10.x, 11.x, 12.x, 13.x]
+                cypress-version: [10.x, 11.x, 12.x, 13.x, 14.x]
         steps:
             - uses: actions/checkout@v4
             - name: Use Node.js 20
