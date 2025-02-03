@@ -72,7 +72,7 @@
     "esbuild": "0.24.2",
     "husky": "9.1.7",
     "lint-staged": "15.4.3",
-    "npm-pkg-lint": "3.10.7",
+    "npm-pkg-lint": "3.10.8",
     "npm-run-all2": "7.0.2",
     "typescript": "5.7.3"
   },
