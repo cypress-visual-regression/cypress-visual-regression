@@ -1,5 +1,10 @@
 # Change Log
 
+## v5.3.0
+
+- Adjust diff screenshot name according to cypress retry attempt, addresses [#277] (https://github.com/cypress-visual-regression/cypress-visual-regression/pull/277)
+- Bump dependencies
+
 ## v5.2.3
 
 - Fix typo in visual regression popup
