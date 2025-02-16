@@ -6,9 +6,9 @@
     "test": "cypress run"
   },
   "devDependencies": {
-    "cypress-visual-regression": "../../../cypress-visual-regression"
+    "cypress-visual-regression": "file:../../../cypress-visual-regression"
   },
   "peerDependencies": {
-    "cypress": "13.13.3"
+    "cypress": "14.0.3"
   }
 }

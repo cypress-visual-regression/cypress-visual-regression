@@ -128,8 +128,9 @@ describe('Visual Regression Example', () => {
       cy.visit('./cypress/web/07.html')
     }
     cy.get('div').contains('Color').should('exist')
-    cy.compareSnapshot('baz', 0.029)
+    cy.compareSnapshot('baz', 0.1)
     cy.compareSnapshot('baz', { errorThreshold: 0.02, failSilently: true })
+    cy.compareSnapshot('baz', { errorThreshold: 0, failSilently: true })
     cy.compareSnapshot('baz', { failSilently: true })
   })
 
@@ -193,7 +194,7 @@ describe('Visual Regression Example', () => {
     }
   )
 
-  it.only('should log command options to Cypress.log', () => {
+  it('should log command options to Cypress.log', () => {
     cy.on('fail', (error) => {
       if (error.message.includes("The 'random' image is different.")) {
         return

@@ -6,7 +6,7 @@ export default defineConfig({
     env: {
       visualRegressionType: 'base'
     },
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on) {
       // implement node event listeners here
       configureVisualRegression(on)
     }

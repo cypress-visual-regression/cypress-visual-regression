@@ -14,7 +14,7 @@ const isLogLevel = (level: string): boolean => {
 
 const logLevel = (): number => {
   const envLevel = isLogLevel(process.env.visual_regression_log ?? '')
-    ? process.env.visual_regression_log ?? 'error'
+    ? (process.env.visual_regression_log ?? 'error')
     : 'error'
   return logLevelKeys[envLevel as keyof typeof logLevelKeys]
 }
