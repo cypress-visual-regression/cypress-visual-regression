@@ -31,7 +31,6 @@
     "lint": "npm run eslint",
     "prepack": "release-prepack --bundle",
     "postpack": "release-postpack",
-    "prepare": "husky",
     "prepublishOnly": "release-prepublish --bundle",
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write .",
@@ -59,7 +58,7 @@
     "pngjs": "7.0.0"
   },
   "devDependencies": {
-    "@forsakringskassan/commitlint-config": "1.4.2",
+    "@forsakringskassan/commitlint-config": "3.0.3",
     "@forsakringskassan/eslint-config": "12.0.8",
     "@forsakringskassan/eslint-config-jest": "12.0.9",
     "@forsakringskassan/jest-config": "29.9.0",
@@ -70,8 +69,6 @@
     "cypress": "14.5.4",
     "dts-bundle-generator": "9.5.1",
     "esbuild": "0.25.9",
-    "husky": "9.1.7",
-    "lint-staged": "15.5.2",
     "npm-pkg-lint": "4.0.3",
     "npm-run-all2": "8.0.4",
     "typescript": "5.9.2"
