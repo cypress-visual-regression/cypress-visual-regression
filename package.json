@@ -60,8 +60,8 @@
   },
   "devDependencies": {
     "@forsakringskassan/commitlint-config": "1.4.2",
-    "@forsakringskassan/eslint-config": "11.7.0",
-    "@forsakringskassan/eslint-config-jest": "11.7.1",
+    "@forsakringskassan/eslint-config": "11.9.14",
+    "@forsakringskassan/eslint-config-jest": "11.9.14",
     "@forsakringskassan/jest-config": "29.6.0",
     "@forsakringskassan/prettier-config": "3.0.0",
     "@html-validate/release-scripts": "6.7.5",
