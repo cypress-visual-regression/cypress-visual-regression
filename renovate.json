@@ -1,3 +1,4 @@
 {
-    "extends": ["local>forsakringskassan/renovate-config"]
+    "extends": ["local>forsakringskassan/renovate-config"],
+    "forkProcessing": "enabled"
 }
