@@ -1,13 +1,17 @@
 {
     "compilerOptions": {
-        "target": "es2020",
+        "target": "es2022",
         "declaration": true,
         "module": "esnext",
         "strict": true,
         "noImplicitAny": true,
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
+
+        /* https://github.com/cypress-io/cypress/issues/29519 */
+        "skipLibCheck": true,
+
         "types": ["cypress"],
-        "lib": ["es2020", "dom"]
+        "lib": ["es2022", "dom"]
     }
 }
