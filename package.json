@@ -66,7 +66,7 @@
     "@html-validate/release-scripts": "6.9.0",
     "@types/jest": "29.5.14",
     "@types/node": "20.19.11",
-    "cypress": "14.5.4",
+    "cypress": "15.0.0",
     "dts-bundle-generator": "9.5.1",
     "esbuild": "0.25.9",
     "npm-pkg-lint": "4.0.3",
@@ -74,7 +74,7 @@
     "typescript": "5.9.2"
   },
   "peerDependencies": {
-    "cypress": "^12.0.0 || ^13.0.0 || ^14.0.0"
+    "cypress": "^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0"
   },
   "engines": {
     "node": ">= 20"
