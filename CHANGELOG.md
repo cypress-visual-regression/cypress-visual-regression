@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [3.0.0](https://github.com/Forsakringskassan/cypress-visual-regression/compare/v2.4.0...v3.0.0) (2025-08-25)
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** Cypress v12 or later is now required.
+* **deps:** NodeJS v20 or later is now required.
+
+### Features
+
+* **deps:** require cypress v12 or later ([203fd4c](https://github.com/Forsakringskassan/cypress-visual-regression/commit/203fd4c24a48d276dcf49ffd2a7a004864e2a844))
+* **deps:** require nodejs v20 or later ([eca1c0e](https://github.com/Forsakringskassan/cypress-visual-regression/commit/eca1c0e3d222b0a1323910f3bb675555d17608d1))
+* **deps:** support cypress v15 ([b878d51](https://github.com/Forsakringskassan/cypress-visual-regression/commit/b878d51887a012fa0a37925c04b28db903dc6c44))
+
 ## [2.4.0](https://github.com/Forsakringskassan/cypress-visual-regression/compare/v2.3.2...v2.4.0) (2025-01-27)
 
 ### Features
