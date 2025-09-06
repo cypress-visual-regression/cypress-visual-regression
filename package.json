@@ -58,7 +58,7 @@
     "pngjs": "7.0.0"
   },
   "devDependencies": {
-    "@forsakringskassan/commitlint-config": "3.0.4",
+    "@forsakringskassan/commitlint-config": "3.0.6",
     "@forsakringskassan/eslint-config": "12.1.0",
     "@forsakringskassan/eslint-config-jest": "12.1.0",
     "@forsakringskassan/jest-config": "29.9.0",
