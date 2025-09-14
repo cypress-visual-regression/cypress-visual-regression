@@ -59,8 +59,9 @@
   },
   "devDependencies": {
     "@forsakringskassan/commitlint-config": "3.0.8",
-    "@forsakringskassan/eslint-config": "12.2.2",
-    "@forsakringskassan/eslint-config-jest": "12.2.2",
+    "@forsakringskassan/eslint-config": "13.0.2",
+    "@forsakringskassan/eslint-config-jest": "13.0.1",
+    "@forsakringskassan/eslint-config-typescript": "13.0.1",
     "@forsakringskassan/jest-config": "29.9.0",
     "@forsakringskassan/prettier-config": "3.1.7",
     "@html-validate/release-scripts": "6.9.6",

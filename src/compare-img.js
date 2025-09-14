@@ -1,13 +1,15 @@
-/* eslint-disable no-var -- technical debt */
+/* eslint-disable complexity -- technical debt */
+/* eslint-disable max-depth -- technical debt */
+/* eslint-disable no-prototype-builtins -- technical debt */
 /* eslint-disable no-undef -- technical debt */
 /* eslint-disable no-unused-vars -- technical debt */
-/* eslint-disable max-depth -- technical debt */
-/* eslint-disable complexity -- technical debt */
+/* eslint-disable no-var -- technical debt */
+/* eslint-disable prefer-template -- technical debt */
 /* eslint-disable sonarjs/no-duplicated-branches -- technical debt */
 /* eslint-disable sonarjs/no-extra-arguments -- technical debt */
-/* eslint-disable sonarjs/no-collapsible-if -- technical debt */
-/* eslint-disable no-prototype-builtins -- technical debt */
-/* eslint-disable prefer-template -- technical debt */
+/* eslint-disable sonarjs/no-redundant-assignments -- technical debt */
+/* eslint-disable sonarjs/no-implicit-global -- technical debt */
+/* eslint-disable sonarjs/no-nested-functions -- technical debt */
 
 /*
 James Cryer / Huddle
@@ -41,7 +43,7 @@ var getGlobalThis = function () {
             },
             configurable: true,
         });
-    } catch (error) {
+    } catch {
         return naiveFallback();
     }
     try {
