@@ -65,7 +65,7 @@
     "@forsakringskassan/jest-config": "30.0.0",
     "@forsakringskassan/prettier-config": "3.1.7",
     "@html-validate/release-scripts": "6.9.6",
-    "@types/jest": "29.5.14",
+    "@types/jest": "30.0.0",
     "@types/node": "20.19.17",
     "cypress": "15.2.0",
     "dts-bundle-generator": "9.5.1",
