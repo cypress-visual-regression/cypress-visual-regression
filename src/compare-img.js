@@ -38,7 +38,7 @@ var getGlobalThis = function () {
 
     try {
         Object.defineProperty(Object.prototype, "__global__", {
-            get: function () {
+            get() {
                 return this;
             },
             configurable: true,
@@ -85,13 +85,13 @@ var getGlobalThis = function () {
         var targetPix = { r: 0, g: 0, b: 0, a: 0 }; // isAntialiased
 
         var errorPixelTransform = {
-            flat: function (px, offset) {
+            flat(px, offset) {
                 px[offset] = errorPixelColor.red;
                 px[offset + 1] = errorPixelColor.green;
                 px[offset + 2] = errorPixelColor.blue;
                 px[offset + 3] = errorPixelColor.alpha;
             },
-            movement: function (px, offset, d1, d2) {
+            movement(px, offset, d1, d2) {
                 px[offset] =
                     (d2.r * (errorPixelColor.red / 255) + errorPixelColor.red) /
                     2;
@@ -105,13 +105,13 @@ var getGlobalThis = function () {
                     2;
                 px[offset + 3] = d2.a;
             },
-            flatDifferenceIntensity: function (px, offset, d1, d2) {
+            flatDifferenceIntensity(px, offset, d1, d2) {
                 px[offset] = errorPixelColor.red;
                 px[offset + 1] = errorPixelColor.green;
                 px[offset + 2] = errorPixelColor.blue;
                 px[offset + 3] = colorsDistance(d1, d2);
             },
-            movementDifferenceIntensity: function (px, offset, d1, d2) {
+            movementDifferenceIntensity(px, offset, d1, d2) {
                 var ratio = (colorsDistance(d1, d2) / 255) * 0.8;
 
                 px[offset] =
@@ -125,7 +125,7 @@ var getGlobalThis = function () {
                     ratio * errorPixelColor.blue;
                 px[offset + 3] = d2.a;
             },
-            diffOnly: function (px, offset, d1, d2) {
+            diffOnly(px, offset, d1, d2) {
                 px[offset] = d2.r;
                 px[offset + 1] = d2.g;
                 px[offset + 2] = d2.b;
@@ -841,14 +841,14 @@ var getGlobalThis = function () {
             }
 
             var self = {
-                setReturnEarlyThreshold: function (threshold) {
+                setReturnEarlyThreshold(threshold) {
                     if (threshold) {
                         compareOnly = true;
                         returnEarlyThreshold = threshold;
                     }
                     return self;
                 },
-                scaleToSameSize: function () {
+                scaleToSameSize() {
                     scaleToSameSize = true;
 
                     if (hasMethod) {
@@ -856,7 +856,7 @@ var getGlobalThis = function () {
                     }
                     return self;
                 },
-                useOriginalSize: function () {
+                useOriginalSize() {
                     scaleToSameSize = false;
 
                     if (hasMethod) {
@@ -864,7 +864,7 @@ var getGlobalThis = function () {
                     }
                     return self;
                 },
-                ignoreNothing: function () {
+                ignoreNothing() {
                     tolerance.red = 0;
                     tolerance.green = 0;
                     tolerance.blue = 0;
@@ -880,7 +880,7 @@ var getGlobalThis = function () {
                     }
                     return self;
                 },
-                ignoreLess: function () {
+                ignoreLess() {
                     tolerance.red = 16;
                     tolerance.green = 16;
                     tolerance.blue = 16;
@@ -896,7 +896,7 @@ var getGlobalThis = function () {
                     }
                     return self;
                 },
-                ignoreAntialiasing: function () {
+                ignoreAntialiasing() {
                     tolerance.red = 32;
                     tolerance.green = 32;
                     tolerance.blue = 32;
@@ -912,7 +912,7 @@ var getGlobalThis = function () {
                     }
                     return self;
                 },
-                ignoreColors: function () {
+                ignoreColors() {
                     tolerance.alpha = 16;
                     tolerance.minBrightness = 16;
                     tolerance.maxBrightness = 240;
@@ -925,7 +925,7 @@ var getGlobalThis = function () {
                     }
                     return self;
                 },
-                ignoreAlpha: function () {
+                ignoreAlpha() {
                     tolerance.red = 16;
                     tolerance.green = 16;
                     tolerance.blue = 16;
@@ -941,17 +941,17 @@ var getGlobalThis = function () {
                     }
                     return self;
                 },
-                repaint: function () {
+                repaint() {
                     if (hasMethod) {
                         param();
                     }
                     return self;
                 },
-                outputSettings: function (options) {
+                outputSettings(options) {
                     outputSettings(options);
                     return self;
                 },
-                onComplete: function (callback) {
+                onComplete(callback) {
                     updateCallbackArray.push(callback);
 
                     var wrapper = function () {
@@ -962,7 +962,7 @@ var getGlobalThis = function () {
 
                     return getCompareApi(wrapper);
                 },
-                setupCustomTolerance: function (customSettings) {
+                setupCustomTolerance(customSettings) {
                     for (var property in tolerance) {
                         if (!customSettings.hasOwnProperty(property)) {
                             continue;
@@ -977,16 +977,16 @@ var getGlobalThis = function () {
         }
 
         var rootSelf = {
-            onComplete: function (callback) {
+            onComplete(callback) {
                 updateCallbackArray.push(callback);
                 loadImageData(fileData, function (imageData, width, height) {
                     parseImage(imageData.data, width, height);
                 });
             },
-            compareTo: function (secondFileData) {
+            compareTo(secondFileData) {
                 return getCompareApi(secondFileData);
             },
-            outputSettings: function (options) {
+            outputSettings(options) {
                 outputSettings(options);
                 return rootSelf;
             },
