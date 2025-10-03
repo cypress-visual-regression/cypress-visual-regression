@@ -72,7 +72,7 @@
     "esbuild": "0.25.10",
     "npm-pkg-lint": "4.1.1",
     "npm-run-all2": "8.0.4",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   },
   "peerDependencies": {
     "cypress": "^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0"
