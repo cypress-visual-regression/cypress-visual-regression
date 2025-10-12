@@ -2,8 +2,8 @@ const fs = require("node:fs");
 const fsPromises = require("node:fs/promises");
 const path = require("path");
 
-const { compareImages } = require("./utils");
 const { getSubfolderName } = require("./get-subfolder-name");
+const { compareImages } = require("./utils");
 
 /** @type {string} */
 let CYPRESS_SCREENSHOT_DIR = "cypress/screenshots";
