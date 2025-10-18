@@ -69,7 +69,7 @@
     "@types/node": "20.19.21",
     "cypress": "15.4.0",
     "dts-bundle-generator": "9.5.1",
-    "esbuild": "0.25.10",
+    "esbuild": "0.25.11",
     "npm-pkg-lint": "4.1.2",
     "npm-run-all2": "8.0.4",
     "typescript": "5.9.3"
