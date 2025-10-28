@@ -70,7 +70,7 @@
     "cypress": "15.5.0",
     "dts-bundle-generator": "9.5.1",
     "esbuild": "0.25.11",
-    "npm-pkg-lint": "4.1.2",
+    "npm-pkg-lint": "4.2.0",
     "npm-run-all2": "8.0.4",
     "typescript": "5.9.3"
   },
