@@ -51,7 +51,11 @@ function takeScreenshotsUntilMatch(args, options, remainingAttempts) {
         const attemptsLeft = remainingAttempts - 1;
         if (result.error) {
             if (attemptsLeft === 0) {
-                throw new Error(result.error);
+                if (args.type === "base") {
+                    return;
+                } else {
+                    throw new Error(result.error);
+                }
             }
             cy.log("Retrying after 200ms");
             cy.wait(200);
@@ -94,22 +98,23 @@ function toMatchScreenshot(subject, screenshotOptions) {
         fileName,
     };
 
+    const options = {
+        fileName,
+        specDirectory: folderName,
+        type,
+        errorThreshold,
+        relative: Cypress.spec.relative,
+        testingType: Cypress.testingType,
+        testPath: Cypress.spec.absolute,
+    };
+
     if (type === "actual") {
-        const options = {
-            fileName,
-            specDirectory: folderName,
-            type,
-            errorThreshold,
-            relative: Cypress.spec.relative,
-            testingType: Cypress.testingType,
-            testPath: Cypress.spec.absolute,
-        };
         takeScreenshotsUntilMatch(args, options, retries);
     } else if (type === "base") {
         if (baseDelay) {
             cy.wait(baseDelay);
         }
-        takeScreenshot(args);
+        takeScreenshotsUntilMatch(args, options, retries);
     }
 }
 

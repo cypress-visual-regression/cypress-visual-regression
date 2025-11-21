@@ -52,29 +52,10 @@ function cleanup(filename) {
     }
 }
 
-/**
- * Screenshots are saved to different directories depending on whenever we are
- * creating the base images or if we are comparing to them.
- *
- * - When `type` is `"base"` the target directory is `"__screenshots__"` in the same folder as the testcase.
- * - When `type` is `"actual"` the target directory is `"cypress/screenshots/actual"`.
- *
- * @param {"base" | "actual"} type - Screenshot type.
- * @param {string} testPath - Filepath to current testcase.
- * @returns Returns directory to store screenshots in.
- */
-function getScreenshotTargetDirectory(type, testPath) {
-    if (type === "actual") {
-        return path.join(CYPRESS_SCREENSHOT_DIR, "actual");
-    } else {
-        return path.join(path.dirname(testPath), "__screenshots__");
-    }
-}
-
 async function visualRegressionCopy(args) {
     let { from, deleteFolder } = args;
     const { absolute, specType, isHeadless, relativePath } = args;
-    const folderName = getScreenshotTargetDirectory(args.type, args.testPath);
+    const folderName = path.join(CYPRESS_SCREENSHOT_DIR, "actual");
 
     /* In version 10, Cypress.spec.name stops inkluding parent folder.
      *  Screenshots in headless mode still include it, so need a workaround to make it work.
@@ -144,48 +125,49 @@ async function toMatchScreenshotsPlugin(args) {
         "__screenshots__",
         `${fileName}.png`,
     );
+
     if (!fs.existsSync(expectedImage)) {
+        // Create new baseline
+        await fsPromises.rename(actualImage, expectedImage);
         cleanup(actualImage);
-        return {
-            error: [
-                `Base image not found\n`,
-                `'${expectedImage}'\n`,
-                `Did you forget to create image?`,
-                `Add environment variable 'type=base'\n`,
-                `$ npm run cypress run -- --env type=base --${testingType} --spec **/${relative}\n`,
-                `It is recommended to run the screenshot test individually with 'it.only' when creating base image`,
-            ].join("\n"),
-        };
+        return {};
     }
     const result = await compareImages(actualImage, expectedImage, {});
     const percentage = result.rawMisMatchPercentage / 100;
 
-    if (percentage > args.errorThreshold) {
-        await copyMismatchingFiles(
-            actualImage,
-            expectedImage,
-            CYPRESS_SCREENSHOT_DIR,
-            fileName,
-        );
-
+    if (percentage <= args.errorThreshold) {
+        // Below threshold, do nothing
         cleanup(actualImage);
-
-        return {
-            error: [
-                `The "${fileName}" image is different. Threshold limit exceeded!"`,
-                `Expected: ${args.errorThreshold}`,
-                `Actual: ${percentage}\n`,
-                `Did you forget to update image?`,
-                `Add environment variable 'type=base'\n`,
-                `$ npm run cypress run -- --env type=base --${testingType} --spec **/${relative}\n`,
-                `It is recommended to run the screenshot test individually with 'it.only' when creating base image`,
-            ].join("\n"),
-        };
+        return {};
     }
+
+    if (args.type === "base") {
+        // Above threshold, update baseline
+        await fsPromises.rename(actualImage, expectedImage);
+        cleanup(actualImage);
+        return {};
+    }
+
+    await copyMismatchingFiles(
+        actualImage,
+        expectedImage,
+        CYPRESS_SCREENSHOT_DIR,
+        fileName,
+    );
 
     cleanup(actualImage);
 
-    return {};
+    return {
+        error: [
+            `The "${fileName}" image is different. Threshold limit exceeded!"`,
+            `Expected: ${args.errorThreshold}`,
+            `Actual: ${percentage}\n`,
+            `Did you forget to update image?`,
+            `Add environment variable 'type=base'\n`,
+            `$ npm run cypress run -- --env type=base --${testingType} --spec **/${relative}\n`,
+            `It is recommended to run the screenshot test individually with 'it.only' when creating base image`,
+        ].join("\n"),
+    };
 }
 
 /**

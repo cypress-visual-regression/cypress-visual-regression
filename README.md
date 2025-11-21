@@ -74,7 +74,7 @@ For more info on how to use TypeScript with Cypress, please refer to [this docum
 
 The plugin has two modes, `base` and `actual`.
 
-`base` means taking a new screenshot as a baseline while `actual` means taking a screenshot and then comparing it to the _base-image_.
+`base` captures a new screenshot to set as the reference image, or updates the existing one if the difference exceeds the threshold. `actual` captures the current screenshot and compares it against the reference image.
 
 Default is `actual`.
 
