@@ -34,6 +34,7 @@ export type CypressConfigEnv = {
   visualRegressionDiffDirectory?: string
   visualRegressionGenerateDiff?: DiffOption
   visualRegressionFailSilently?: boolean
+  visualRegressionUpdateSnapshots?: boolean
 }
 
 /** Add custom cypress command to compare image snapshots of an element or the window. */
@@ -109,6 +110,7 @@ function prepareOptions(
     baseDirectory: 'cypress/snapshots/base',
     diffDirectory: 'cypress/snapshots/diff',
     generateDiff: 'fail',
+    updateSnapshots: false,
     spec: Cypress.spec
   }
 
@@ -137,6 +139,10 @@ function prepareOptions(
   }
   if (Cypress.env('visualRegressionFailSilently') !== undefined) {
     options.pluginOptions.failSilently = Cypress.env('visualRegressionFailSilently')
+  }
+  if (Cypress.env('visualRegressionUpdateSnapshots') !== undefined) {
+    const envValue = Cypress.env('visualRegressionUpdateSnapshots')
+    options.updateSnapshots = envValue === true || envValue === 'true' || envValue === 1 || envValue === '1'
   }
 
   // lastly, override values provided through compareSnapshot command
