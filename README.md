@@ -40,6 +40,14 @@ module.exports = defineConfig({
 Pay attention to the `visualRegressionType` option. Use 'base' to generate baseline images, and 'regression' to compare current
 screenshot to the base screenshot
 
+When running in `'regression'` mode, you can enable automatic base snapshot updates on mismatch using `visualRegressionUpdateSnapshots`.
+
+```bash
+CYPRESS_visualRegressionType=regression CYPRESS_visualRegressionUpdateSnapshots=true cypress run --spec 'cypress/e2e/**/*.cy.ts'
+```
+
+You can also set it through Cypress CLI env: `cypress run --env visualRegressionUpdateSnapshots=true`.
+
 In your support file _cypress/support/e2e.js_ add the following:
 
 ```javascript
@@ -111,13 +119,14 @@ module.exports = defineConfig({
 })
 ```
 
-| Variable                      | Default                  | Description                                                                                                                                                  |
-| ----------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| visualRegressionType          | /                        | Either 'regression' or 'base'. Base will override any existing base images with new screenshots. Regression will compare the base to the current screenshot. |
-| visualRegressionBaseDirectory | 'cypress/snapshots/base' | Path to the directory where the base snapshots will be stored.                                                                                               |
-| visualRegressionDiffDirectory | 'cypress/snapshots/diff' | Path to the directory where the generated image differences will be stored.                                                                                  |
-| visualRegressionGenerateDiff  | 'fail'                   | Either 'fail', 'never' or 'always'. Determines if and when image differences are generated.                                                                  |
-| visualRegressionFailSilently  | false                    | Used to decide if any error found in regression should be thrown or returned as part of the result.                                                          |
+| Variable                        | Default                  | Description                                                                                                                                                  |
+| ------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| visualRegressionType            | /                        | Either 'regression' or 'base'. Base will override any existing base images with new screenshots. Regression will compare the base to the current screenshot. |
+| visualRegressionBaseDirectory   | 'cypress/snapshots/base' | Path to the directory where the base snapshots will be stored.                                                                                               |
+| visualRegressionDiffDirectory   | 'cypress/snapshots/diff' | Path to the directory where the generated image differences will be stored.                                                                                  |
+| visualRegressionGenerateDiff    | 'fail'                   | Either 'fail', 'never' or 'always'. Determines if and when image differences are generated.                                                                  |
+| visualRegressionFailSilently    | false                    | Used to decide if any error found in regression should be thrown or returned as part of the result.                                                          |
+| visualRegressionUpdateSnapshots | false                    | When set to true, regression mismatches update existing base snapshots instead of failing. Set using Cypress env values.                                     |
 
 To override different default arguments/options on a global level pass them to the `addCompareSnapshotCommand()` command:
 

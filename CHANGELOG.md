@@ -1,5 +1,9 @@
 # Change Log
 
+## Unreleased
+
+- Add support for updating base snapshots on regression mismatch via `visualRegressionUpdateSnapshots`.
+
 ## v5.3.0
 
 - Adjust diff screenshot name according to cypress retry attempt, addresses [#277] (https://github.com/cypress-visual-regression/cypress-visual-regression/pull/277)
