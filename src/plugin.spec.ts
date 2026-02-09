@@ -1,7 +1,10 @@
-import { existsSync, rmSync } from 'fs'
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'fs'
+import { tmpdir } from 'os'
 import path from 'path'
 import { expect } from 'vitest'
 import { compareSnapshots, updateSnapshot, type VisualRegressionOptions, type UpdateSnapshotOptions } from './plugin'
+
+type CompareSnapshotsOptions = VisualRegressionOptions & { retryAttempt: number }
 
 const baseUpdateOptions: UpdateSnapshotOptions = {
   screenshotName: 'enjuto',
@@ -15,7 +18,7 @@ const baseUpdateOptions: UpdateSnapshotOptions = {
   }
 }
 
-const baseCompareOptions: VisualRegressionOptions = {
+const baseCompareOptions: CompareSnapshotsOptions = {
   ...baseUpdateOptions,
   pluginOptions: {
     errorThreshold: 0.1,
@@ -24,7 +27,19 @@ const baseCompareOptions: VisualRegressionOptions = {
   },
   screenshotOptions: {},
   diffDirectory: path.join('./src/fixtures/diff'),
-  generateDiff: 'fail'
+  generateDiff: 'fail',
+  retryAttempt: 0
+}
+
+const createTempBaseDirectory = (screenshotName: string): string => {
+  const directory = mkdtempSync(path.join(tmpdir(), 'cypress-visual-regression-'))
+  const destinationDirectory = path.join(directory, baseUpdateOptions.spec.relative)
+  mkdirSync(destinationDirectory, { recursive: true })
+  copyFileSync(
+    path.join(baseUpdateOptions.baseDirectory, baseUpdateOptions.spec.relative, `${screenshotName}.png`),
+    path.join(destinationDirectory, `${screenshotName}.png`)
+  )
+  return directory
 }
 
 describe('plugin', () => {
@@ -62,7 +77,7 @@ describe('plugin', () => {
   describe('compareSnapshot', () => {
     describe('when doing a comparison', () => {
       it('should return a valid result', async () => {
-        const options = {
+        const options: CompareSnapshotsOptions & { specName: string } = {
           ...baseCompareOptions,
           specName: ''
         }
@@ -77,7 +92,7 @@ describe('plugin', () => {
       })
       describe('when image differs', () => {
         it('should generate a diff image by default', async () => {
-          const options: VisualRegressionOptions = {
+          const options: CompareSnapshotsOptions = {
             ...baseCompareOptions,
             screenshotAbsolutePath: './src/fixtures/actual/random.png',
             pluginOptions: {
@@ -100,7 +115,7 @@ describe('plugin', () => {
           expect(isDiffGenerated).toBe(true)
         })
         it('should not generate a diff image if generateDiff is set to never', async () => {
-          const options: VisualRegressionOptions = {
+          const options: CompareSnapshotsOptions = {
             ...baseCompareOptions,
             screenshotAbsolutePath: './src/fixtures/actual/not_ever.png',
             pluginOptions: {
@@ -124,7 +139,7 @@ describe('plugin', () => {
           expect(isDiffGenerated).toBe(false)
         })
         it('should not generate a diff image if threshold is higher than mismatched percentage ', async () => {
-          const options: VisualRegressionOptions = {
+          const options: CompareSnapshotsOptions = {
             ...baseCompareOptions,
             screenshotName: 'not_ever',
             screenshotAbsolutePath: './src/fixtures/actual/not_ever.png',
@@ -146,8 +161,36 @@ describe('plugin', () => {
           expect(isDiffGenerated).toBe(false)
         })
 
+        it('should update base snapshot on mismatch when updateSnapshots option is enabled', async () => {
+          const tempBaseDirectory = createTempBaseDirectory('random')
+          const options: CompareSnapshotsOptions = {
+            ...baseCompareOptions,
+            screenshotName: 'random',
+            screenshotAbsolutePath: './src/fixtures/actual/random.png',
+            baseDirectory: tempBaseDirectory,
+            generateDiff: 'never',
+            updateSnapshots: true,
+            pluginOptions: {
+              errorThreshold: 0,
+              failSilently: false,
+              pixelmatchOptions: {}
+            }
+          }
+
+          try {
+            const result = await compareSnapshots(options)
+            const updatedBasePath = path.join(tempBaseDirectory, options.spec.relative, 'random.png')
+            expect(result.error).toBeUndefined()
+            expect(result.baseGenerated).toBe(true)
+            expect(result.mismatchedPixels).toBeGreaterThan(0)
+            expect(readFileSync(updatedBasePath)).toEqual(readFileSync(options.screenshotAbsolutePath))
+          } finally {
+            rmSync(tempBaseDirectory, { recursive: true, force: true })
+          }
+        })
+
         it('should generate a diff image if generateDiff is set to always', async () => {
-          const options: VisualRegressionOptions = {
+          const options: CompareSnapshotsOptions = {
             ...baseCompareOptions,
             screenshotAbsolutePath: './src/fixtures/actual/enjuto.png',
             pluginOptions: {
@@ -171,7 +214,7 @@ describe('plugin', () => {
         })
 
         it('should calculate percentage difference correctly', async () => {
-          const options: VisualRegressionOptions = {
+          const options: CompareSnapshotsOptions = {
             ...baseCompareOptions,
             screenshotAbsolutePath: './src/fixtures/actual/percentage-actual-10.png',
             pluginOptions: {

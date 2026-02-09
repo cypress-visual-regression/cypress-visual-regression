@@ -34,6 +34,8 @@ export type VisualRegressionOptions = {
   diffDirectory: string
   /** how we should handle diff images */
   generateDiff: DiffOption
+  /** whether base snapshots should be updated on mismatch during regression runs */
+  updateSnapshots?: boolean
   /** Cypress spec file object info */
   spec: Cypress.Spec
 }
@@ -54,6 +56,10 @@ export type VisualRegressionResult = {
   baseGenerated?: boolean
   mismatchedPixels?: number
   percentage?: number
+}
+
+const shouldUpdateOnRegressionError = (options: VisualRegressionOptions): boolean => {
+  return options.updateSnapshots === true
 }
 
 /**
@@ -131,6 +137,13 @@ export const compareSnapshots = async (
   }
 
   if (regressionError) {
+    if (shouldUpdateOnRegressionError(options)) {
+      fs.copyFileSync(actualImagePath, expectedImagePath)
+      logger.info(`Updated base snapshot '${options.screenshotName}' at ${expectedImagePath} due to update mode`)
+      result.baseGenerated = true
+      return result
+    }
+
     logger.error(`Error in visual regression found: ${percentage.toFixed(2)}`)
 
     result.error = `The '${options.screenshotName}' image is different. Threshold limit of '${
