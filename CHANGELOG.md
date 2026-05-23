@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Add support for updating base snapshots on regression mismatch via `visualRegressionUpdateSnapshots`.
+- Drop support for Cypress v12, v13
+- Drop support for Node v18, v20
 - Bumps all dependency versions
 
 ## v5.3.0
