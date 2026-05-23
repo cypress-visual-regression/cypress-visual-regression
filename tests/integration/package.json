@@ -10,11 +10,15 @@
     "cy:regression": "cypress run -C cypress.regression.config.ts"
   },
   "peerDependencies": {
-    "cypress": "14.0.3"
+    "cypress": "14.5.4"
   },
   "devDependencies": {
     "cypress-visual-regression": "file:../../../cypress-visual-regression",
-    "@cypress/webpack-preprocessor": "6.0.2",
-    "ts-loader": "9.5.2"
+    "@cypress/webpack-preprocessor": "7.1.0",
+    "ts-loader": "9.5.7",
+    "typescript": "6.0.3"
+  },
+  "overrides": {
+    "qs": "6.15.2"
   }
 }
