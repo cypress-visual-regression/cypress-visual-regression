@@ -8,9 +8,12 @@
   },
   "devDependencies": {
     "cypress-visual-regression": "file:../../../cypress-visual-regression",
-    "typescript": "5.7.3"
+    "typescript": "6.0.3"
   },
   "peerDependencies": {
-    "cypress": "14.0.3"
+    "cypress": ">=15"
+  },
+  "overrides": {
+    "qs": "6.15.2"
   }
 }

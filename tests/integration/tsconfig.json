@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["es5", "dom"],
+    "target": "es6",
+    "lib": ["es6", "dom"],
     "esModuleInterop": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
     "types": ["cypress", "node"],
     "paths": {
       "@src/*": ["../../src/*"]
