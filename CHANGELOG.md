@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Add support for updating base snapshots on regression mismatch via `visualRegressionUpdateSnapshots`.
+- Bumps all dependency versions
 
 ## v5.3.0
 

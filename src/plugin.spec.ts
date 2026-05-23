@@ -1,6 +1,6 @@
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'fs'
-import { tmpdir } from 'os'
-import path from 'path'
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
 import { expect } from 'vitest'
 import { compareSnapshots, updateSnapshot, type VisualRegressionOptions, type UpdateSnapshotOptions } from './plugin'
 

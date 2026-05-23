@@ -1,5 +1,5 @@
-import chalk, { type Chalk } from 'chalk'
-import { inspect } from 'util'
+import chalk, { type ChalkInstance } from 'chalk'
+import { inspect } from 'node:util'
 
 const logLevelKeys = {
   debug: 3,
@@ -19,7 +19,7 @@ const logLevel = (): number => {
   return logLevelKeys[envLevel as keyof typeof logLevelKeys]
 }
 
-const format = (colorFormat: Chalk, messages: unknown[]): void => {
+const format = (colorFormat: ChalkInstance, messages: unknown[]): void => {
   for (const msg of messages) {
     if (typeof msg === 'string') {
       console.log(colorFormat(msg))
@@ -39,7 +39,7 @@ const format = (colorFormat: Chalk, messages: unknown[]): void => {
   }
 }
 
-const printDate = (colorFormat: Chalk): void => {
+const printDate = (colorFormat: ChalkInstance): void => {
   console.log(colorFormat(`LOGGER [${new Date().toISOString()}]`))
 }
 

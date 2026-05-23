@@ -1,12 +1,13 @@
-import * as fs from 'fs'
-import { existsSync } from 'fs'
-import * as path from 'path'
-import pixelmatch, { type PixelmatchOptions } from 'pixelmatch'
+/* jslint node: true */
+import * as fs from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import * as path from 'node:path'
+import pixelmatch from 'pixelmatch'
+type PixelmatchOptions = NonNullable<Parameters<typeof pixelmatch>[5]>
 import { PNG } from 'pngjs'
 import sanitize from 'sanitize-filename'
 import { adjustCanvas } from './utils/image'
 import { logger } from './utils/logger'
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 
 export type PluginOptions = {
   errorThreshold: number
@@ -85,7 +86,7 @@ export const compareSnapshots = async (
   options: VisualRegressionOptions & { retryAttempt: number }
 ): Promise<VisualRegressionResult> => {
   const sanitizedFileName = sanitize(options.screenshotName)
-  const retryAttempt = options.retryAttempt
+  const { retryAttempt } = options
 
   const expectedImagePath = path.join(options.baseDirectory, options.spec.relative, `${sanitizedFileName}.png`)
   if (!existsSync(expectedImagePath)) {
