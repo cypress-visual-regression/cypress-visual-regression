@@ -22,7 +22,6 @@ declare global {
        * @param name - name of the screenshot file
        * @param commandOptions - additional screenshot and plugin options to control the visual regression behavior
        */
-      // eslint-disable-next-line @typescript-eslint/method-signature-style
       compareSnapshot(name: string, commandOptions?: PluginCommandOptions): Chainable<VisualRegressionResult>
     }
   }
