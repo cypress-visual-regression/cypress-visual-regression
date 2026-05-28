@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Add support for updating base snapshots on regression mismatch via `visualRegressionUpdateSnapshots`.
+- Improve TypeScript support for element snapshots and `compareSnapshot` overwrites.
 - Drop support for Cypress v12, v13
 - Drop support for Node v18, v20
 - Bumps all dependency versions
