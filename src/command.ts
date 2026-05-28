@@ -1,13 +1,26 @@
 // Load type definitions that come with Cypress module
 import type {
   DiffOption,
-  TypeOption,
-  VisualRegressionOptions,
-  VisualRegressionResult,
   PluginCommandOptions,
+  PluginOptions,
+  TypeOption,
   VisualRegressionImages,
-  PluginOptions
+  VisualRegressionOptions,
+  VisualRegressionResult
 } from './plugin'
+
+export type CompareSnapshotSubject = Cypress.JQueryWithSelector | void
+export type CompareSnapshotCommandFn = (
+  subject: CompareSnapshotSubject,
+  name: string,
+  commandOptions?: PluginCommandOptions
+) => Cypress.Chainable<VisualRegressionResult>
+export type CompareSnapshotOverwriteFn = (
+  originalFn: CompareSnapshotCommandFn,
+  subject: CompareSnapshotSubject,
+  name: string,
+  commandOptions?: PluginCommandOptions
+) => Cypress.Chainable<VisualRegressionResult> | void
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -23,6 +36,15 @@ declare global {
        * @param commandOptions - additional screenshot and plugin options to control the visual regression behavior
        */
       compareSnapshot(name: string, commandOptions?: PluginCommandOptions): Chainable<VisualRegressionResult>
+    }
+
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+    interface Commands {
+      /**
+       * Overwrite compareSnapshot as a dual command. Cypress injects the previous subject
+       * as the first argument when compareSnapshot is chained from another command.
+       */
+      overwrite(name: 'compareSnapshot', fn: CompareSnapshotOverwriteFn): void
     }
   }
 }
@@ -42,10 +64,10 @@ function addCompareSnapshotCommand(screenshotOptions?: Partial<Cypress.Screensho
     'compareSnapshot',
     { prevSubject: ['optional', 'element'] },
     function (
-      subject: Cypress.JQueryWithSelector | void,
+      subject: CompareSnapshotSubject,
       name: string,
       commandOptions?: PluginCommandOptions
-    ): Cypress.Chainable {
+    ): Cypress.Chainable<VisualRegressionResult> {
       if (name === undefined || name === '') {
         throw new Error('Snapshot name must be specified')
       }
@@ -159,7 +181,7 @@ function prepareOptions(
 
 /** Take a screenshot and move screenshot to base or actual folder */
 function takeScreenshot(
-  subject: Cypress.JQueryWithSelector | void,
+  subject: CompareSnapshotSubject,
   name: string,
   screenshotOptions: Partial<Cypress.ScreenshotOptions>
 ): Cypress.Chainable {
@@ -182,7 +204,7 @@ function takeScreenshot(
 
 /** Call the plugin to compare snapshot images and generate a diff */
 function compareScreenshots(
-  subject: Cypress.JQueryWithSelector | void,
+  subject: CompareSnapshotSubject,
   options: VisualRegressionOptions
 ): Cypress.Chainable<VisualRegressionResult> {
   const retryAttempt = Cypress.currentRetry
@@ -242,7 +264,7 @@ function compareScreenshots(
 
 /** Call the plugin to update base snapshot images */
 function updateSnapshots(
-  subject: Cypress.JQueryWithSelector | void,
+  subject: CompareSnapshotSubject,
   options: VisualRegressionOptions
 ): Cypress.Chainable<VisualRegressionResult> {
   return cy.task<VisualRegressionResult>('updateSnapshot', options, { log: false }).then((result) => {
