@@ -7,6 +7,7 @@ const cypressCommonConfig: Cypress.ConfigOptions = {
   viewportHeight: 720,
   viewportWidth: 1280,
   video: false,
+  allowCypressEnv: false,
   e2e: {
     screenshotsFolder: './cypress/snapshots/actual',
     setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
@@ -26,10 +27,10 @@ const cypressCommonConfig: Cypress.ConfigOptions = {
   }
 }
 
-export const cypressConfigWithEnv = (env: Cypress.ConfigOptions['env']): Cypress.ConfigOptions => ({
+export const cypressConfigWithEnv = (expose: Cypress.ConfigOptions['expose']): Cypress.ConfigOptions => ({
   ...cypressCommonConfig,
-  env: {
-    ...cypressCommonConfig.env,
-    ...env
+  expose: {
+    ...cypressCommonConfig.expose,
+    ...expose
   }
 })

@@ -1,5 +1,7 @@
 import { faker } from '@faker-js/faker'
 
+const visualRegressionType = Cypress.expose('visualRegressionType')
+
 describe('Visual Regression Example', () => {
   it('should display the home page correctly', () => {
     cy.visit('./cypress/web/01.html')
@@ -37,7 +39,7 @@ describe('Visual Regression Example', () => {
     cy.get('form')
       .compareSnapshot('login-form')
       .should((result) => {
-        if (Cypress.env('visualRegressionType') === 'base') {
+        if (visualRegressionType === 'base') {
           expect(result.mismatchedPixels).to.not.exist
           expect(result.percentage).to.not.exist
           expect(result.error).to.not.exist
@@ -58,7 +60,7 @@ describe('Visual Regression Example', () => {
     cy.get('form')
       .compareSnapshot('login-form', 0.02)
       .should((result) => {
-        if (Cypress.env('visualRegressionType') === 'base') {
+        if (visualRegressionType === 'base') {
           expect(result.baseGenerated).to.be.true
         } else {
           expect(result.mismatchedPixels).to.equal(0)
@@ -77,7 +79,7 @@ describe('Visual Regression Example', () => {
       }
       throw error
     })
-    if (Cypress.env('visualRegressionType') === 'base') {
+    if (visualRegressionType === 'base') {
       cy.visit('./cypress/web/04.html')
       cy.get('div').contains('bar').should('exist')
     } else {
@@ -88,7 +90,7 @@ describe('Visual Regression Example', () => {
   })
 
   it('should handle custom error thresholds correctly', () => {
-    if (Cypress.env('visualRegressionType') === 'base') {
+    if (visualRegressionType === 'base') {
       cy.visit('./cypress/web/04.html')
       cy.compareSnapshot('foo')
       cy.get('div').compareSnapshot('bar')
@@ -122,7 +124,7 @@ describe('Visual Regression Example', () => {
   })
 
   it('should handle custom error thresholds correctly - take 2', () => {
-    if (Cypress.env('visualRegressionType') === 'base') {
+    if (visualRegressionType === 'base') {
       cy.visit('./cypress/web/06.html')
     } else {
       cy.visit('./cypress/web/07.html')
@@ -141,7 +143,7 @@ describe('Visual Regression Example', () => {
       }
       throw error
     })
-    if (Cypress.env('visualRegressionType') === 'base') {
+    if (visualRegressionType === 'base') {
       cy.visit('./cypress/web/07.html')
       cy.get('div').contains('Color').should('exist')
       cy.compareSnapshot('bar-07', 0.1)
@@ -163,18 +165,15 @@ describe('Visual Regression Example', () => {
     })
   })
 
-  const visualRegressionConfig = Cypress.env()
-
   it(
     'should not fail if failSilently is set in env',
     {
-      env: {
-        ...visualRegressionConfig,
+      expose: {
         visualRegressionFailSilently: true
       }
     },
     () => {
-      if (Cypress.env('visualRegressionType') === 'base') {
+      if (visualRegressionType === 'base') {
         cy.visit('./cypress/web/04.html')
         cy.get('div').contains('bar').should('exist')
         cy.compareSnapshot('foo')
@@ -243,7 +242,7 @@ describe('Visual Regression Example', () => {
 
   it('should not detect errors because of default pixelmatch sensitivity', () => {
     cy.visit('./cypress/web/pixelmatch.html')
-    if (Cypress.env('visualRegressionType') === 'base') {
+    if (visualRegressionType === 'base') {
       cy.get('#first').compareSnapshot('pixelmatch-1')
     } else {
       cy.get('#second').compareSnapshot('pixelmatch-1')
@@ -258,7 +257,7 @@ describe('Visual Regression Example', () => {
       throw error
     })
     cy.visit('./cypress/web/pixelmatch.html')
-    if (Cypress.env('visualRegressionType') === 'base') {
+    if (visualRegressionType === 'base') {
       cy.get('#first').compareSnapshot('pixelmatch-2')
     } else {
       cy.get('#second')

@@ -10,7 +10,7 @@
     "cy:regression": "cypress run -C cypress.regression.config.ts"
   },
   "peerDependencies": {
-    "cypress": "14.5.4"
+    "cypress": "15.17.0"
   },
   "devDependencies": {
     "cypress-visual-regression": "file:../../../cypress-visual-regression",

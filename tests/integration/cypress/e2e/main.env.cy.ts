@@ -1,11 +1,4 @@
-const visualRegressionConfig = Cypress.env()
-
-visualRegressionConfig.baseDirectory = './cypress/snapshots/alternative-base'
-visualRegressionConfig.diffDirectory = './cypress/snapshots/alternative-diff'
-visualRegressionConfig.generateDiff = 'always'
-
-const env: any = {
-  ...Cypress.env(),
+const expose: Record<string, unknown> = {
   visualRegressionBaseDirectory: './cypress/snapshots/alternative-base',
   visualRegressionDiffDirectory: './cypress/snapshots/alternative-diff',
   visualRegressionGenerateDiff: 'always'
@@ -14,26 +7,36 @@ const env: any = {
 describe(
   'Visual Regression Example with setting paths by environment variables',
   {
-    env
+    expose
   },
   () => {
     it('take screenshot with parent command', () => {
       cy.visit('./cypress/web/01.html')
       cy.get('div').contains('Hello, World')
       cy.compareSnapshot('home')
-      if (env.visualRegressionType === 'base') {
-        cy.readFile(`${env.visualRegressionBaseDirectory}/cypress/e2e/main.env.cy.ts/home.png`).should('exist')
+      const visualRegressionType = ((Cypress.expose() ?? {}) as Record<string, unknown>).visualRegressionType
+      if (visualRegressionType === 'base') {
+        cy.readFile(`${expose.visualRegressionBaseDirectory as string}/cypress/e2e/main.env.cy.ts/home.png`).should(
+          'exist'
+        )
       } else {
-        cy.readFile(`${env.visualRegressionDiffDirectory}/cypress/e2e/main.env.cy.ts/home.png`).should('exist')
+        cy.readFile(`${expose.visualRegressionDiffDirectory as string}/cypress/e2e/main.env.cy.ts/home.png`).should(
+          'exist'
+        )
       }
     })
     it('take screenshot with child command', () => {
       cy.visit('./cypress/web/01.html')
       cy.get('div').contains('Hello, World').compareSnapshot('home-child')
-      if (env.visualRegressionType === 'base') {
-        cy.readFile(`${visualRegressionConfig.baseDirectory}/cypress/e2e/main.env.cy.ts/home-child.png`).should('exist')
+      const visualRegressionType = ((Cypress.expose() ?? {}) as Record<string, unknown>).visualRegressionType
+      if (visualRegressionType === 'base') {
+        cy.readFile(
+          `${expose.visualRegressionBaseDirectory as string}/cypress/e2e/main.env.cy.ts/home-child.png`
+        ).should('exist')
       } else {
-        cy.readFile(`${visualRegressionConfig.diffDirectory}/cypress/e2e/main.env.cy.ts/home-child.png`).should('exist')
+        cy.readFile(
+          `${expose.visualRegressionDiffDirectory as string}/cypress/e2e/main.env.cy.ts/home-child.png`
+        ).should('exist')
       }
     })
   }
