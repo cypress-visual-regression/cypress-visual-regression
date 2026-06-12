@@ -2,8 +2,9 @@ import { defineConfig } from 'cypress'
 import { configureVisualRegression } from 'cypress-visual-regression'
 
 export default defineConfig({
+  allowCypressEnv: false,
   e2e: {
-    env: {
+    expose: {
       visualRegressionType: 'base'
     },
     setupNodeEvents(on) {

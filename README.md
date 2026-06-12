@@ -26,7 +26,7 @@ const { configureVisualRegression } = require('cypress-visual-regression')
 
 module.exports = defineConfig({
   e2e: {
-    env: {
+    expose: {
       visualRegressionType: 'regression'
     },
     screenshotsFolder: './cypress/snapshots/actual',
@@ -46,7 +46,7 @@ When running in `'regression'` mode, you can enable automatic base snapshot upda
 CYPRESS_visualRegressionType=regression CYPRESS_visualRegressionUpdateSnapshots=true cypress run --spec 'cypress/e2e/**/*.cy.ts'
 ```
 
-You can also set it through Cypress CLI env: `cypress run --env visualRegressionUpdateSnapshots=true`.
+You can also set it through Cypress CLI expose: `cypress run --expose visualRegressionUpdateSnapshots=true`.
 
 In your support file _cypress/support/e2e.js_ add the following:
 
@@ -67,7 +67,7 @@ import { configureVisualRegression } from 'cypress-visual-regression'
 
 export default defineConfig({
   e2e: {
-    env: {
+    expose: {
       visualRegressionType: 'regression'
     },
     screenshotsFolder: './cypress/snapshots/actual',
@@ -102,13 +102,13 @@ For more info on how to use TypeScript with Cypress, please refer to [this docum
 
 ## Plugin options
 
-All options can be configured within `visualRegression` prefix under `env` variable inside `cypress.config.js` file, like this:
+All options can be configured within `visualRegression` prefix under `expose` variable inside `cypress.config.js` file, like this:
 
 ```javascript
 module.exports = defineConfig({
   e2e: {
     screenshotsFolder: './cypress/snapshots/actual',
-    env: {
+    expose: {
       visualRegressionType: 'regression',
       visualRegressionBaseDirectory: 'cypress/snapshot/base',
       visualRegressionDiffDirectory: 'cypress/snapshot/diff',
@@ -126,7 +126,7 @@ module.exports = defineConfig({
 | visualRegressionDiffDirectory   | 'cypress/snapshots/diff' | Path to the directory where the generated image differences will be stored.                                                                                  |
 | visualRegressionGenerateDiff    | 'fail'                   | Either 'fail', 'never' or 'always'. Determines if and when image differences are generated.                                                                  |
 | visualRegressionFailSilently    | false                    | Used to decide if any error found in regression should be thrown or returned as part of the result.                                                          |
-| visualRegressionUpdateSnapshots | false                    | When set to true, regression mismatches update existing base snapshots instead of failing. Set using Cypress env values.                                     |
+| visualRegressionUpdateSnapshots | false                    | When set to true, regression mismatches update existing base snapshots instead of failing. Set using Cypress expose values.                                  |
 
 To override different default arguments/options on a global level pass them to the `addCompareSnapshotCommand()` command:
 

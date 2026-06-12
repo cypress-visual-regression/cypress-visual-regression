@@ -58,6 +58,28 @@ export type CypressConfigEnv = {
   visualRegressionUpdateSnapshots?: boolean
 }
 
+type CypressCommandRuntimeEnv = {
+  visualRegressionType: TypeOption | undefined
+  visualRegressionBaseDirectory: string | undefined
+  visualRegressionDiffDirectory: string | undefined
+  visualRegressionGenerateDiff: DiffOption | undefined
+  visualRegressionFailSilently: boolean | undefined
+  visualRegressionUpdateSnapshots: boolean | number | string | undefined
+}
+
+const getCommandRuntimeEnv = (): CypressCommandRuntimeEnv => {
+  const values = (Cypress.expose() ?? {}) as Record<string, unknown>
+
+  return {
+    visualRegressionType: values.visualRegressionType as TypeOption | undefined,
+    visualRegressionBaseDirectory: values.visualRegressionBaseDirectory as string | undefined,
+    visualRegressionDiffDirectory: values.visualRegressionDiffDirectory as string | undefined,
+    visualRegressionGenerateDiff: values.visualRegressionGenerateDiff as DiffOption | undefined,
+    visualRegressionFailSilently: values.visualRegressionFailSilently as boolean | undefined,
+    visualRegressionUpdateSnapshots: values.visualRegressionUpdateSnapshots as boolean | number | string | undefined
+  }
+}
+
 /** Add custom cypress command to compare image snapshots of an element or the window. */
 function addCompareSnapshotCommand(screenshotOptions?: Partial<Cypress.ScreenshotOptions & PluginOptions>): void {
   Cypress.Commands.add(
@@ -79,7 +101,12 @@ function addCompareSnapshotCommand(screenshotOptions?: Partial<Cypress.Screensho
       const commandOptionsObject =
         typeof commandOptions === 'number' ? { errorThreshold: commandOptions } : { ...commandOptions }
 
-      const visualRegressionOptions = prepareOptions(name, screenshotOptionsObject, commandOptionsObject)
+      const visualRegressionOptions = prepareOptions(
+        name,
+        screenshotOptionsObject,
+        commandOptionsObject,
+        getCommandRuntimeEnv()
+      )
       // We need to add the folder structure, so we can have as many levels as we want
       // https://github.com/cypress-visual-regression/cypress-visual-regression/issues/225
       const folderAndName = `${Cypress.spec.relative}/${name}`
@@ -107,11 +134,14 @@ function addCompareSnapshotCommand(screenshotOptions?: Partial<Cypress.Screensho
 function prepareOptions(
   name: string,
   screenshotOptions: Partial<Cypress.ScreenshotOptions & PluginOptions>,
-  commandOptions: Partial<Cypress.ScreenshotOptions & PluginOptions>
+  commandOptions: Partial<Cypress.ScreenshotOptions & PluginOptions>,
+  configEnv: CypressCommandRuntimeEnv
 ): VisualRegressionOptions {
   // if type is not set, throw error immediately
-  if (Cypress.env('visualRegressionType') === undefined) {
-    throw new Error("The 'type' environment variable is missing. Expected values: 'regression' or 'base'")
+  if (configEnv.visualRegressionType === undefined) {
+    throw new Error(
+      "The 'visualRegressionType' environment variable is missing. Expected values: 'regression' or 'base'"
+    )
   }
 
   // follow Cypress priority order https://docs.cypress.io/guides/references/configuration#Resolved-Configuration
@@ -123,7 +153,7 @@ function prepareOptions(
   }
 
   const options: VisualRegressionOptions = {
-    type: Cypress.env('visualRegressionType'),
+    type: configEnv.visualRegressionType,
     screenshotName: name,
     screenshotAbsolutePath: 'null', // will be set after takeScreenshot
     pluginOptions: defaultCommandOptions,
@@ -149,20 +179,20 @@ function prepareOptions(
   options.screenshotOptions = { ...screenshotOptions, ...commandOptions }
 
   // thirdly, override values provided through environment variables
-  if (Cypress.env('visualRegressionBaseDirectory') !== undefined) {
-    options.baseDirectory = Cypress.env('visualRegressionBaseDirectory')
+  if (configEnv.visualRegressionBaseDirectory !== undefined) {
+    options.baseDirectory = configEnv.visualRegressionBaseDirectory
   }
-  if (Cypress.env('visualRegressionDiffDirectory') !== undefined) {
-    options.diffDirectory = Cypress.env('visualRegressionDiffDirectory')
+  if (configEnv.visualRegressionDiffDirectory !== undefined) {
+    options.diffDirectory = configEnv.visualRegressionDiffDirectory
   }
-  if (Cypress.env('visualRegressionGenerateDiff') !== undefined) {
-    options.generateDiff = Cypress.env('visualRegressionGenerateDiff')
+  if (configEnv.visualRegressionGenerateDiff !== undefined) {
+    options.generateDiff = configEnv.visualRegressionGenerateDiff
   }
-  if (Cypress.env('visualRegressionFailSilently') !== undefined) {
-    options.pluginOptions.failSilently = Cypress.env('visualRegressionFailSilently')
+  if (configEnv.visualRegressionFailSilently !== undefined) {
+    options.pluginOptions.failSilently = configEnv.visualRegressionFailSilently
   }
-  if (Cypress.env('visualRegressionUpdateSnapshots') !== undefined) {
-    const envValue = Cypress.env('visualRegressionUpdateSnapshots')
+  if (configEnv.visualRegressionUpdateSnapshots !== undefined) {
+    const envValue = configEnv.visualRegressionUpdateSnapshots as unknown
     options.updateSnapshots = envValue === true || envValue === 'true' || envValue === 1 || envValue === '1'
   }
 

@@ -1,3 +1,5 @@
+const visualRegressionType = Cypress.expose('visualRegressionType')
+
 it('test outside context', () => {
   cy.visit('./cypress/web/01.html')
   cy.compareSnapshot('outside-context')
@@ -25,7 +27,7 @@ describe('File name tests', () => {
       }
       throw error
     })
-    if (Cypress.env('visualRegressionType') === 'base') {
+    if (visualRegressionType === 'base') {
       cy.visit('./cypress/web/07.html')
       cy.compareSnapshot('files-1[2<3>4:5"6\\7|8?9*10, 11]12(13)')
       cy.readFile(

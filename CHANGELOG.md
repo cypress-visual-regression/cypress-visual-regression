@@ -1,10 +1,14 @@
 # Change Log
 
-## Unreleased
+## v6.0.0
 
+- **BREAKING**: Migrate to Cypress.expose
+  - Addresses issue [#304] (https://github.com/cypress-visual-regression/cypress-visual-regression/issues/304)
+  - Move visual regression configuration variables from `env` object to `expose` object. See README.md
+  - Important: only supported with Cypress v15
 - Add support for updating base snapshots on regression mismatch via `visualRegressionUpdateSnapshots`.
 - Improve TypeScript support for element snapshots and `compareSnapshot` overwrites.
-- Drop support for Cypress v12, v13
+- Drop support for Cypress v12, v13, v14
 - Drop support for Node v18, v20
 - Bumps all dependency versions
 

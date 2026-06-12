@@ -1,3 +1,5 @@
+const visualRegressionType = Cypress.expose('visualRegressionType')
+
 describe('run cypress-visual-regression in cjs project', () => {
   it('should run without errors', () => {
     cy.visit('https://example.cypress.io')
@@ -15,7 +17,7 @@ describe('run cypress-visual-regression in cjs project', () => {
       }
       throw error
     })
-    if (Cypress.env('visualRegressionType') === 'base') {
+    if (visualRegressionType === 'base') {
       cy.visit('https://example.cypress.io/')
       cy.compareSnapshot('files-1[2<3>4:5"6\\7|8?9*10, 11]12(13)')
       cy.readFile('./cypress/snapshots/base/cypress/e2e/spec.cy.js/files-1[2345678910, 11]12(13).png').should('exist')
