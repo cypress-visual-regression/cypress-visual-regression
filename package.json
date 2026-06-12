@@ -43,7 +43,7 @@
     "@typescript-eslint/eslint-plugin": "8.59.4",
     "@typescript-eslint/parser": "8.59.4",
     "cross-env": "10.1.0",
-    "esbuild": "0.28.0",
+    "esbuild": "0.28.1",
     "esbuild-node-externals": "1.22.0",
     "eslint": "9.39.4",
     "eslint-config-love": "154.0.0",
