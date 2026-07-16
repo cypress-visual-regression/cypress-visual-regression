@@ -189,7 +189,7 @@ cy.compareSnapshot('homePage', {errorThreshold: 1, failSilently: true}).then(com
 })
 ```
 
-> Looking for more examples? See [cypress/e2e/main.cy.ts](https://github.com/cypress-visual-regression/cypress-visual-regression/blob/master/cypress/e2e/main.cy.ts).
+> Looking for more examples? See [cypress/e2e/main.cy.ts](https://github.com/cypress-visual-regression/cypress-visual-regression/blob/master/tests/integration/cypress/e2e/main.cy.ts).
 
 ## Tips & Tricks
 
