@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@eslint/compat": "2.1.0",
-    "@faker-js/faker": "10.4.0",
+    "@faker-js/faker": "10.5.0",
     "@types/node": "25.9.1",
     "@types/pixelmatch": "5.2.6",
     "@types/pngjs": "6.0.5",
