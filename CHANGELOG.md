@@ -1,5 +1,10 @@
 # Change Log
 
+## v6.0.1
+
+- Update Show Difference dialog to support Cypress v16, addresses [#330] (https://github.com/cypress-visual-regression/cypress-visual-regression/issues/330)
+- Dependency updates
+
 ## v6.0.0
 
 - **BREAKING**: Migrate to Cypress.expose
