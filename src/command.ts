@@ -232,13 +232,45 @@ function takeScreenshot(
   )
 }
 
-/** Call the plugin to compare snapshot images and generate a diff */
+/**
+ * Cypress 16 renders the reporter inside #reporter-frame.
+ *
+ * In older Cypress versions the reporter was rendered directly in the
+ * top-level document, so listening on top.document.body was sufficient.
+ *
+ * The error message containing "Show Difference" is rendered by the
+ * reporter, therefore the click listener must be attached to the
+ * reporter iframe's document.
+ */
+function getReporterDocument(): Document | null {
+  if (top === null) {
+    return null
+  }
+
+  const reporterFrame = top.document.querySelector<HTMLIFrameElement>('#reporter-frame')
+
+  if (reporterFrame) {
+    try {
+      return reporterFrame.contentDocument
+    } catch {
+      return null
+    }
+  }
+
+  // Cypress <= 15
+  return top.document
+}
+
+/**
+ * Call the plugin to compare snapshot images and generate a diff
+ */
 function compareScreenshots(
   subject: CompareSnapshotSubject,
   options: VisualRegressionOptions
 ): Cypress.Chainable<VisualRegressionResult> {
   const retryAttempt = Cypress.currentRetry
   const compareSnapshotsOptions = { retryAttempt, ...options }
+
   return cy.task<VisualRegressionResult>('compareSnapshots', compareSnapshotsOptions, { log: false }).then((result) => {
     const log = Cypress.log({
       type: 'parent',
@@ -252,6 +284,7 @@ function compareScreenshots(
         }
       }
     })
+
     if (subject != null) {
       log.set('$el', subject)
       log.set('message', subject.selector)
@@ -259,26 +292,44 @@ function compareScreenshots(
     } else if (options.screenshotOptions?.capture !== undefined) {
       log.set('message', `captureMode: ${options.screenshotOptions.capture}`)
     }
+
     if (result.error !== undefined && !options.pluginOptions.failSilently) {
       if (result.error.includes('image is different') && top !== null) {
         const random = Math.random()
-        result.error += ` - [Show Difference](#visualRegressionPopup${random})`
-        Cypress.$(top.document.body).on('click', `a[href^="#visualRegressionPopup${random}"]`, (e) => {
+        const popupAnchor = `visualRegressionPopup${random}`
+
+        result.error += ` - [Show Difference](#${popupAnchor})`
+
+        const reporterDocument = getReporterDocument()
+
+        if (reporterDocument === null) {
+          throw Error('Cypress reporter not properly initialized')
+        }
+
+        Cypress.$(reporterDocument).on('click', `a[href^="#${popupAnchor}"]`, (e) => {
           e.preventDefault()
+          e.stopPropagation()
+
           if (top === null) {
             throw Error('Cypress runner not properly initialized')
           }
+
+          // The popup belongs to the top-level Cypress runner document,
+          // not to the reporter iframe.
           Cypress.$(getVisual(result.images)).appendTo(top.document.body)
+
           if (result.images.diff === undefined) {
             Cypress.$('#diffContainer', top.document.body).remove()
           }
 
           const popup = Cypress.$('#visualRegressionPopup', top.document.body)
+
           popup.on('click', 'button[data-type="close"]', () => {
             popup.remove()
           })
-          popup.on('click', function (e) {
-            if (e.target === this) {
+
+          popup.on('click', function (event) {
+            if (event.target === this) {
               popup.remove()
             }
           })
@@ -286,8 +337,10 @@ function compareScreenshots(
           return false
         })
       }
+
       throw constructCypressError(log, new Error(result.error))
     }
+
     return result
   })
 }
