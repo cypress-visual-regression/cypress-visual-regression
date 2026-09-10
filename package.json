@@ -57,7 +57,7 @@
     "rimraf": "6.1.3",
     "tsup": "8.5.1",
     "typescript": "6.0.3",
-    "vitest": "4.1.7"
+    "vitest": "4.1.11"
   },
   "peerDependencies": {
     "cypress": ">=15"
