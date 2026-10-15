@@ -160,7 +160,7 @@ cy.compareSnapshot(name, options)
 | Arguments      | Default | Description                                                                                                                  |
 | -------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | name           | /       | Represents the name of the base snapshot file that the actual screenshot will be compared with.                              |
-| errorThreshold | 0       | Threshold under which any image difference will be considered as failed test. Represented in percentages.                    |
+| errorThreshold | 0       | Maximum allowed fraction of mismatched pixels. The test fails only when the fraction exceeds this value (0.2 means 20%).     |
 | options        | {}      | Used to provide additional cypress screenshot arguments, pixelmatch options, and `failSilently` and `errorThreshold` values. |
 
 ### > yields
